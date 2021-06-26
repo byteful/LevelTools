@@ -1,0 +1,135 @@
+#
+# ${project.name} v${project.version} by byteful#0001
+#
+
+# Configuration for messages.
+messages:
+  no_permission: "&cYou do not have permission to execute this command!"
+  successful_reload: "&aSuccessfully reloaded ${project.name}!"
+
+# The multiplier used on the current level plus 1 to determine how much XP will be needed to achieve the next level.
+# Ex: If this was 100.0, it would take 100 XP to get from level 0 to level 1. It would take 200 XP to get to level 2 from level 1.
+level_multiplier: 100.0
+
+# Should blocks that are placed by a player count towards XP?
+# May cause lag on a large server. Recommended to keep this true.
+# If this is set to false, all blocks placed beforehand will be counted towards XP.
+playerPlacedBlocks: true
+
+# Sends the progress bar to the action bar of a player when they gain XP on the tool in their hand.
+actionBar:
+  enabled: true
+  display: "{progress_bar} &e{xp}&6/&e{max_xp}"
+
+# Configuration for the sound played during a level up.
+level_up_sound:
+  sound: "ENTITY_PLAYER_LEVELUP" # Set to null to disable this.
+  pitch: 1.0
+  volume: 1.0
+
+# The default block XP modifier. Look at the configuration section below for a better explanation.
+default_block_xp_modifier:
+  min: 0.5
+  max: 1.5
+
+# The default combat XP modifier. Look at the configuration section below for a better explanation.
+default_combat_xp_modifier:
+  min: 1.0
+  max: 2.5
+
+# Configuration for specific block modifiers.
+# These modifiers change the amount of XP a block gives. Set the min and max to the same value to disable the random range system.
+block_xp_modifiers:
+  DIAMOND_ORE:
+    min: 5.0
+    max: 10.0
+
+# Configuration for specific entity (combat) modifiers.
+# These modifiers change the amount of XP an entity gives. Set the min and max to the same value to disable the random range system.
+combat_xp_modifiers:
+  BLAZE:
+    min: 5.0
+    max: 7.5
+
+# A blacklist that prevents the blocks listed from giving XP on break.
+blockBlacklist:
+  - "FIRE"
+  - "SOUL_FIRE"
+  - "CRIMSON_FUNGUS"
+  - "BROWN_MUSHROOM"
+  - "RED_MUSHROOM"
+  - "CRIMSON_ROOTS"
+  - "GRASS"
+  - "TALL_GRASS"
+  - "SEAGRASS"
+  - "TORCH"
+  - "FERN"
+  - "LARGE_FERN"
+  - "SUNFLOWER"
+  - "CORNFLOWER"
+
+# A blacklist that prevents the entities listed from giving XP on kill.
+entityBlacklist:
+  - "PLAYER"
+
+# Configuration for tool rewards given at level ups.
+# Handlers:
+# - "command" : Runs the command provided as the console.
+# - "player-command" : Runs the command provided as the player.
+# - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided.
+# - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments.
+tool_rewards:
+  1:
+    - "enchant2 efficiency 1"
+
+# Configuration for sword rewards given at level ups.
+# Same system as tool rewards.
+sword_rewards:
+  1:
+    - "enchant2 sharpness 1"
+
+# Configuration for bow and crossbow rewards given at level ups.
+# Same system as tool rewards.
+bow_rewards:
+  1:
+    - "enchant2 power 1"
+
+# Configuration for tool lore display.
+# To create a custom display for a specific tool item type, list that type as a key and set the lore as shown in the default lore.
+# Placeholders:
+# - {level} : The tool's level.
+# - {xp} : The tool's xp.
+# - {max_xp} : The tool's max XP needed to reach the next level.
+# - {progress_bar} : The progress bar text built with the configuration under 'progress_bar'.
+display:
+  default:
+    - ""
+    - "&eLevel: &6{level}"
+    - ""
+    - "{progress_bar} &e{xp}&6/&e{max_xp}"
+
+# Configuration for the progress bar.
+progress_bar:
+  # The total amount of bars in the progress bar.
+  total_bars: 50
+
+  # The symbol used for the bar.
+  bar_symbol: '|'
+
+  # The symbol used to prefix the bar symbols.
+  prefix_symbol: '['
+
+  # The symbol used to suffix the bar symbols.
+  suffix_symbol: ']'
+
+  # The color for the prefix symbol.
+  prefix_color: '8' # Do not include the '&'
+
+  # The color for the suffix symbol.
+  suffix_color: '8' # Do not include the '&'
+
+  # The color for the achieved/completed bars.
+  completed_color: 'e' # Do not include the '&'
+
+  # The color for the remaining/placeholder bars.
+  placeholder_color: '7' # Do not include the '&'

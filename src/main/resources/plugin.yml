@@ -1,0 +1,14 @@
+name: ${project.name}
+version: ${project.version}
+main: ${main.class}
+author: byteful
+api-version: 1.17
+description: ${project.description}
+website: ${project.url}
+permissions:
+  leveltools.admin:
+    description: "Permission to use admin commands."
+    default: op
+  leveltools.enabled:
+    description: "Permission to let a player level up a tool."
+    default: true
