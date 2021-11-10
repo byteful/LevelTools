@@ -1,5 +1,5 @@
 name: "LevelTools"
-version: "1.1.0"
+version: "1.1.0.1"
 main: "me.byteful.plugin.leveltools.LevelToolsPlugin"
 author: byteful
 description: "A plugin that adds a leveling system to tools, swords, and bows."

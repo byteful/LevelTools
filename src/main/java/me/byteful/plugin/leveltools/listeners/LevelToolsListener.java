@@ -1,5 +1,6 @@
 package me.byteful.plugin.leveltools.listeners;
 
+import com.cryptomorin.xseries.XEnchantment;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.api.event.LevelToolsLevelIncreaseEvent;
@@ -12,16 +13,15 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 public abstract class LevelToolsListener implements Listener {
   protected void handle(LevelToolsItem tool, Player player, double modifier) {
@@ -124,11 +124,15 @@ public abstract class LevelToolsListener implements Listener {
 
               case "enchant":
                 {
-                  if (split.length >= 3
-                      && Enchantment.getByKey(NamespacedKey.minecraft(split[1])) != null
-                      && NumberUtils.isNumber(split[2])) {
+                  if(split.length < 3) {
+                    return;
+                  }
+
+                  final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
+
+                  if (enchant.isPresent() && NumberUtils.isNumber(split[2])) {
                     tool.enchant(
-                        Enchantment.getByKey(NamespacedKey.minecraft(split[1])),
+                        enchant.get().parseEnchantment(),
                         Integer.parseInt(split[2]));
                   }
 
@@ -137,14 +141,17 @@ public abstract class LevelToolsListener implements Listener {
 
               case "enchant2":
                 {
-                  if (split.length >= 3 && NumberUtils.isNumber(split[2])) {
-                    final Enchantment enchant =
-                        Enchantment.getByKey(NamespacedKey.minecraft(split[1]));
+                  if(split.length < 3) {
+                    return;
+                  }
+
+                  final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
+
+                  if (NumberUtils.isNumber(split[2])) {
                     final int level = Integer.parseInt(split[2]);
 
-                    if (enchant != null
-                        && tool.getItemStack().getEnchantmentLevel(enchant) < level) {
-                      tool.enchant(enchant, level);
+                    if (enchant.isPresent() && tool.getItemStack().getEnchantmentLevel(enchant.get().parseEnchantment()) < level) {
+                      tool.enchant(enchant.get().parseEnchantment(), level);
                     }
                   }
 

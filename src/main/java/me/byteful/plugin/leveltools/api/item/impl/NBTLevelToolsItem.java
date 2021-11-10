@@ -117,6 +117,24 @@ public class NBTLevelToolsItem implements LevelToolsItem {
     enchantments.put(enchantment, level);
   }
 
+  @NotNull
+  public NBTItem getNBT() {
+    return nbt;
+  }
+
+  public void setNBT(@NotNull NBTItem nbt) {
+    this.nbt = nbt;
+  }
+
+  @NotNull
+  public Map<Enchantment, Integer> getEnchantments() {
+    return enchantments;
+  }
+
+  public void setEnchantments(@NotNull Map<Enchantment, Integer> enchantments) {
+    this.enchantments = enchantments;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
