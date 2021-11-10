@@ -1,10 +1,6 @@
 package me.byteful.plugin.leveltools.api.item.impl;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
@@ -13,27 +9,24 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
-public class LevelToolsItemImpl implements LevelToolsItem {
-  @Nonnull private NBTItem nbt;
-  @Nonnull private Map<Enchantment, Integer> enchantments;
+public class NBTLevelToolsItem implements LevelToolsItem {
+  @NotNull private NBTItem nbt;
+  @NotNull private Map<Enchantment, Integer> enchantments;
 
-  public LevelToolsItemImpl(@Nonnull ItemStack stack) {
+  public NBTLevelToolsItem(@NotNull ItemStack stack) {
     this.nbt = new NBTItem(stack);
     this.enchantments = new HashMap<>();
   }
 
-  @Nonnull
+  @NotNull
   @Override
   public ItemStack getItemStack() {
     final ItemStack stack = nbt.getItem().clone();
@@ -122,5 +115,23 @@ public class LevelToolsItemImpl implements LevelToolsItem {
   @Override
   public void enchant(Enchantment enchantment, int level) {
     enchantments.put(enchantment, level);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    NBTLevelToolsItem that = (NBTLevelToolsItem) o;
+    return nbt.equals(that.nbt) && enchantments.equals(that.enchantments);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(nbt, enchantments);
+  }
+
+  @Override
+  public String toString() {
+    return "LevelToolsItemImpl{" + "nbt=" + nbt + ", enchantments=" + enchantments + '}';
   }
 }

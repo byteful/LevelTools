@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "7.1.0"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+    }
+
+    maven {
+        url = uri('https://oss.sonatype.org/content/groups/public/')
+    }
+
+    maven {
+        url = uri('https://repo.codemc.org/repository/maven-public/')
+    }
+
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+    maven {
+        url = uri('https://jitpack.io')
+    }
+}
+
+dependencies {
+    implementation 'de.tr7zw:item-nbt-api:2.8.0'
+    implementation 'me.lucko:helper:5.6.8'
+    implementation 'com.github.Redempt:RedLib:6.1.0.3'
+    implementation 'com.github.cryptomorin:XSeries:8.4.0'
+
+    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compileOnly 'org.jetbrains:annotations:22.0.0'
+}
+
+group = 'me.byteful.plugin'
+version = '1.0.0'
+description = 'LevelTools'
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+shadowJar {
+    archiveBaseName.set("LevelTools")
+    archiveClassifier.set("")
+
+    relocate "de.tr7zw.changeme.nbtapi", "me.byteful.plugin.leveltools.libs.nbtapi"
+    relocate "me.lucko", "me.byteful.plugin.leveltools.libs.lucko"
+    relocate "com.cryptomorin.xseries", "me.byteful.plugin.leveltools.libs.xseries"
+    relocate "redempt.redlib", "me.byteful.plugin.leveltools.libs.redlib"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}

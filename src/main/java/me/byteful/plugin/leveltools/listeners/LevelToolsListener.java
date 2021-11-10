@@ -74,11 +74,15 @@ public abstract class LevelToolsListener implements Listener {
       final ConfigurationSection soundCs =
           LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("level_up_sound");
 
-      player.playSound(
-          player.getLocation(),
-          Sound.valueOf(soundCs.getString("sound")),
-          (float) soundCs.getDouble("pitch"),
-          (float) soundCs.getDouble("volume"));
+      final String sound = soundCs.getString("sound", null);
+
+      if (sound != null) {
+        player.playSound(
+            player.getLocation(),
+            Sound.valueOf(sound),
+            (float) soundCs.getDouble("pitch"),
+            (float) soundCs.getDouble("volume"));
+      }
     }
 
     LevelToolsUtil.setHand(player, tool.getItemStack());
@@ -102,7 +106,8 @@ public abstract class LevelToolsListener implements Listener {
                 {
                   Bukkit.dispatchCommand(
                       Bukkit.getConsoleSender(),
-                      String.join(" ", Arrays.copyOfRange(split, 1, split.length)).replace("{player}", player.getName()));
+                      String.join(" ", Arrays.copyOfRange(split, 1, split.length))
+                          .replace("{player}", player.getName()));
 
                   break;
                 }
@@ -110,7 +115,9 @@ public abstract class LevelToolsListener implements Listener {
               case "player-command":
                 {
                   Bukkit.dispatchCommand(
-                      player, String.join(" ", Arrays.copyOfRange(split, 1, split.length)).replace("{player}", player.getName()));
+                      player,
+                      String.join(" ", Arrays.copyOfRange(split, 1, split.length))
+                          .replace("{player}", player.getName()));
 
                   break;
                 }
@@ -135,7 +142,8 @@ public abstract class LevelToolsListener implements Listener {
                         Enchantment.getByKey(NamespacedKey.minecraft(split[1]));
                     final int level = Integer.parseInt(split[2]);
 
-                    if (enchant != null && tool.getItemStack().getEnchantmentLevel(enchant) < level) {
+                    if (enchant != null
+                        && tool.getItemStack().getEnchantmentLevel(enchant) < level) {
                       tool.enchant(enchant, level);
                     }
                   }
@@ -150,9 +158,9 @@ public abstract class LevelToolsListener implements Listener {
   }
 
   private ConfigurationSection getCsFromType(Material material) {
-    if(LevelToolsUtil.isSword(material)) {
+    if (LevelToolsUtil.isSword(material)) {
       return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("sword_rewards");
-    } else if(LevelToolsUtil.isBowOrCrossbow(material)) {
+    } else if (LevelToolsUtil.isProjectileShooter(material)) {
       return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("bow_rewards");
     } else {
       return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("tool_rewards");

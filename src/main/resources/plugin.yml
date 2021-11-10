@@ -1,10 +1,9 @@
-name: ${project.name}
-version: ${project.version}
-main: ${main.class}
+name: "LevelTools"
+version: "1.0.0"
+main: "me.byteful.plugin.leveltools.LevelToolsPlugin"
 author: byteful
-api-version: 1.17
-description: ${project.description}
-website: ${project.url}
+description: "A plugin that adds a leveling system to tools, swords, and bows."
+website: "https://byteful.me"
 permissions:
   leveltools.admin:
     description: "Permission to use admin commands."

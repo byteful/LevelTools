@@ -1,7 +1,10 @@
 package me.byteful.plugin.leveltools;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Strings;
-import lombok.experimental.UtilityClass;
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
+import me.byteful.plugin.leveltools.api.item.impl.NBTLevelToolsItem;
 import me.lucko.helper.reflect.MinecraftVersion;
 import me.lucko.helper.text3.Text;
 import org.bukkit.ChatColor;
@@ -10,12 +13,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import redempt.redlib.RedLib;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.concurrent.ThreadLocalRandom;
 
-@UtilityClass
 public final class LevelToolsUtil {
   public static String getProgressBar(
       double percent,
@@ -68,7 +71,6 @@ public final class LevelToolsUtil {
         1);
   }
 
-
   public static double getBlockModifier(Material material) {
     final ConfigurationSection block_xp_modifiers =
         LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("block_xp_modifiers");
@@ -114,8 +116,9 @@ public final class LevelToolsUtil {
     return material.name().endsWith("_SWORD");
   }
 
-  public static boolean isBowOrCrossbow(Material material) {
-    return material == Material.BOW || material == Material.CROSSBOW;
+  public static boolean isProjectileShooter(Material material) {
+    return material == XMaterial.BOW.parseMaterial()
+        || (RedLib.MID_VERSION >= 14 && material == XMaterial.CROSSBOW.parseMaterial());
   }
 
   public static ItemStack getHand(Player player) {
@@ -162,5 +165,23 @@ public final class LevelToolsUtil {
     bd = bd.setScale(1, RoundingMode.DOWN);
 
     return bd.intValue();
+  }
+
+  public static LevelToolsItem createLevelToolsItem(ItemStack stack) {
+    final NBTItem nbt = new NBTItem(stack);
+
+    if (nbt.hasKey("isLevelTool")) {
+      return fromItemStack(stack);
+    }
+
+    nbt.setBoolean("isLevelTool", true);
+    nbt.setInteger("levelToolsLevel", 0);
+    nbt.setDouble("levelToolsXp", 0.0D);
+
+    return new NBTLevelToolsItem(nbt.getItem());
+  }
+
+  public static LevelToolsItem fromItemStack(ItemStack stack) {
+    return new NBTLevelToolsItem(stack);
   }
 }

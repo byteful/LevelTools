@@ -2,9 +2,6 @@ package me.byteful.plugin.leveltools.listeners;
 
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
-import me.byteful.plugin.leveltools.api.LevelToolsAPI;
-import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
-import me.lucko.helper.utils.Log;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -27,11 +24,16 @@ public class BlockEventListener extends LevelToolsListener {
     final Block block = e.getBlock();
     final ItemStack hand = LevelToolsUtil.getHand(player);
 
-    if(LevelToolsPlugin.getInstance().getConfig().getStringList("blockBlacklist").stream().map(Material::getMaterial).anyMatch(material -> block.getType() == material)) {
+    if (LevelToolsPlugin.getInstance().getConfig().getStringList("blockBlacklist").stream()
+        .map(Material::getMaterial)
+        .anyMatch(material -> block.getType() == material)) {
       return;
     }
 
-    if ((LevelToolsUtil.isAxe(hand.getType()) || LevelToolsUtil.isPickaxe(hand.getType()) || LevelToolsUtil.isShovel(hand.getType())) && !block.getDrops(hand).isEmpty()) {
+    if ((LevelToolsUtil.isAxe(hand.getType())
+            || LevelToolsUtil.isPickaxe(hand.getType())
+            || LevelToolsUtil.isShovel(hand.getType()))
+        && !block.getDrops(hand).isEmpty()) {
       if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
         final DataBlock db =
             LevelToolsPlugin.getInstance().getBlockDataManager().getExisting(block);
@@ -43,7 +45,10 @@ public class BlockEventListener extends LevelToolsListener {
         }
       }
 
-      handle(LevelToolsAPI.instance().createLevelToolsItem(hand), player, LevelToolsUtil.getBlockModifier(block.getType()));
+      handle(
+          LevelToolsUtil.createLevelToolsItem(hand),
+          player,
+          LevelToolsUtil.getBlockModifier(block.getType()));
     }
   }
 

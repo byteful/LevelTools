@@ -1,11 +1,11 @@
 #
-# ${project.name} v${project.version} by byteful#0001
+# LevelTools v1.0.0 by byteful#0001
 #
 
 # Configuration for messages.
 messages:
   no_permission: "&cYou do not have permission to execute this command!"
-  successful_reload: "&aSuccessfully reloaded ${project.name}!"
+  successful_reload: "&aSuccessfully reloaded LevelTools!"
 
 # The multiplier used on the current level plus 1 to determine how much XP will be needed to achieve the next level.
 # Ex: If this was 100.0, it would take 100 XP to get from level 0 to level 1. It would take 200 XP to get to level 2 from level 1.

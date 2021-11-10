@@ -2,11 +2,10 @@ package me.byteful.plugin.leveltools.api.item;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface LevelToolsItem {
-  @Nonnull
+  @NotNull
   ItemStack getItemStack();
 
   int getLevel();
