@@ -1,7 +1,6 @@
-![Logo](https://github.com/byteful/LevelTools/blob/master/LevelTools.png?raw=true)
+![Logo](https://github.com/byteful/LevelTools/blob/master/LevelTools%20Large%20Logo.png?raw=true)
 
-# LevelTools
-A plugin that adds a leveling system to tools, swords, and bows.
+<h3 align="center">A plugin that adds a leveling system to tools, swords, and bows.</h3>
 
 ## Features
 
