@@ -7,8 +7,10 @@ import me.lucko.helper.command.CommandInterruptException;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import redempt.redlib.blockdata.BlockDataManager;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public final class LevelToolsPlugin extends ExtendedJavaPlugin {
   private static LevelToolsPlugin instance;
@@ -27,16 +29,32 @@ public final class LevelToolsPlugin extends ExtendedJavaPlugin {
       getDataFolder().mkdirs();
     }
 
-    final File blocksFile = new File(getDataFolder(), "blocks.db");
-    if (!blocksFile.exists()) {
+    // Support older file names.
+    final Path blocksFile = getDataFolder().toPath().resolve("player_placed_blocks.db");
+    final Path oldFile = getDataFolder().toPath().resolve("blocks.db");
+    if(Files.exists(oldFile)) {
+      if(Files.exists(blocksFile)) {
+        getLogger().warning("Found old 'blocks.db' file, but ignored it because a newer 'player_placed_blocks.db' file exists!");
+      } else {
+        try {
+          Files.move(oldFile, blocksFile, StandardCopyOption.COPY_ATTRIBUTES);
+          getLogger()
+              .warning("Found old 'blocks.db' file... Moved to newer 'player_placed_blocks.db' file.");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+
+    if (!Files.exists(blocksFile)) {
       try {
-        blocksFile.createNewFile();
+        blocksFile.toFile().createNewFile();
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
 
-    blockDataManager = new BlockDataManager(blocksFile.toPath());
+    blockDataManager = new BlockDataManager(blocksFile);
     blockDataManager.setAutoSave(true);
     getLogger().info("Loaded BlockDataManager...");
 
@@ -46,7 +64,7 @@ public final class LevelToolsPlugin extends ExtendedJavaPlugin {
     registerListeners();
     getLogger().info("Registered listeners...");
 
-    registerCommands();
+    registerReloadCommand();
     getLogger().info("Registered commands...");
 
     getLogger().info("Successfully started " + getDescription().getFullName() + "!");
@@ -69,7 +87,7 @@ public final class LevelToolsPlugin extends ExtendedJavaPlugin {
     registerListener(new EntityEventListener());
   }
 
-  private void registerCommands() {
+  private void registerReloadCommand() {
     Commands.create()
         .description("Reloads the configuration for LevelTools.")
         .handler(

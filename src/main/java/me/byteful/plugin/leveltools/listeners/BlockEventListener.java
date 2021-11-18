@@ -34,17 +34,6 @@ public class BlockEventListener extends LevelToolsListener {
             || LevelToolsUtil.isPickaxe(hand.getType())
             || LevelToolsUtil.isShovel(hand.getType()))
         && !block.getDrops(hand).isEmpty()) {
-      if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
-        final DataBlock db =
-            LevelToolsPlugin.getInstance().getBlockDataManager().getExisting(block);
-
-        if (db != null && db.getBoolean("isPlayerPlaced")) {
-          LevelToolsPlugin.getInstance().getBlockDataManager().remove(db);
-
-          return;
-        }
-      }
-
       handle(
           LevelToolsUtil.createLevelToolsItem(hand),
           player,
@@ -57,7 +46,7 @@ public class BlockEventListener extends LevelToolsListener {
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
       final DataBlock db =
           LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(e.getBlockPlaced());
-      db.set("isPlayerPlaced", true);
+      db.set("level_tools", true);
     }
   }
 }
