@@ -1,3 +1,5 @@
+<h5 align="center">Support/Help Server: https://discord.gg/G8BDgqsuyw</h5>
+
 ![Logo](https://github.com/byteful/LevelTools/blob/master/LevelTools%20Large%20Logo.png?raw=true)
 
 <h3 align="center">A plugin that adds a leveling system to tools, swords, and bows.</h3>
