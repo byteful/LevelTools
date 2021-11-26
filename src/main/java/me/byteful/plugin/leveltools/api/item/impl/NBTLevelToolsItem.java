@@ -107,9 +107,31 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
   @Override
   public double getMaxXp() {
-    return LevelToolsUtil.round(
-        (getLevel() + 1) * LevelToolsPlugin.getInstance().getConfig().getDouble("level_multiplier"),
-        1);
+    final double xpStart = LevelToolsPlugin.getInstance().getConfig().getDouble("level_xp_start");
+    final double increaseAmount =
+        LevelToolsPlugin.getInstance().getConfig().getDouble("level_xp_increase.amount");
+    final String mode =
+        LevelToolsPlugin.getInstance().getConfig().getString("level_xp_increase.mode");
+
+    if (mode == null) {
+      throw new RuntimeException(
+          "Failed to find valid value for 'level_xp_increase -> mode'. Please check your configuration!");
+    }
+
+    final double value = getLevel() * increaseAmount;
+
+    double nextXp;
+
+    if (mode.equalsIgnoreCase("ADD")) {
+      nextXp = xpStart + value;
+    } else if (mode.equalsIgnoreCase("MULTIPLY")) {
+      nextXp = xpStart * value;
+    } else {
+      throw new RuntimeException(
+          "Mode for 'level_xp_increase' is not 'ADD' or 'MULTIPLY'. Please check your configuration!");
+    }
+
+    return LevelToolsUtil.round(nextXp, 1);
   }
 
   @Override

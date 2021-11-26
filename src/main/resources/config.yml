@@ -7,9 +7,18 @@ messages:
   no_permission: "&cYou do not have permission to execute this command!"
   successful_reload: "&aSuccessfully reloaded LevelTools!"
 
-# The multiplier used on the current level plus 1 to determine how much XP will be needed to achieve the next level.
-# Ex: If this was 100.0, it would take 100 XP to get from level 0 to level 1. It would take 200 XP to get to level 2 from level 1.
-level_multiplier: 100.0
+# @Deprecated
+#level_multiplier: 100.0
+
+# The amount of XP needed to get from level 0 to level 1.
+level_xp_start: 100.0
+
+# The increase in amount of XP needed to get from level to level.
+# Ex: If we are on level 1 and the level_xp_start is on 100.0 and the mode is ADD with 100.0, it would take 200.0 XP to get to level 2 from level 1.
+# Ex 2: If we are on level 1 and the level_xp_start is on 100.0 and the mode is MULTIPLY with 2.0, it would take 200.0 XP to get to level 2 from level 1.
+level_xp_increase:
+  mode: "ADD" # Modes: "ADD" or "MULTIPLY"
+  amount: 100.0
 
 # Should blocks that are placed by a player count towards XP?
 # May cause lag on a large server. Recommended to keep this true.
