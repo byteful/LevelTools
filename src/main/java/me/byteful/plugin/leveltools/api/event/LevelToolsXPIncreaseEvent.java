@@ -12,14 +12,18 @@ import java.util.Objects;
 
 public class LevelToolsXPIncreaseEvent extends Event implements Cancellable {
   private static final HandlerList handlers = new HandlerList();
-  @NotNull private final LevelToolsItem item;
-  @NotNull private final Player player;
+  @NotNull
+  private final LevelToolsItem item;
+  @NotNull
+  private final Player player;
   private double newXp;
   private boolean isCancelled;
+
   public LevelToolsXPIncreaseEvent(@NotNull LevelToolsItem item, @NotNull Player player) {
     this.item = item;
     this.player = player;
   }
+
   public LevelToolsXPIncreaseEvent(
       @NotNull LevelToolsItem item, @NotNull Player player, double newXp, boolean isCancelled) {
     this.item = item;

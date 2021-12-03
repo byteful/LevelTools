@@ -18,8 +18,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NBTLevelToolsItem implements LevelToolsItem {
-  @NotNull private NBTItem nbt;
-  @NotNull private Map<Enchantment, Integer> enchantments;
+  @NotNull
+  private NBTItem nbt;
+  @NotNull
+  private Map<Enchantment, Integer> enchantments;
 
   public NBTLevelToolsItem(@NotNull ItemStack stack) {
     this.nbt = new NBTItem(stack);
@@ -108,30 +110,44 @@ public class NBTLevelToolsItem implements LevelToolsItem {
   @Override
   public double getMaxXp() {
     final double xpStart = LevelToolsPlugin.getInstance().getConfig().getDouble("level_xp_start");
-    final double increaseAmount =
+    double increaseAmount =
         LevelToolsPlugin.getInstance().getConfig().getDouble("level_xp_increase.amount");
     final String mode =
         LevelToolsPlugin.getInstance().getConfig().getString("level_xp_increase.mode");
+
+    if (xpStart < 1.0) {
+      throw new RuntimeException("Failed to find valid value for 'level_xp_start'. Please make sure it is equal to or over 1.0. Check your configuration!");
+    }
+
+    if (increaseAmount < 1.0) {
+      throw new RuntimeException("Failed to find valid value for 'level_xp_increase -> amount'. Please make sure it is equal to or over 1.0. Check your configuration!");
+    }
 
     if (mode == null) {
       throw new RuntimeException(
           "Failed to find valid value for 'level_xp_increase -> mode'. Please check your configuration!");
     }
 
-    final double value = getLevel() * increaseAmount;
+    double nextXp = xpStart;
 
-    double nextXp;
-
-    if (mode.equalsIgnoreCase("ADD")) {
-      nextXp = xpStart + value;
-    } else if (mode.equalsIgnoreCase("MULTIPLY")) {
-      nextXp = xpStart * value;
-    } else {
-      throw new RuntimeException(
-          "Mode for 'level_xp_increase' is not 'ADD' or 'MULTIPLY'. Please check your configuration!");
+    if (getLevel() > 0) {
+      if (mode.equalsIgnoreCase("ADD")) {
+        nextXp = xpStart + (getLevel() * increaseAmount);
+      } else if (mode.equalsIgnoreCase("MULTIPLY")) {
+        nextXp = xpStart * (Math.pow(increaseAmount, getLevel() * 1.0));
+      } else {
+        throw new RuntimeException(
+            "Mode for 'level_xp_increase' is not 'ADD' or 'MULTIPLY'. Please check your configuration!");
+      }
     }
 
-    return LevelToolsUtil.round(nextXp, 1);
+    final double rounded = LevelToolsUtil.round(nextXp, 1);
+
+    if (rounded <= 0.0) {
+      throw new RuntimeException("Failed to round " + nextXp + " to the first place. Please modify your values to get a better result! Check your configuration!");
+    }
+
+    return rounded;
   }
 
   @Override

@@ -32,8 +32,8 @@ public final class LevelToolsPlugin extends ExtendedJavaPlugin {
     // Support older file names.
     final Path blocksFile = getDataFolder().toPath().resolve("player_placed_blocks.db");
     final Path oldFile = getDataFolder().toPath().resolve("blocks.db");
-    if(Files.exists(oldFile)) {
-      if(Files.exists(blocksFile)) {
+    if (Files.exists(oldFile)) {
+      if (Files.exists(blocksFile)) {
         getLogger().warning("Found old 'blocks.db' file, but ignored it because a newer 'player_placed_blocks.db' file exists!");
       } else {
         try {

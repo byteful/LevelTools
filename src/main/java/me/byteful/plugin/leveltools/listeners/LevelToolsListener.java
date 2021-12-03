@@ -102,61 +102,57 @@ public abstract class LevelToolsListener implements Listener {
             final String handler = split[0];
 
             switch (handler.toLowerCase(Locale.ROOT).trim()) {
-              case "command":
-                {
-                  Bukkit.dispatchCommand(
-                      Bukkit.getConsoleSender(),
-                      String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-                          .replace("{player}", player.getName()));
+              case "command": {
+                Bukkit.dispatchCommand(
+                    Bukkit.getConsoleSender(),
+                    String.join(" ", Arrays.copyOfRange(split, 1, split.length))
+                        .replace("{player}", player.getName()));
 
-                  break;
+                break;
+              }
+
+              case "player-command": {
+                Bukkit.dispatchCommand(
+                    player,
+                    String.join(" ", Arrays.copyOfRange(split, 1, split.length))
+                        .replace("{player}", player.getName()));
+
+                break;
+              }
+
+              case "enchant": {
+                if (split.length < 3) {
+                  return;
                 }
 
-              case "player-command":
-                {
-                  Bukkit.dispatchCommand(
-                      player,
-                      String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-                          .replace("{player}", player.getName()));
+                final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
 
-                  break;
+                if (enchant.isPresent() && NumberUtils.isNumber(split[2])) {
+                  tool.enchant(
+                      enchant.get().parseEnchantment(),
+                      Integer.parseInt(split[2]));
                 }
 
-              case "enchant":
-                {
-                  if(split.length < 3) {
-                    return;
-                  }
+                break;
+              }
 
-                  final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
-
-                  if (enchant.isPresent() && NumberUtils.isNumber(split[2])) {
-                    tool.enchant(
-                        enchant.get().parseEnchantment(),
-                        Integer.parseInt(split[2]));
-                  }
-
-                  break;
+              case "enchant2": {
+                if (split.length < 3) {
+                  return;
                 }
 
-              case "enchant2":
-                {
-                  if(split.length < 3) {
-                    return;
+                final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
+
+                if (NumberUtils.isNumber(split[2])) {
+                  final int level = Integer.parseInt(split[2]);
+
+                  if (enchant.isPresent() && tool.getItemStack().getEnchantmentLevel(enchant.get().parseEnchantment()) < level) {
+                    tool.enchant(enchant.get().parseEnchantment(), level);
                   }
-
-                  final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
-
-                  if (NumberUtils.isNumber(split[2])) {
-                    final int level = Integer.parseInt(split[2]);
-
-                    if (enchant.isPresent() && tool.getItemStack().getEnchantmentLevel(enchant.get().parseEnchantment()) < level) {
-                      tool.enchant(enchant.get().parseEnchantment(), level);
-                    }
-                  }
-
-                  break;
                 }
+
+                break;
+              }
             }
           }
         }
