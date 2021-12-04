@@ -6,6 +6,7 @@ import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
@@ -38,36 +39,48 @@ public class PDCLevelToolsItem implements LevelToolsItem {
   public int getLevel() {
     final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
 
-    if(!pdc.has(LEVEL_KEY, PersistentDataType.INTEGER)) {
+    Integer value = pdc.get(LEVEL_KEY, PersistentDataType.INTEGER);
+
+    if(value == null) {
       setLevel(0);
+
+      value = 0;
     }
 
-    return pdc.get(LEVEL_KEY, PersistentDataType.INTEGER);
+    return value;
   }
 
   @Override
   public void setLevel(int level) {
-    final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
+    final PersistentDataHolder holder = getItemPDC();
+    final PersistentDataContainer pdc = holder.getPersistentDataContainer();
 
     pdc.set(LEVEL_KEY, PersistentDataType.INTEGER, Math.max(level, 0));
+    stack.setItemMeta((ItemMeta) holder);
   }
 
   @Override
   public double getXp() {
     final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
 
-    if(!pdc.has(XP_KEY, PersistentDataType.DOUBLE)) {
+    Double value = pdc.get(XP_KEY, PersistentDataType.DOUBLE);
+
+    if(value == null) {
       setXp(0.0D);
+
+      value = 0.0D;
     }
 
-    return pdc.get(XP_KEY, PersistentDataType.DOUBLE);
+    return value;
   }
 
   @Override
   public void setXp(double xp) {
-    final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
+    final PersistentDataHolder holder = getItemPDC();
+    final PersistentDataContainer pdc = holder.getPersistentDataContainer();
 
     pdc.set(XP_KEY, PersistentDataType.DOUBLE, Math.max(xp, 0.0));
+    stack.setItemMeta((ItemMeta) holder);
   }
 
   @Override
