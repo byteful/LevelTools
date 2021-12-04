@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class NBTLevelToolsItem implements LevelToolsItem {
   @NotNull
-  private static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
+  public static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
 
   @NotNull
   private NBTItem nbt;

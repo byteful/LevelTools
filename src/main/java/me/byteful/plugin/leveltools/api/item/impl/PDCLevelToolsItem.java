@@ -17,7 +17,7 @@ import java.util.Objects;
 
 public class PDCLevelToolsItem implements LevelToolsItem {
   @NotNull
-  private static final NamespacedKey LEVEL_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsLevel"), XP_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsXp");
+  public static final NamespacedKey LEVEL_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsLevel"), XP_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsXp");
 
   @NotNull
   private ItemStack stack;

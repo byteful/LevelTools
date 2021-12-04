@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.NBTLevelToolsItem;
+import me.byteful.plugin.leveltools.api.item.impl.PDCLevelToolsItem;
 import me.lucko.helper.reflect.MinecraftVersion;
 import me.lucko.helper.text3.Text;
 import org.bukkit.ChatColor;
@@ -173,21 +174,18 @@ public final class LevelToolsUtil {
   }
 
   public static LevelToolsItem createLevelToolsItem(ItemStack stack) {
-    final NBTItem nbt = new NBTItem(stack);
+    if(RedLib.MID_VERSION >= 14) {
+      if(RedLib.MID_VERSION < 18) {
+        final NBTItem nbt = new NBTItem(stack);
+        if (nbt.getKeys().stream().anyMatch(s -> s.startsWith("levelTools"))) {
+          return new NBTLevelToolsItem(stack); // Support tools created with "old" NBT system for 1.14+.
+        }
+      }
 
-    if (nbt.hasKey("isLevelTool")) {
-      return fromItemStack(stack);
+      return new PDCLevelToolsItem(stack);
+    } else {
+      return new NBTLevelToolsItem(stack);
     }
-
-    nbt.setBoolean("isLevelTool", true);
-    nbt.setInteger("levelToolsLevel", 0);
-    nbt.setDouble("levelToolsXp", 0.0D);
-
-    return new NBTLevelToolsItem(nbt.getItem());
-  }
-
-  public static LevelToolsItem fromItemStack(ItemStack stack) {
-    return new NBTLevelToolsItem(stack);
   }
 
   public static ItemStack buildItemStack(ItemStack stack, Map<Enchantment, Integer> enchantments, int level, double xp, double maxXp) {
