@@ -6,8 +6,8 @@ import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,11 +36,7 @@ public class PDCLevelToolsItem implements LevelToolsItem {
 
   @Override
   public int getLevel() {
-    final PersistentDataContainer pdc = getItemPDC();
-
-    if(pdc == null) {
-      throw new RuntimeException("Failed to find PDC for ItemStack!");
-    }
+    final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
 
     if(!pdc.has(LEVEL_KEY, PersistentDataType.INTEGER)) {
       setLevel(0);
@@ -51,20 +47,14 @@ public class PDCLevelToolsItem implements LevelToolsItem {
 
   @Override
   public void setLevel(int level) {
-    final PersistentDataContainer pdc = getItemPDC();
+    final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
 
-    if(pdc != null) {
-      pdc.set(LEVEL_KEY, PersistentDataType.INTEGER, Math.max(level, 0));
-    }
+    pdc.set(LEVEL_KEY, PersistentDataType.INTEGER, Math.max(level, 0));
   }
 
   @Override
   public double getXp() {
-    final PersistentDataContainer pdc = getItemPDC();
-
-    if(pdc == null) {
-      throw new RuntimeException("Failed to find PDC for ItemStack!");
-    }
+    final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
 
     if(!pdc.has(XP_KEY, PersistentDataType.DOUBLE)) {
       setXp(0.0D);
@@ -75,11 +65,9 @@ public class PDCLevelToolsItem implements LevelToolsItem {
 
   @Override
   public void setXp(double xp) {
-    final PersistentDataContainer pdc = getItemPDC();
+    final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
 
-    if(pdc != null) {
-      pdc.set(LEVEL_KEY, PersistentDataType.DOUBLE, Math.max(xp, 0.0));
-    }
+    pdc.set(LEVEL_KEY, PersistentDataType.DOUBLE, Math.max(xp, 0.0));
   }
 
   @Override
@@ -87,14 +75,8 @@ public class PDCLevelToolsItem implements LevelToolsItem {
     enchantments.put(enchantment, level);
   }
 
-  private PersistentDataContainer getItemPDC() {
-    final ItemMeta meta = stack.getItemMeta();
-
-    if(meta == null) {
-      return null;
-    }
-
-    return (PersistentDataContainer) meta;
+  private PersistentDataHolder getItemPDC() {
+    return stack.getItemMeta();
   }
 
   @NotNull
