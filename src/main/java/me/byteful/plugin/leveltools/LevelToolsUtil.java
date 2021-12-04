@@ -10,14 +10,19 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import redempt.redlib.RedLib;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public final class LevelToolsUtil {
   public static String getProgressBar(
@@ -183,5 +188,40 @@ public final class LevelToolsUtil {
 
   public static LevelToolsItem fromItemStack(ItemStack stack) {
     return new NBTLevelToolsItem(stack);
+  }
+
+  public static ItemStack buildItemStack(ItemStack stack, Map<Enchantment, Integer> enchantments, int level, double xp, double maxXp) {
+    final ConfigurationSection cs =
+        LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("display");
+    List<String> lore = cs.getStringList("default");
+
+    for (String key : cs.getKeys(false)) {
+      if (key.equalsIgnoreCase(stack.getType().name())) {
+        lore = cs.getStringList(key);
+      }
+    }
+
+    lore =
+        lore.stream()
+            .map(
+                str ->
+                    Text.colorize(
+                        str.replace("{level}", String.valueOf(level))
+                            .replace("{xp}", String.valueOf(xp))
+                            .replace("{max_xp}", String.valueOf(maxXp))
+                            .replace(
+                                "{progress_bar}",
+                                LevelToolsUtil.createDefaultProgressBar(xp, maxXp))))
+            .collect(Collectors.toList());
+
+    final ItemMeta meta = stack.getItemMeta();
+    meta.setLore(lore);
+    stack.setItemMeta(meta);
+
+    for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+      stack.addUnsafeEnchantment(entry.getKey(), entry.getValue());
+    }
+
+    return stack;
   }
 }

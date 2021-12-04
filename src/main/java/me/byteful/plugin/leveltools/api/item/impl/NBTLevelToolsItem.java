@@ -1,23 +1,20 @@
 package me.byteful.plugin.leveltools.api.item.impl;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
-import me.lucko.helper.text3.Text;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class NBTLevelToolsItem implements LevelToolsItem {
+  @NotNull
+  private static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
+
   @NotNull
   private NBTItem nbt;
   @NotNull
@@ -31,50 +28,21 @@ public class NBTLevelToolsItem implements LevelToolsItem {
   @NotNull
   @Override
   public ItemStack getItemStack() {
-    final ItemStack stack = nbt.getItem().clone();
-
-    final ConfigurationSection cs =
-        LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("display");
-    List<String> lore = cs.getStringList("default");
-
-    for (String key : cs.getKeys(false)) {
-      if (key.equalsIgnoreCase(stack.getType().name())) {
-        lore = cs.getStringList(key);
-      }
-    }
-
-    lore =
-        lore.stream()
-            .map(
-                str ->
-                    Text.colorize(
-                        str.replace("{level}", String.valueOf(nbt.getInteger("levelToolsLevel")))
-                            .replace("{xp}", String.valueOf(getXp()))
-                            .replace("{max_xp}", String.valueOf(getMaxXp()))
-                            .replace(
-                                "{progress_bar}",
-                                LevelToolsUtil.createDefaultProgressBar(getXp(), getMaxXp()))))
-            .collect(Collectors.toList());
-
-    final ItemMeta meta = stack.getItemMeta();
-    meta.setLore(lore);
-    stack.setItemMeta(meta);
-
-    for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-      stack.addUnsafeEnchantment(entry.getKey(), entry.getValue());
-    }
-
-    return stack;
+    return LevelToolsUtil.buildItemStack(nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
   }
 
   @Override
   public int getLevel() {
-    return nbt.getInteger("levelToolsLevel");
+    if(!nbt.hasKey(LEVEL_KEY)) {
+      setLevel(0);
+    }
+
+    return nbt.getInteger(LEVEL_KEY);
   }
 
   @Override
   public void setLevel(int level) {
-    if (level <= 0) {
+    if (level < 0) {
       setLevel0(0);
 
       return;
@@ -85,12 +53,16 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
   @Override
   public double getXp() {
-    return nbt.getDouble("levelToolsXp");
+    if(!nbt.hasKey(XP_KEY)) {
+      setXp(0.0D);
+    }
+
+    return nbt.getDouble(XP_KEY);
   }
 
   @Override
   public void setXp(double xp) {
-    if (xp <= 0.0D) {
+    if (xp < 0.0D) {
       setXp0(0.0D);
 
       return;
@@ -100,11 +72,11 @@ public class NBTLevelToolsItem implements LevelToolsItem {
   }
 
   private void setLevel0(int level) {
-    nbt.setInteger("levelToolsLevel", level);
+    nbt.setInteger(LEVEL_KEY, level);
   }
 
   private void setXp0(double xp) {
-    nbt.setDouble("levelToolsXp", xp);
+    nbt.setDouble(XP_KEY, xp);
   }
 
   @Override
@@ -145,6 +117,9 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
   @Override
   public String toString() {
-    return "LevelToolsItemImpl{" + "nbt=" + nbt + ", enchantments=" + enchantments + '}';
+    return "NBTLevelToolsItem{" +
+        "nbt=" + nbt +
+        ", enchantments=" + enchantments +
+        '}';
   }
 }
