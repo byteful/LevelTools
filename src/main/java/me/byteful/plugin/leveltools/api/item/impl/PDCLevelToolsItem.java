@@ -41,7 +41,7 @@ public class PDCLevelToolsItem implements LevelToolsItem {
 
     Integer value = pdc.get(LEVEL_KEY, PersistentDataType.INTEGER);
 
-    if(value == null) {
+    if (value == null) {
       setLevel(0);
 
       value = 0;
@@ -65,7 +65,7 @@ public class PDCLevelToolsItem implements LevelToolsItem {
 
     Double value = pdc.get(XP_KEY, PersistentDataType.DOUBLE);
 
-    if(value == null) {
+    if (value == null) {
       setXp(0.0D);
 
       value = 0.0D;

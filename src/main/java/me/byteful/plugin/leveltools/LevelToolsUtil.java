@@ -174,8 +174,8 @@ public final class LevelToolsUtil {
   }
 
   public static LevelToolsItem createLevelToolsItem(ItemStack stack) {
-    if(RedLib.MID_VERSION >= 14) {
-      if(RedLib.MID_VERSION < 18) {
+    if (RedLib.MID_VERSION >= 14) {
+      if (RedLib.MID_VERSION < 18) {
         final NBTItem nbt = new NBTItem(stack);
         if (nbt.getKeys().stream().anyMatch(s -> s.startsWith("levelTools"))) {
           return new NBTLevelToolsItem(stack); // Support tools created with "old" NBT system for 1.14+.

@@ -33,7 +33,7 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
   @Override
   public int getLevel() {
-    if(!nbt.hasKey(LEVEL_KEY)) {
+    if (!nbt.hasKey(LEVEL_KEY)) {
       setLevel(0);
     }
 
@@ -53,7 +53,7 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
   @Override
   public double getXp() {
-    if(!nbt.hasKey(XP_KEY)) {
+    if (!nbt.hasKey(XP_KEY)) {
       setXp(0.0D);
     }
 
