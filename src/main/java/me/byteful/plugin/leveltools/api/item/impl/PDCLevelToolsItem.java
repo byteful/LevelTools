@@ -67,7 +67,7 @@ public class PDCLevelToolsItem implements LevelToolsItem {
   public void setXp(double xp) {
     final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
 
-    pdc.set(LEVEL_KEY, PersistentDataType.DOUBLE, Math.max(xp, 0.0));
+    pdc.set(XP_KEY, PersistentDataType.DOUBLE, Math.max(xp, 0.0));
   }
 
   @Override
