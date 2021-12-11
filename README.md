@@ -11,7 +11,7 @@
 - No dependencies.
 - Super efficient, no lag.
 - Simple developer API.
-- Commands/enchants/ on level up.
+- Commands & enchants on level up.
 - Supports blacklisting for blocks and items for XP.
 - ActionBar notifications.
 - Item lore modification.
