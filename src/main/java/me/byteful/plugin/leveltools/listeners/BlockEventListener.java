@@ -7,14 +7,14 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import redempt.redlib.blockdata.DataBlock;
+import redempt.redlib.blockdata.events.DataBlockDestroyEvent;
 
 public class BlockEventListener extends LevelToolsListener {
-  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-  public void onBlockBreak(BlockBreakEvent e) {
+  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+  public void onBlockBreak(DataBlockDestroyEvent e) {
     final Player player = e.getPlayer();
 
     if (!player.hasPermission("leveltools.enabled")) {
@@ -22,7 +22,12 @@ public class BlockEventListener extends LevelToolsListener {
     }
 
     final Block block = e.getBlock();
+    final DataBlock db = e.getDataBlock();
     final ItemStack hand = LevelToolsUtil.getHand(player);
+
+    if (LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks") && db.getBoolean("level_tools")) {
+      return;
+    }
 
     if (LevelToolsPlugin.getInstance().getConfig().getStringList("blockBlacklist").stream()
         .map(Material::getMaterial)
@@ -41,7 +46,7 @@ public class BlockEventListener extends LevelToolsListener {
     }
   }
 
-  @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onBlockPlace(BlockPlaceEvent e) {
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
       final DataBlock db =
