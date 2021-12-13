@@ -5,11 +5,12 @@ import me.byteful.plugin.leveltools.LevelToolsUtil;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EntityEventListener extends LevelToolsListener {
-  @EventHandler
+  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
   public void onEntityKillEntity(EntityDeathEvent e) {
     Player killer = e.getEntity().getKiller();
 
