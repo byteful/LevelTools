@@ -11,15 +11,12 @@ repositories {
     maven {
         url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
     }
-
     maven {
         url = uri('https://oss.sonatype.org/content/groups/public/')
     }
-
     maven {
         url = uri('https://repo.codemc.org/repository/maven-public/')
     }
-
     maven {
         url = uri('https://repo.maven.apache.org/maven2/')
     }
@@ -30,9 +27,8 @@ repositories {
 
 dependencies {
     implementation 'de.tr7zw:item-nbt-api:2.8.0'
-    implementation 'me.lucko:helper:5.6.8'
-    implementation 'com.github.Redempt:RedLib:6.1.0.3'
-    implementation 'com.github.cryptomorin:XSeries:8.4.0'
+    implementation 'com.github.Redempt:RedLib:6.3.0.4'
+    implementation 'com.github.cryptomorin:XSeries:8.5.0.1'
 
     compileOnly 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:22.0.0'
@@ -56,7 +52,6 @@ shadowJar {
     archiveClassifier.set("")
 
     relocate "de.tr7zw.changeme.nbtapi", "me.byteful.plugin.leveltools.libs.nbtapi"
-    relocate "me.lucko", "me.byteful.plugin.leveltools.libs.lucko"
     relocate "com.cryptomorin.xseries", "me.byteful.plugin.leveltools.libs.xseries"
     relocate "redempt.redlib", "me.byteful.plugin.leveltools.libs.redlib"
 }

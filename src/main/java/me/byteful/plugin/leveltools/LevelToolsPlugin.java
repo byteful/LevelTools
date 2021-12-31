@@ -1,28 +1,32 @@
 package me.byteful.plugin.leveltools;
 
+import me.byteful.plugin.leveltools.api.AnvilCombineMode;
+import me.byteful.plugin.leveltools.listeners.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockEventListener;
 import me.byteful.plugin.leveltools.listeners.EntityEventListener;
-import me.lucko.helper.Commands;
-import me.lucko.helper.command.CommandInterruptException;
-import me.lucko.helper.plugin.ExtendedJavaPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 import redempt.redlib.blockdata.BlockDataManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
-public final class LevelToolsPlugin extends ExtendedJavaPlugin {
+public final class LevelToolsPlugin extends JavaPlugin {
   private static LevelToolsPlugin instance;
 
   private BlockDataManager blockDataManager;
+  private AnvilCombineMode anvilCombineMode;
 
   public static LevelToolsPlugin getInstance() {
     return instance;
   }
 
   @Override
-  protected void enable() {
+  public void onEnable() {
     instance = this;
 
     if (!getDataFolder().exists()) {
@@ -59,6 +63,8 @@ public final class LevelToolsPlugin extends ExtendedJavaPlugin {
     getLogger().info("Loaded BlockDataManager...");
 
     saveDefaultConfig();
+    getConfig().options().copyDefaults(true).copyHeader(true);
+    setAnvilCombineMode();
     getLogger().info("Loaded configuration...");
 
     registerListeners();
@@ -71,7 +77,7 @@ public final class LevelToolsPlugin extends ExtendedJavaPlugin {
   }
 
   @Override
-  protected void disable() {
+  public void onDisable() {
     if (blockDataManager != null) {
       blockDataManager.saveAndClose();
       blockDataManager = null;
@@ -83,28 +89,35 @@ public final class LevelToolsPlugin extends ExtendedJavaPlugin {
   }
 
   private void registerListeners() {
-    registerListener(new BlockEventListener());
-    registerListener(new EntityEventListener());
+    final PluginManager pm = Bukkit.getPluginManager();
+    pm.registerEvents(new BlockEventListener(), this);
+    pm.registerEvents(new EntityEventListener(), this);
+    pm.registerEvents(new AnvilListener(), this);
+  }
+
+  private void setAnvilCombineMode() {
+    anvilCombineMode = AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
   }
 
   private void registerReloadCommand() {
-    Commands.create()
-        .description("Reloads the configuration for LevelTools.")
-        .handler(
-            c -> {
-              if (!c.sender().hasPermission("leveltools.admin")) {
-                throw new CommandInterruptException(
-                    getConfig().getString("messages.no_permission"));
-              }
+    Objects.requireNonNull(getCommand("lt-reload")).setExecutor((sender, command, label, args) -> {
+      if (!sender.hasPermission("leveltools.admin")) {
+        sender.sendMessage(Text.colorize(Objects.requireNonNull(getConfig().getString("messages.no_permission"))));
+      }
 
-              reloadConfig();
+      reloadConfig();
+      setAnvilCombineMode();
+      sender.sendMessage(Text.colorize(Objects.requireNonNull(getConfig().getString("messages.successful_reload"))));
 
-              c.reply(getConfig().getString("messages.successful_reload"));
-            })
-        .register("leveltools-reload", "lt-reload");
+      return true;
+    });
   }
 
   public BlockDataManager getBlockDataManager() {
     return blockDataManager;
+  }
+
+  public AnvilCombineMode getAnvilCombineMode() {
+    return anvilCombineMode;
   }
 }

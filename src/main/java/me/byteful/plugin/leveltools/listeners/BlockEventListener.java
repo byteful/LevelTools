@@ -12,7 +12,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import redempt.redlib.blockdata.DataBlock;
 
-public class BlockEventListener extends LevelToolsListener {
+public class BlockEventListener extends LevelToolsXPListener {
   @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
   public void onBlockBreak(BlockBreakEvent e) {
     final Player player = e.getPlayer();
@@ -27,7 +27,7 @@ public class BlockEventListener extends LevelToolsListener {
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
       final DataBlock db = LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block);
 
-      if(db.contains("level_tools") && db.getBoolean("level_tools")) {
+      if (db.contains("level_tools") && db.getBoolean("level_tools")) {
         return;
       }
     }
