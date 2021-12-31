@@ -7,7 +7,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class LevelToolsLevelIncreaseEvent extends Event implements Cancellable {
@@ -32,7 +31,7 @@ public class LevelToolsLevelIncreaseEvent extends Event implements Cancellable {
     this.isCancelled = isCancelled;
   }
 
-  @Nonnull
+  @NotNull
   public static HandlerList getHandlerList() {
     return handlers;
   }
@@ -82,7 +81,7 @@ public class LevelToolsLevelIncreaseEvent extends Event implements Cancellable {
   }
 
   @Override
-  @Nonnull
+  @NotNull
   public HandlerList getHandlers() {
     return handlers;
   }

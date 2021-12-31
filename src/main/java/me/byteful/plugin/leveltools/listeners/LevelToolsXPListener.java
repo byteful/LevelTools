@@ -3,11 +3,10 @@ package me.byteful.plugin.leveltools.listeners;
 import com.cryptomorin.xseries.XEnchantment;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
+import me.byteful.plugin.leveltools.Text;
 import me.byteful.plugin.leveltools.api.event.LevelToolsLevelIncreaseEvent;
 import me.byteful.plugin.leveltools.api.event.LevelToolsXPIncreaseEvent;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
-import me.lucko.helper.Events;
-import me.lucko.helper.text3.Text;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.math.NumberUtils;
@@ -23,14 +22,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public abstract class LevelToolsListener implements Listener {
+public abstract class LevelToolsXPListener implements Listener {
   protected void handle(LevelToolsItem tool, Player player, double modifier) {
     double newXp = LevelToolsUtil.round(tool.getXp() + modifier, 1);
 
     final LevelToolsXPIncreaseEvent xpEvent =
         new LevelToolsXPIncreaseEvent(tool, player, newXp, false);
 
-    Events.call(xpEvent);
+    Bukkit.getPluginManager().callEvent(xpEvent);
 
     if (xpEvent.isCancelled()) {
       return;

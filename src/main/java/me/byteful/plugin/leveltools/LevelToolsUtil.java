@@ -6,8 +6,6 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.NBTLevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.PDCLevelToolsItem;
-import me.lucko.helper.reflect.MinecraftVersion;
-import me.lucko.helper.text3.Text;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -127,14 +125,18 @@ public final class LevelToolsUtil {
         || (RedLib.MID_VERSION >= 14 && material == XMaterial.CROSSBOW.parseMaterial());
   }
 
+  public static boolean isSupportedTool(Material material) {
+    return isPickaxe(material) || isAxe(material) || isShovel(material) || isSword(material) || isProjectileShooter(material);
+  }
+
   public static ItemStack getHand(Player player) {
-    return MinecraftVersion.getRuntimeVersion().isAfterOrEq(MinecraftVersion.parse("1.9"))
+    return RedLib.MID_VERSION >= 9
         ? player.getInventory().getItemInMainHand().clone()
         : player.getItemInHand().clone();
   }
 
   public static void setHand(Player player, ItemStack stack) {
-    if (MinecraftVersion.getRuntimeVersion().isAfterOrEq(MinecraftVersion.parse("1.9"))) {
+    if (RedLib.MID_VERSION >= 9) {
       player.getInventory().setItemInMainHand(stack);
     } else {
       player.setItemInHand(stack);

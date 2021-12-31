@@ -7,8 +7,9 @@ messages:
   no_permission: "&cYou do not have permission to execute this command!"
   successful_reload: "&aSuccessfully reloaded LevelTools!"
 
-# @Deprecated
-#level_multiplier: 100.0
+# What action should be done when combining items in an anvil?
+# Modes: "HIGHER_OF_BOTH" (Takes level and xp of higher level item), "LOWER_OF_BOTH" (Takes level and xp of lower level item), OR "ADD_BOTH" (Adds the level and XP of both items)
+anvil_combine: "ADD_BOTH"
 
 # The amount of XP needed to get from level 0 to level 1.
 level_xp_start: 100.0
