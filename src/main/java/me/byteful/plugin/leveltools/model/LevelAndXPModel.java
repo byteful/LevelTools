@@ -1,5 +1,6 @@
 package me.byteful.plugin.leveltools.model;
 
+import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +12,7 @@ public final class LevelAndXPModel {
 
   public LevelAndXPModel(int level, double xp) {
     this.level = level;
-    this.xp = xp;
+    this.xp = LevelToolsUtil.round(xp, 1);
   }
 
   @NotNull

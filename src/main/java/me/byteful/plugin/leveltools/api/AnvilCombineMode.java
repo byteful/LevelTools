@@ -3,7 +3,7 @@ package me.byteful.plugin.leveltools.api;
 import me.byteful.plugin.leveltools.model.LevelAndXPModel;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
 public enum AnvilCombineMode {
   HIGHER_OF_BOTH((item1, item2) -> {
@@ -65,9 +65,9 @@ public enum AnvilCombineMode {
   });
 
   @NotNull
-  private final BiFunction<LevelAndXPModel, LevelAndXPModel, LevelAndXPModel> handler;
+  private final BinaryOperator<LevelAndXPModel> handler;
 
-  AnvilCombineMode(@NotNull BiFunction<LevelAndXPModel, LevelAndXPModel, LevelAndXPModel> handler) {
+  AnvilCombineMode(@NotNull BinaryOperator<LevelAndXPModel> handler) {
     this.handler = handler;
   }
 
@@ -83,7 +83,7 @@ public enum AnvilCombineMode {
   }
 
   @NotNull
-  public BiFunction<LevelAndXPModel, LevelAndXPModel, LevelAndXPModel> getHandler() {
+  public BinaryOperator<LevelAndXPModel> getHandler() {
     return handler;
   }
 
