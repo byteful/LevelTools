@@ -63,7 +63,8 @@ public final class LevelToolsPlugin extends JavaPlugin {
     getLogger().info("Loaded BlockDataManager...");
 
     saveDefaultConfig();
-    anvilCombineMode = AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
+    getConfig().options().copyDefaults(true).copyHeader(true);
+    setAnvilCombineMode();
     getLogger().info("Loaded configuration...");
 
     registerListeners();
@@ -94,6 +95,10 @@ public final class LevelToolsPlugin extends JavaPlugin {
     pm.registerEvents(new AnvilListener(), this);
   }
 
+  private void setAnvilCombineMode() {
+    anvilCombineMode = AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
+  }
+
   private void registerReloadCommand() {
     Objects.requireNonNull(getCommand("lt-reload")).setExecutor((sender, command, label, args) -> {
       if (!sender.hasPermission("leveltools.admin")) {
@@ -101,6 +106,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
       }
 
       reloadConfig();
+      setAnvilCombineMode();
       sender.sendMessage(Text.colorize(Objects.requireNonNull(getConfig().getString("messages.successful_reload"))));
 
       return true;
