@@ -27,7 +27,7 @@ public class BlockEventListener extends LevelToolsXPListener {
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
       final DataBlock db = LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block);
 
-      if(db.contains("level_tools") && db.getBoolean("level_tools")) {
+      if (db.contains("level_tools") && db.getBoolean("level_tools")) {
         return;
       }
     }

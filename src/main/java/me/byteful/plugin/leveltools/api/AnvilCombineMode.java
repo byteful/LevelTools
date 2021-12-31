@@ -16,12 +16,12 @@ public enum AnvilCombineMode {
     int level;
     double xp;
 
-    if(level1 == level2) {
+    if (level1 == level2) {
       level = level1;
       xp = Math.max(xp1, xp2);
     } else {
       level = Math.max(level1, level2);
-      if(level == level1) {
+      if (level == level1) {
         xp = xp1;
       } else {
         xp = xp2;
@@ -40,12 +40,12 @@ public enum AnvilCombineMode {
     int level;
     double xp;
 
-    if(level1 == level2) {
+    if (level1 == level2) {
       level = level1;
       xp = Math.min(xp1, xp2);
     } else {
       level = Math.min(level1, level2);
-      if(level == level1) {
+      if (level == level1) {
         xp = xp1;
       } else {
         xp = xp2;
@@ -62,8 +62,7 @@ public enum AnvilCombineMode {
     final double xp2 = item2.getXp();
 
     return new LevelAndXPModel(level1 + level2, xp1 + xp2);
-  })
-  ;
+  });
 
   @NotNull
   private final BiFunction<LevelAndXPModel, LevelAndXPModel, LevelAndXPModel> handler;
@@ -73,19 +72,19 @@ public enum AnvilCombineMode {
   }
 
   @NotNull
-  public BiFunction<LevelAndXPModel, LevelAndXPModel, LevelAndXPModel> getHandler() {
-    return handler;
-  }
-
-  @NotNull
   public static AnvilCombineMode fromName(@NotNull String name) {
     for (AnvilCombineMode value : values()) {
-      if(value.name().equalsIgnoreCase(name.replace(" ", "_"))) {
+      if (value.name().equalsIgnoreCase(name.replace(" ", "_"))) {
         return value;
       }
     }
 
     return ADD_BOTH;
+  }
+
+  @NotNull
+  public BiFunction<LevelAndXPModel, LevelAndXPModel, LevelAndXPModel> getHandler() {
+    return handler;
   }
 
   @Override

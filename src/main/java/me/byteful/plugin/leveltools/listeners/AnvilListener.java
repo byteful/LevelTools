@@ -20,7 +20,7 @@ public class AnvilListener implements Listener {
     final ItemStack secondItem = inv.getItem(1);
     final ItemStack result = e.getResult();
 
-    if(result == null || !LevelToolsUtil.isSupportedTool(result.getType()) || firstItem == null || secondItem == null || !LevelToolsUtil.isSupportedTool(firstItem.getType()) || !LevelToolsUtil.isSupportedTool(secondItem.getType())) {
+    if (result == null || !LevelToolsUtil.isSupportedTool(result.getType()) || firstItem == null || secondItem == null || !LevelToolsUtil.isSupportedTool(firstItem.getType()) || !LevelToolsUtil.isSupportedTool(secondItem.getType())) {
       return;
     }
 
@@ -42,7 +42,7 @@ public class AnvilListener implements Listener {
     final ItemStack secondItem = inv.getItem(1);
     final ItemStack result = e.getResult();
 
-    if(result == null || !LevelToolsUtil.isSupportedTool(result.getType()) || firstItem == null || secondItem == null || !LevelToolsUtil.isSupportedTool(firstItem.getType())) {
+    if (result == null || !LevelToolsUtil.isSupportedTool(result.getType()) || firstItem == null || secondItem == null || !LevelToolsUtil.isSupportedTool(firstItem.getType())) {
       return;
     }
 
