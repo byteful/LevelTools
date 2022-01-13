@@ -12,6 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import redempt.redlib.RedLib;
@@ -225,6 +226,9 @@ public final class LevelToolsUtil {
     meta.setLore(lore);
     for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
       meta.addEnchant(entry.getKey(), entry.getValue(), true);
+    }
+    if (LevelToolsPlugin.getInstance().getConfig().getBoolean("hide_attributes", true)) {
+      meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
     }
     stack.setItemMeta(meta);
 

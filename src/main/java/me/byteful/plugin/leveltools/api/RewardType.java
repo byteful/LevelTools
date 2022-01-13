@@ -84,7 +84,7 @@ public enum RewardType {
       if (NumberUtils.isNumber(split[2])) {
         final int modifier = Integer.parseInt(split[2]);
 
-        if(StringUtils.countMatches(attribute, "_") >= 3) {
+        if(StringUtils.countMatches(attribute, "_") >= 2) {
           attribute = attribute.toLowerCase(Locale.ROOT).replaceFirst("_+", ".").trim();
         }
 

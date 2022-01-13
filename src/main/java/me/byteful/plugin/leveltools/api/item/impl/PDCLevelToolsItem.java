@@ -37,6 +37,8 @@ public class PDCLevelToolsItem implements LevelToolsItem {
 
   @Override
   public @NotNull ItemStack getItemStack() {
+    final ItemStack stack = LevelToolsUtil.buildItemStack(this.stack, enchantments, getLevel(), getXp(), getMaxXp());
+
     attributes.forEach(
         (attribute, modifier) -> {
           final ItemMeta meta = stack.getItemMeta();
@@ -47,9 +49,10 @@ public class PDCLevelToolsItem implements LevelToolsItem {
           final AttributeModifier mod =
               new AttributeModifier(attribute, modifier, AttributeModifier.Operation.ADD_NUMBER);
           meta.addAttributeModifier(attr, mod);
+          stack.setItemMeta(meta);
         });
 
-    return LevelToolsUtil.buildItemStack(stack, enchantments, getLevel(), getXp(), getMaxXp());
+    return stack;
   }
 
   @Override

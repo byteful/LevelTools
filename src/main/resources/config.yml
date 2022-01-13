@@ -137,6 +137,9 @@ display:
     - ""
     - "{progress_bar} &e{xp}&6/&e{max_xp}"
 
+# Set to true if leveled items should show attributes. Recommended to keep this true to prevent "lore spam".
+hide_attributes: true
+
 # Configuration for the progress bar.
 progress_bar:
   # The total amount of bars in the progress bar.
