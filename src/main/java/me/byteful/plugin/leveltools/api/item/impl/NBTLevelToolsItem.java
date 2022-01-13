@@ -14,15 +14,11 @@ import java.util.Map;
 import java.util.Objects;
 
 public class NBTLevelToolsItem implements LevelToolsItem {
-  @NotNull
-  public static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
+  @NotNull public static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
 
-  @NotNull
-  private NBTItem nbt;
-  @NotNull
-  private Map<Enchantment, Integer> enchantments;
-  @NotNull
-  private Map<String, Double> attributes;
+  @NotNull private NBTItem nbt;
+  @NotNull private Map<Enchantment, Integer> enchantments;
+  @NotNull private Map<String, Double> attributes;
 
   public NBTLevelToolsItem(@NotNull ItemStack stack) {
     this.nbt = new NBTItem(stack);
@@ -33,19 +29,22 @@ public class NBTLevelToolsItem implements LevelToolsItem {
   @NotNull
   @Override
   public ItemStack getItemStack() {
-    final ItemStack stack = LevelToolsUtil.buildItemStack(nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
+    final ItemStack stack =
+        LevelToolsUtil.buildItemStack(
+            nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
 
     nbt = new NBTItem(stack);
     final NBTCompoundList attr = nbt.getCompoundList("AttributeModifiers");
-    attributes.forEach((attribute, modifier) -> {
-      final NBTListCompound list = attr.addCompound();
-      list.setDouble("Amount", modifier);
-      list.setString("AttributeName", attribute);
-      list.setString("Name", attribute);
-      list.setInteger("Operation", 0);
-      list.setInteger("UUIDLeast", 59664);
-      list.setInteger("UUIDMost", 31453);
-    });
+    attributes.forEach(
+        (attribute, modifier) -> {
+          final NBTListCompound list = attr.addCompound();
+          list.setDouble("Amount", modifier);
+          list.setString("AttributeName", attribute);
+          list.setString("Name", attribute);
+          list.setInteger("Operation", 0);
+          list.setInteger("UUIDLeast", 59664);
+          list.setInteger("UUIDMost", 31453);
+        });
 
     return nbt.getItem();
   }
@@ -139,7 +138,9 @@ public class NBTLevelToolsItem implements LevelToolsItem {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     NBTLevelToolsItem that = (NBTLevelToolsItem) o;
-    return nbt.equals(that.nbt) && enchantments.equals(that.enchantments) && attributes.equals(that.attributes);
+    return nbt.equals(that.nbt)
+        && enchantments.equals(that.enchantments)
+        && attributes.equals(that.attributes);
   }
 
   @Override
@@ -149,10 +150,13 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
   @Override
   public String toString() {
-    return "NBTLevelToolsItem{" +
-        "nbt=" + nbt +
-        ", enchantments=" + enchantments +
-        ", attributes=" + attributes +
-        '}';
+    return "NBTLevelToolsItem{"
+        + "nbt="
+        + nbt
+        + ", enchantments="
+        + enchantments
+        + ", attributes="
+        + attributes
+        + '}';
   }
 }

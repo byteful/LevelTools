@@ -21,14 +21,13 @@ import java.util.Objects;
 
 public class PDCLevelToolsItem implements LevelToolsItem {
   @NotNull
-  public static final NamespacedKey LEVEL_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsLevel"), XP_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsXp");
+  public static final NamespacedKey
+      LEVEL_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsLevel"),
+      XP_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsXp");
 
-  @NotNull
-  private ItemStack stack;
-  @NotNull
-  private Map<Enchantment, Integer> enchantments;
-  @NotNull
-  private Map<String, Double> attributes;
+  @NotNull private ItemStack stack;
+  @NotNull private Map<Enchantment, Integer> enchantments;
+  @NotNull private Map<String, Double> attributes;
 
   public PDCLevelToolsItem(@NotNull ItemStack stack) {
     this.stack = stack;
@@ -38,14 +37,17 @@ public class PDCLevelToolsItem implements LevelToolsItem {
 
   @Override
   public @NotNull ItemStack getItemStack() {
-    attributes.forEach((attribute, modifier) -> {
-      final ItemMeta meta = stack.getItemMeta();
-      assert meta != null : "ItemMeta is null! Should not happen.";
+    attributes.forEach(
+        (attribute, modifier) -> {
+          final ItemMeta meta = stack.getItemMeta();
+          assert meta != null : "ItemMeta is null! Should not happen.";
 
-      final Attribute attr = Attribute.valueOf(attribute.replace(".", "_").toUpperCase(Locale.ROOT).trim());
-      final AttributeModifier mod = new AttributeModifier(attribute, modifier, AttributeModifier.Operation.ADD_NUMBER);
-      meta.addAttributeModifier(attr, mod);
-    });
+          final Attribute attr =
+              Attribute.valueOf(attribute.replace(".", "_").toUpperCase(Locale.ROOT).trim());
+          final AttributeModifier mod =
+              new AttributeModifier(attribute, modifier, AttributeModifier.Operation.ADD_NUMBER);
+          meta.addAttributeModifier(attr, mod);
+        });
 
     return LevelToolsUtil.buildItemStack(stack, enchantments, getLevel(), getXp(), getMaxXp());
   }
@@ -143,7 +145,9 @@ public class PDCLevelToolsItem implements LevelToolsItem {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     PDCLevelToolsItem that = (PDCLevelToolsItem) o;
-    return stack.equals(that.stack) && enchantments.equals(that.enchantments) && attributes.equals(that.attributes);
+    return stack.equals(that.stack)
+        && enchantments.equals(that.enchantments)
+        && attributes.equals(that.attributes);
   }
 
   @Override
@@ -153,10 +157,13 @@ public class PDCLevelToolsItem implements LevelToolsItem {
 
   @Override
   public String toString() {
-    return "PDCLevelToolsItem{" +
-        "stack=" + stack +
-        ", enchantments=" + enchantments +
-        ", attributes=" + attributes +
-        '}';
+    return "PDCLevelToolsItem{"
+        + "stack="
+        + stack
+        + ", enchantments="
+        + enchantments
+        + ", attributes="
+        + attributes
+        + '}';
   }
 }

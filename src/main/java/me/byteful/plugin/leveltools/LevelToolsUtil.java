@@ -126,7 +126,11 @@ public final class LevelToolsUtil {
   }
 
   public static boolean isSupportedTool(Material material) {
-    return isPickaxe(material) || isAxe(material) || isShovel(material) || isSword(material) || isProjectileShooter(material);
+    return isPickaxe(material)
+        || isAxe(material)
+        || isShovel(material)
+        || isSword(material)
+        || isProjectileShooter(material);
   }
 
   public static ItemStack getHand(Player player) {
@@ -180,7 +184,8 @@ public final class LevelToolsUtil {
       if (RedLib.MID_VERSION < 18) {
         final NBTItem nbt = new NBTItem(stack);
         if (nbt.getKeys().stream().anyMatch(s -> s.startsWith("levelTools"))) {
-          return new NBTLevelToolsItem(stack); // Support tools created with "old" NBT system for 1.14+.
+          return new NBTLevelToolsItem(
+              stack); // Support tools created with "old" NBT system for 1.14+.
         }
       }
 
@@ -190,7 +195,8 @@ public final class LevelToolsUtil {
     }
   }
 
-  public static ItemStack buildItemStack(ItemStack stack, Map<Enchantment, Integer> enchantments, int level, double xp, double maxXp) {
+  public static ItemStack buildItemStack(
+      ItemStack stack, Map<Enchantment, Integer> enchantments, int level, double xp, double maxXp) {
     final ConfigurationSection cs =
         LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("display");
     List<String> lore = cs.getStringList("default");

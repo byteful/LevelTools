@@ -99,7 +99,8 @@ public abstract class LevelToolsXPListener implements Listener {
           continue;
         }
 
-        RewardType.fromConfigKey(split[0].toLowerCase(Locale.ROOT).trim()).ifPresent(type -> type.apply(tool, split, player));
+        RewardType.fromConfigKey(split[0].toLowerCase(Locale.ROOT).trim())
+            .ifPresent(type -> type.apply(tool, split, player));
       }
 
       return;

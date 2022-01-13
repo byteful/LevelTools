@@ -14,7 +14,8 @@ import java.util.Optional;
 public enum RewardType {
   COMMAND("command") {
     @Override
-    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+    public void apply(
+        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       Bukkit.dispatchCommand(
           Bukkit.getConsoleSender(),
           String.join(" ", Arrays.copyOfRange(split, 1, split.length))
@@ -23,7 +24,8 @@ public enum RewardType {
   },
   PLAYER_COMMAND("player_command") {
     @Override
-    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+    public void apply(
+        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       Bukkit.dispatchCommand(
           player,
           String.join(" ", Arrays.copyOfRange(split, 1, split.length))
@@ -32,7 +34,8 @@ public enum RewardType {
   },
   ENCHANT("enchant") {
     @Override
-    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+    public void apply(
+        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -40,15 +43,14 @@ public enum RewardType {
       final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
 
       if (enchant.isPresent() && NumberUtils.isNumber(split[2])) {
-        tool.enchant(
-            enchant.get().parseEnchantment(),
-            Integer.parseInt(split[2]));
+        tool.enchant(enchant.get().parseEnchantment(), Integer.parseInt(split[2]));
       }
     }
   },
   ENCHANT_2("enchant2") {
     @Override
-    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+    public void apply(
+        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -58,7 +60,10 @@ public enum RewardType {
       if (NumberUtils.isNumber(split[2])) {
         final int level = Integer.parseInt(split[2]);
 
-        if (enchant.isPresent() && tool.getItemStack().getEnchantmentLevel(Objects.requireNonNull(enchant.get().parseEnchantment())) < level) {
+        if (enchant.isPresent()
+            && tool.getItemStack()
+                    .getEnchantmentLevel(Objects.requireNonNull(enchant.get().parseEnchantment()))
+                < level) {
           tool.enchant(enchant.get().parseEnchantment(), level);
         }
       }
@@ -66,7 +71,8 @@ public enum RewardType {
   },
   ATTRIBUTE("attribute") {
     @Override
-    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+    public void apply(
+        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -75,35 +81,32 @@ public enum RewardType {
 
       if (NumberUtils.isNumber(split[2])) {
         final int modifier = Integer.parseInt(split[2]);
-
-
       }
     }
-  }
-  ;
+  };
 
-  @NotNull
-  private final String configKey;
+  @NotNull private final String configKey;
 
   RewardType(@NotNull String configKey) {
     this.configKey = configKey;
   }
 
-  public abstract void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player);
-
-  @NotNull
-  public String getConfigKey() {
-    return configKey;
-  }
-
   @NotNull
   public static Optional<RewardType> fromConfigKey(@NotNull String configKey) {
     for (RewardType value : values()) {
-      if(value.configKey.equals(configKey)) {
+      if (value.configKey.equals(configKey)) {
         return Optional.of(value);
       }
     }
 
     return Optional.empty();
+  }
+
+  public abstract void apply(
+      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player);
+
+  @NotNull
+  public String getConfigKey() {
+    return configKey;
   }
 }
