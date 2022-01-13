@@ -2,12 +2,14 @@ package me.byteful.plugin.leveltools.api;
 
 import com.cryptomorin.xseries.XEnchantment;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -77,10 +79,16 @@ public enum RewardType {
         return;
       }
 
-      final String attribute = split[1];
+      String attribute = split[1];
 
       if (NumberUtils.isNumber(split[2])) {
         final int modifier = Integer.parseInt(split[2]);
+
+        if(StringUtils.countMatches(attribute, "_") >= 3) {
+          attribute = attribute.toLowerCase(Locale.ROOT).replaceFirst("_+", ".").trim();
+        }
+
+        tool.modifyAttribute(attribute, modifier);
       }
     }
   };
