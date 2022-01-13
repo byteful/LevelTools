@@ -39,8 +39,8 @@ public class BlockEventListener extends LevelToolsXPListener {
     }
 
     if ((LevelToolsUtil.isAxe(hand.getType())
-        || LevelToolsUtil.isPickaxe(hand.getType())
-        || LevelToolsUtil.isShovel(hand.getType()))
+            || LevelToolsUtil.isPickaxe(hand.getType())
+            || LevelToolsUtil.isShovel(hand.getType()))
         && !block.getDrops(hand).isEmpty()) {
       handle(
           LevelToolsUtil.createLevelToolsItem(hand),

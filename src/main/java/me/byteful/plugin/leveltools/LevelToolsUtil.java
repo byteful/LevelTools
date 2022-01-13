@@ -12,6 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import redempt.redlib.RedLib;
@@ -126,7 +127,11 @@ public final class LevelToolsUtil {
   }
 
   public static boolean isSupportedTool(Material material) {
-    return isPickaxe(material) || isAxe(material) || isShovel(material) || isSword(material) || isProjectileShooter(material);
+    return isPickaxe(material)
+        || isAxe(material)
+        || isShovel(material)
+        || isSword(material)
+        || isProjectileShooter(material);
   }
 
   public static ItemStack getHand(Player player) {
@@ -180,7 +185,8 @@ public final class LevelToolsUtil {
       if (RedLib.MID_VERSION < 18) {
         final NBTItem nbt = new NBTItem(stack);
         if (nbt.getKeys().stream().anyMatch(s -> s.startsWith("levelTools"))) {
-          return new NBTLevelToolsItem(stack); // Support tools created with "old" NBT system for 1.14+.
+          return new NBTLevelToolsItem(
+              stack); // Support tools created with "old" NBT system for 1.14+.
         }
       }
 
@@ -190,7 +196,8 @@ public final class LevelToolsUtil {
     }
   }
 
-  public static ItemStack buildItemStack(ItemStack stack, Map<Enchantment, Integer> enchantments, int level, double xp, double maxXp) {
+  public static ItemStack buildItemStack(
+      ItemStack stack, Map<Enchantment, Integer> enchantments, int level, double xp, double maxXp) {
     final ConfigurationSection cs =
         LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("display");
     List<String> lore = cs.getStringList("default");
@@ -215,12 +222,15 @@ public final class LevelToolsUtil {
             .collect(Collectors.toList());
 
     final ItemMeta meta = stack.getItemMeta();
+    assert meta != null : "ItemMeta is null! Should not happen.";
     meta.setLore(lore);
-    stack.setItemMeta(meta);
-
     for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-      stack.addUnsafeEnchantment(entry.getKey(), entry.getValue());
+      meta.addEnchant(entry.getKey(), entry.getValue(), true);
     }
+    if (LevelToolsPlugin.getInstance().getConfig().getBoolean("hide_attributes", true)) {
+      meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+    }
+    stack.setItemMeta(meta);
 
     return stack;
   }

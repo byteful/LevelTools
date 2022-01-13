@@ -43,9 +43,6 @@ public final class LevelAndXPModel {
 
   @Override
   public String toString() {
-    return "LevelAndXPModel{" +
-        "level=" + level +
-        ", xp=" + xp +
-        '}';
+    return "LevelAndXPModel{" + "level=" + level + ", xp=" + xp + '}';
   }
 }

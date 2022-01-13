@@ -26,11 +26,13 @@ public interface LevelToolsItem {
         LevelToolsPlugin.getInstance().getConfig().getString("level_xp_increase.mode");
 
     if (xpStart < 1.0) {
-      throw new RuntimeException("Failed to find valid value for 'level_xp_start'. Please make sure it is equal to or over 1.0. Check your configuration!");
+      throw new RuntimeException(
+          "Failed to find valid value for 'level_xp_start'. Please make sure it is equal to or over 1.0. Check your configuration!");
     }
 
     if (increaseAmount < 1.0) {
-      throw new RuntimeException("Failed to find valid value for 'level_xp_increase -> amount'. Please make sure it is equal to or over 1.0. Check your configuration!");
+      throw new RuntimeException(
+          "Failed to find valid value for 'level_xp_increase -> amount'. Please make sure it is equal to or over 1.0. Check your configuration!");
     }
 
     if (mode == null) {
@@ -54,11 +56,16 @@ public interface LevelToolsItem {
     final double rounded = LevelToolsUtil.round(nextXp, 1);
 
     if (rounded <= 0.0) {
-      throw new RuntimeException("Failed to round " + nextXp + " to the first place. Please modify your values to get a better result! Check your configuration!");
+      throw new RuntimeException(
+          "Failed to round "
+              + nextXp
+              + " to the first place. Please modify your values to get a better result! Check your configuration!");
     }
 
     return rounded;
   }
 
   void enchant(Enchantment enchantment, int level);
+
+  void modifyAttribute(String attribute, double modifier);
 }

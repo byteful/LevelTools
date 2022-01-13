@@ -38,12 +38,15 @@ public final class LevelToolsPlugin extends JavaPlugin {
     final Path oldFile = getDataFolder().toPath().resolve("blocks.db");
     if (Files.exists(oldFile)) {
       if (Files.exists(blocksFile)) {
-        getLogger().warning("Found old 'blocks.db' file, but ignored it because a newer 'player_placed_blocks.db' file exists!");
+        getLogger()
+            .warning(
+                "Found old 'blocks.db' file, but ignored it because a newer 'player_placed_blocks.db' file exists!");
       } else {
         try {
           Files.move(oldFile, blocksFile, StandardCopyOption.COPY_ATTRIBUTES);
           getLogger()
-              .warning("Found old 'blocks.db' file... Moved to newer 'player_placed_blocks.db' file.");
+              .warning(
+                  "Found old 'blocks.db' file... Moved to newer 'player_placed_blocks.db' file.");
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -96,21 +99,28 @@ public final class LevelToolsPlugin extends JavaPlugin {
   }
 
   private void setAnvilCombineMode() {
-    anvilCombineMode = AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
+    anvilCombineMode =
+        AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
   }
 
   private void registerReloadCommand() {
-    Objects.requireNonNull(getCommand("lt-reload")).setExecutor((sender, command, label, args) -> {
-      if (!sender.hasPermission("leveltools.admin")) {
-        sender.sendMessage(Text.colorize(Objects.requireNonNull(getConfig().getString("messages.no_permission"))));
-      }
+    Objects.requireNonNull(getCommand("lt-reload"))
+        .setExecutor(
+            (sender, command, label, args) -> {
+              if (!sender.hasPermission("leveltools.admin")) {
+                sender.sendMessage(
+                    Text.colorize(
+                        Objects.requireNonNull(getConfig().getString("messages.no_permission"))));
+              }
 
-      reloadConfig();
-      setAnvilCombineMode();
-      sender.sendMessage(Text.colorize(Objects.requireNonNull(getConfig().getString("messages.successful_reload"))));
+              reloadConfig();
+              setAnvilCombineMode();
+              sender.sendMessage(
+                  Text.colorize(
+                      Objects.requireNonNull(getConfig().getString("messages.successful_reload"))));
 
-      return true;
-    });
+              return true;
+            });
   }
 
   public BlockDataManager getBlockDataManager() {
