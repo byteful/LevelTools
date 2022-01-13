@@ -1,9 +1,9 @@
 package me.byteful.plugin.leveltools.listeners;
 
-import com.cryptomorin.xseries.XEnchantment;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.Text;
+import me.byteful.plugin.leveltools.api.RewardType;
 import me.byteful.plugin.leveltools.api.event.LevelToolsLevelIncreaseEvent;
 import me.byteful.plugin.leveltools.api.event.LevelToolsXPIncreaseEvent;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
@@ -17,10 +17,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 public abstract class LevelToolsXPListener implements Listener {
   protected void handle(LevelToolsItem tool, Player player, double modifier) {
@@ -91,71 +88,21 @@ public abstract class LevelToolsXPListener implements Listener {
     final ConfigurationSection rewardCs = getCsFromType(tool.getItemStack().getType());
 
     for (String key : rewardCs.getKeys(false)) {
-      if (NumberUtils.isNumber(key) && tool.getLevel() == Integer.parseInt(key)) {
-        final List<String> rewards = rewardCs.getStringList(key);
-
-        for (String rewardStr : rewards) {
-          final String[] split = rewardStr.split(" ");
-
-          if (split.length >= 2) {
-            final String handler = split[0];
-
-            switch (handler.toLowerCase(Locale.ROOT).trim()) {
-              case "command": {
-                Bukkit.dispatchCommand(
-                    Bukkit.getConsoleSender(),
-                    String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-                        .replace("{player}", player.getName()));
-
-                break;
-              }
-
-              case "player-command": {
-                Bukkit.dispatchCommand(
-                    player,
-                    String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-                        .replace("{player}", player.getName()));
-
-                break;
-              }
-
-              case "enchant": {
-                if (split.length < 3) {
-                  return;
-                }
-
-                final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
-
-                if (enchant.isPresent() && NumberUtils.isNumber(split[2])) {
-                  tool.enchant(
-                      enchant.get().parseEnchantment(),
-                      Integer.parseInt(split[2]));
-                }
-
-                break;
-              }
-
-              case "enchant2": {
-                if (split.length < 3) {
-                  return;
-                }
-
-                final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
-
-                if (NumberUtils.isNumber(split[2])) {
-                  final int level = Integer.parseInt(split[2]);
-
-                  if (enchant.isPresent() && tool.getItemStack().getEnchantmentLevel(enchant.get().parseEnchantment()) < level) {
-                    tool.enchant(enchant.get().parseEnchantment(), level);
-                  }
-                }
-
-                break;
-              }
-            }
-          }
-        }
+      if (!NumberUtils.isNumber(key) || tool.getLevel() != Integer.parseInt(key)) {
+        continue;
       }
+
+      for (String rewardStr : rewardCs.getStringList(key)) {
+        final String[] split = rewardStr.split(" ");
+
+        if (split.length < 2) {
+          continue;
+        }
+
+        RewardType.fromConfigKey(split[0].toLowerCase(Locale.ROOT).trim()).ifPresent(type -> type.apply(tool, split, player));
+      }
+
+      return;
     }
   }
 

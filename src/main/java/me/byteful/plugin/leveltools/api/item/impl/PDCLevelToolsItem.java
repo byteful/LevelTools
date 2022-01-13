@@ -4,6 +4,8 @@ import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,6 +15,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,14 +27,26 @@ public class PDCLevelToolsItem implements LevelToolsItem {
   private ItemStack stack;
   @NotNull
   private Map<Enchantment, Integer> enchantments;
+  @NotNull
+  private Map<String, Double> attributes;
 
   public PDCLevelToolsItem(@NotNull ItemStack stack) {
     this.stack = stack;
     this.enchantments = new HashMap<>();
+    this.attributes = new HashMap<>();
   }
 
   @Override
   public @NotNull ItemStack getItemStack() {
+    attributes.forEach((attribute, modifier) -> {
+      final ItemMeta meta = stack.getItemMeta();
+      assert meta != null : "ItemMeta is null! Should not happen.";
+
+      final Attribute attr = Attribute.valueOf(attribute.replace(".", "_").toUpperCase(Locale.ROOT).trim());
+      final AttributeModifier mod = new AttributeModifier(attribute, modifier, AttributeModifier.Operation.ADD_NUMBER);
+      meta.addAttributeModifier(attr, mod);
+    });
+
     return LevelToolsUtil.buildItemStack(stack, enchantments, getLevel(), getXp(), getMaxXp());
   }
 
@@ -88,6 +103,11 @@ public class PDCLevelToolsItem implements LevelToolsItem {
     enchantments.put(enchantment, level);
   }
 
+  @Override
+  public void modifyAttribute(String attribute, double modifier) {
+    attributes.put(attribute, modifier);
+  }
+
   private PersistentDataHolder getItemPDC() {
     return stack.getItemMeta();
   }
@@ -110,17 +130,25 @@ public class PDCLevelToolsItem implements LevelToolsItem {
     this.enchantments = enchantments;
   }
 
+  public @NotNull Map<String, Double> getAttributes() {
+    return attributes;
+  }
+
+  public void setAttributes(@NotNull Map<String, Double> attributes) {
+    this.attributes = attributes;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     PDCLevelToolsItem that = (PDCLevelToolsItem) o;
-    return stack.equals(that.stack) && enchantments.equals(that.enchantments);
+    return stack.equals(that.stack) && enchantments.equals(that.enchantments) && attributes.equals(that.attributes);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(stack, enchantments);
+    return Objects.hash(stack, enchantments, attributes);
   }
 
   @Override
@@ -128,6 +156,7 @@ public class PDCLevelToolsItem implements LevelToolsItem {
     return "PDCLevelToolsItem{" +
         "stack=" + stack +
         ", enchantments=" + enchantments +
+        ", attributes=" + attributes +
         '}';
   }
 }

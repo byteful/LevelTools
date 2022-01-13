@@ -61,4 +61,6 @@ public interface LevelToolsItem {
   }
 
   void enchant(Enchantment enchantment, int level);
+
+  void modifyAttribute(String attribute, double modifier);
 }

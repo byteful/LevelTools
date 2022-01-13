@@ -1,6 +1,13 @@
 #
-# LevelTools v1.0.0 by byteful#0001
+# LevelTools v1.2.1.2 by byteful#0001
 #
+
+# Useful Links:
+# - https://minecraft.fandom.com/wiki/Attribute
+# - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
+# - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+# - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
 
 # Configuration for messages.
 messages:
@@ -84,22 +91,33 @@ entityBlacklist:
 
 # Configuration for tool rewards given at level ups.
 # Handlers:
-# - "command" : Runs the command provided as the console.
-# - "player-command" : Runs the command provided as the player.
-# - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided.
-# - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments.
+# - "command" : Runs the command provided as the console. (Ex: "command say test")
+# - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
+# - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
+# - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
+# - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10")
 tool_rewards:
   1:
     - "enchant2 efficiency 1"
 
 # Configuration for sword rewards given at level ups.
-# Same system as tool rewards.
+# Handlers:
+# - "command" : Runs the command provided as the console. (Ex: "command say test")
+# - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
+# - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
+# - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
+# - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10")
 sword_rewards:
   1:
     - "enchant2 sharpness 1"
 
 # Configuration for bow and crossbow rewards given at level ups.
-# Same system as tool rewards.
+# Handlers:
+# - "command" : Runs the command provided as the console. (Ex: "command say test")
+# - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
+# - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
+# - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
+# - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10")
 bow_rewards:
   1:
     - "enchant2 power 1"
