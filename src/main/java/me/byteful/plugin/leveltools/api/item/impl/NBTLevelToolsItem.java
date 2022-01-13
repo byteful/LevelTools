@@ -33,6 +33,9 @@ public class NBTLevelToolsItem implements LevelToolsItem {
   @NotNull
   @Override
   public ItemStack getItemStack() {
+    final ItemStack stack = LevelToolsUtil.buildItemStack(nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
+
+    nbt = new NBTItem(stack);
     final NBTCompoundList attr = nbt.getCompoundList("AttributeModifiers");
     attributes.forEach((attribute, modifier) -> {
       final NBTListCompound list = attr.addCompound();
@@ -44,7 +47,7 @@ public class NBTLevelToolsItem implements LevelToolsItem {
       list.setInteger("UUIDMost", 31453);
     });
 
-    return LevelToolsUtil.buildItemStack(nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
+    return nbt.getItem();
   }
 
   @Override

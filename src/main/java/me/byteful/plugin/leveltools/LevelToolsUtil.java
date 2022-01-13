@@ -215,12 +215,12 @@ public final class LevelToolsUtil {
             .collect(Collectors.toList());
 
     final ItemMeta meta = stack.getItemMeta();
+    assert meta != null : "ItemMeta is null! Should not happen.";
     meta.setLore(lore);
-    stack.setItemMeta(meta);
-
     for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-      stack.addUnsafeEnchantment(entry.getKey(), entry.getValue());
+      meta.addEnchant(entry.getKey(), entry.getValue(), true);
     }
+    stack.setItemMeta(meta);
 
     return stack;
   }
