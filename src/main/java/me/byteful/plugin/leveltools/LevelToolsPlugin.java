@@ -1,5 +1,7 @@
 package me.byteful.plugin.leveltools;
 
+import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.PaperCommandManager;
 import me.byteful.plugin.leveltools.api.AnvilCombineMode;
 import me.byteful.plugin.leveltools.listeners.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockEventListener;
@@ -19,6 +21,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
   private static LevelToolsPlugin instance;
 
   private BlockDataManager blockDataManager;
+  private BukkitCommandManager commandManager;
   private AnvilCombineMode anvilCombineMode;
 
   public static LevelToolsPlugin getInstance() {
@@ -73,7 +76,10 @@ public final class LevelToolsPlugin extends JavaPlugin {
     registerListeners();
     getLogger().info("Registered listeners...");
 
-    registerReloadCommand();
+    commandManager = new PaperCommandManager(this);
+    commandManager.enableUnstableAPI("brigadier");
+    commandManager.enableUnstableAPI("help");
+    commandManager.registerCommand(new LevelToolsCommand());
     getLogger().info("Registered commands...");
 
     getLogger().info("Successfully started " + getDescription().getFullName() + "!");
@@ -98,29 +104,9 @@ public final class LevelToolsPlugin extends JavaPlugin {
     pm.registerEvents(new AnvilListener(), this);
   }
 
-  private void setAnvilCombineMode() {
+  public void setAnvilCombineMode() {
     anvilCombineMode =
         AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
-  }
-
-  private void registerReloadCommand() {
-    Objects.requireNonNull(getCommand("lt-reload"))
-        .setExecutor(
-            (sender, command, label, args) -> {
-              if (!sender.hasPermission("leveltools.admin")) {
-                sender.sendMessage(
-                    Text.colorize(
-                        Objects.requireNonNull(getConfig().getString("messages.no_permission"))));
-              }
-
-              reloadConfig();
-              setAnvilCombineMode();
-              sender.sendMessage(
-                  Text.colorize(
-                      Objects.requireNonNull(getConfig().getString("messages.successful_reload"))));
-
-              return true;
-            });
   }
 
   public BlockDataManager getBlockDataManager() {
