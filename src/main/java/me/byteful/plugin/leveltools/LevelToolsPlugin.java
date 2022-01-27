@@ -65,6 +65,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
     }
 
     blockDataManager = BlockDataManager.createSQLite(this, blocksFile, true, true);
+    blockDataManager.migrate();
     getLogger().info("Loaded BlockDataManager...");
 
     saveDefaultConfig();
