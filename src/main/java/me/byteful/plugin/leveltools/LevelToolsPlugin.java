@@ -64,8 +64,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
       }
     }
 
-    blockDataManager = new BlockDataManager(blocksFile);
-    blockDataManager.setAutoSave(true);
+    blockDataManager = BlockDataManager.createSQLite(this, blocksFile, true, true);
     getLogger().info("Loaded BlockDataManager...");
 
     saveDefaultConfig();
