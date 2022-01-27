@@ -25,9 +25,10 @@ public class BlockEventListener extends LevelToolsXPListener {
     final ItemStack hand = LevelToolsUtil.getHand(player);
 
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
-      final DataBlock db = LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block);
+      final DataBlock db =
+          LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block, false);
 
-      if (db.contains("level_tools") && db.getBoolean("level_tools")) {
+      if (db != null && db.contains("level_tools") && db.getBoolean("level_tools")) {
         return;
       }
     }
@@ -52,9 +53,10 @@ public class BlockEventListener extends LevelToolsXPListener {
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onBlockPlace(BlockPlaceEvent e) {
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
-      final DataBlock db =
-          LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(e.getBlockPlaced());
-      db.set("level_tools", true);
+      LevelToolsPlugin.getInstance()
+          .getBlockDataManager()
+          .getDataBlockAsync(e.getBlockPlaced(), true)
+          .thenAccept(db -> db.set("level_tools", true));
     }
   }
 }
