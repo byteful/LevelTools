@@ -1,5 +1,6 @@
 package me.byteful.plugin.leveltools.listeners;
 
+import com.cryptomorin.xseries.messages.ActionBar;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.Text;
@@ -7,8 +8,6 @@ import me.byteful.plugin.leveltools.api.RewardType;
 import me.byteful.plugin.leveltools.api.event.LevelToolsLevelIncreaseEvent;
 import me.byteful.plugin.leveltools.api.event.LevelToolsXPIncreaseEvent;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -35,21 +34,23 @@ public abstract class LevelToolsXPListener implements Listener {
     tool.setXp(xpEvent.getNewXp());
 
     if (LevelToolsPlugin.getInstance().getConfig().getBoolean("actionBar.enabled")) {
-      player
-          .spigot()
-          .sendMessage(
-              ChatMessageType.ACTION_BAR,
-              TextComponent.fromLegacyText(
-                  Text.colorize(
-                      LevelToolsPlugin.getInstance()
-                          .getConfig()
-                          .getString("actionBar.display")
-                          .replace(
-                              "{progress_bar}",
-                              LevelToolsUtil.createDefaultProgressBar(
-                                  tool.getXp(), tool.getMaxXp()))
-                          .replace("{xp}", String.valueOf(tool.getXp()))
-                          .replace("{max_xp}", String.valueOf(tool.getMaxXp())))));
+      final String text =
+          Text.colorize(
+              LevelToolsPlugin.getInstance()
+                  .getConfig()
+                  .getString("actionBar.display")
+                  .replace(
+                      "{progress_bar}",
+                      LevelToolsUtil.createDefaultProgressBar(tool.getXp(), tool.getMaxXp()))
+                  .replace("{xp}", String.valueOf(tool.getXp()))
+                  .replace("{max_xp}", String.valueOf(tool.getMaxXp())));
+
+      //      player
+      //          .spigot()
+      //          .sendMessage(                                  DOESN'T WORK ON 1.8
+      //              ChatMessageType.ACTION_BAR,
+      //              TextComponent.fromLegacyText(text));
+      ActionBar.sendActionBar(player, text);
     }
 
     if (tool.getXp() >= tool.getMaxXp()) {
