@@ -45,7 +45,7 @@ public enum RewardType {
       final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
 
       if (enchant.isPresent() && NumberUtils.isNumber(split[2])) {
-        tool.enchant(enchant.get().parseEnchantment(), Integer.parseInt(split[2]));
+        tool.enchant(enchant.get().getEnchant(), Integer.parseInt(split[2]));
       }
     }
   },
@@ -64,9 +64,9 @@ public enum RewardType {
 
         if (enchant.isPresent()
             && tool.getItemStack()
-                    .getEnchantmentLevel(Objects.requireNonNull(enchant.get().parseEnchantment()))
+                    .getEnchantmentLevel(Objects.requireNonNull(enchant.get().getEnchant()))
                 < level) {
-          tool.enchant(enchant.get().parseEnchantment(), level);
+          tool.enchant(enchant.get().getEnchant(), level);
         }
       }
     }
