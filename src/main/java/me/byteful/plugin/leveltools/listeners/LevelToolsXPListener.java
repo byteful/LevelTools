@@ -1,5 +1,6 @@
 package me.byteful.plugin.leveltools.listeners;
 
+import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.messages.ActionBar;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
@@ -11,7 +12,6 @@ import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -73,10 +73,16 @@ public abstract class LevelToolsXPListener implements Listener {
 
       final String sound = soundCs.getString("sound", null);
 
-      if (sound != null) {
+      if (sound == null) {
+        return;
+      }
+
+      final XSound parsed = XSound.matchXSound(sound).orElse(null);
+
+      if (parsed != null && parsed.isSupported()) {
         player.playSound(
             player.getLocation(),
-            Sound.valueOf(sound),
+            parsed.parseSound(),
             (float) soundCs.getDouble("pitch"),
             (float) soundCs.getDouble("volume"));
       }
