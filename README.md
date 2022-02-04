@@ -1,3 +1,5 @@
+[![Java CI with Gradle](https://github.com/byteful/LevelTools/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/byteful/LevelTools/actions/workflows/gradle.yml)
+
 <h5 align="center">SpigotMC: https://www.spigotmc.org/resources/leveltools-rpg-item-leveling.97516/</h5>
 <h5 align="center">Support/Help Server: https://discord.gg/G8BDgqsuyw</h5>
 
