@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EntityEventListener extends LevelToolsXPListener {
-  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onEntityKillEntity(EntityDeathEvent e) {
     Player killer = e.getEntity().getKiller();
 

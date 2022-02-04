@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import redempt.redlib.blockdata.DataBlock;
 
 public class BlockEventListener extends LevelToolsXPListener {
-  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onBlockBreak(BlockBreakEvent e) {
     final Player player = e.getPlayer();
 
@@ -50,7 +50,7 @@ public class BlockEventListener extends LevelToolsXPListener {
     }
   }
 
-  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onBlockPlace(BlockPlaceEvent e) {
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
       LevelToolsPlugin.getInstance()
