@@ -13,7 +13,7 @@ import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 
 public class AnvilListener implements Listener {
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onAnvilCombine(PrepareAnvilEvent e) {
     final AnvilInventory inv = e.getInventory();
     final ItemStack firstItem = inv.getItem(0);
@@ -42,7 +42,7 @@ public class AnvilListener implements Listener {
     e.setResult(finalItem.getItemStack());
   }
 
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onAnvilRepair(PrepareAnvilEvent e) {
     final AnvilInventory inv = e.getInventory();
     final ItemStack firstItem = inv.getItem(0);
