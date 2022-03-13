@@ -82,6 +82,10 @@ public final class LevelToolsPlugin extends JavaPlugin {
     commandManager.registerCommand(new LevelToolsCommand());
     getLogger().info("Registered commands...");
 
+    if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+      new LevelToolsPlaceholders().register();
+    }
+
     getLogger().info("Successfully started " + getDescription().getFullName() + "!");
   }
 

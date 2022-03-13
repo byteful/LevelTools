@@ -5,6 +5,8 @@ author: byteful
 description: "A plugin that adds a leveling system to tools, swords, and bows."
 website: "https://byteful.me"
 api-version: "1.14"
+softdepend:
+  - PlaceholderAPI
 permissions:
   leveltools.admin:
     description: "Permission to use admin commands."
