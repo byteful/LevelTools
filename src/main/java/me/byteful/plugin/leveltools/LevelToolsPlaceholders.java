@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import redempt.redlib.RedLib;
 
 import java.util.Locale;
 
@@ -41,7 +42,10 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
       return null;
     }
 
-    final ItemStack hand = player.getInventory().getItemInMainHand();
+    final ItemStack hand =
+        RedLib.MID_VERSION <= 8
+            ? player.getItemInHand()
+            : player.getInventory().getItemInMainHand();
 
     if (!LevelToolsUtil.isSupportedTool(hand.getType())) {
       return "N/A";
