@@ -3,9 +3,11 @@ package me.byteful.plugin.leveltools;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Strings;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.byteful.plugin.leveltools.api.RewardType;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.NBTLevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.PDCLevelToolsItem;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -20,6 +22,7 @@ import redempt.redlib.RedLib;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -233,5 +236,38 @@ public final class LevelToolsUtil {
     stack.setItemMeta(meta);
 
     return stack;
+  }
+
+  public static void handleReward(LevelToolsItem tool, Player player) {
+    final ConfigurationSection rewardCs = getCsFromType(tool.getItemStack().getType());
+
+    for (String key : rewardCs.getKeys(false)) {
+      if (!NumberUtils.isNumber(key) || tool.getLevel() != Integer.parseInt(key)) {
+        continue;
+      }
+
+      for (String rewardStr : rewardCs.getStringList(key)) {
+        final String[] split = rewardStr.split(" ");
+
+        if (split.length < 2) {
+          continue;
+        }
+
+        RewardType.fromConfigKey(split[0].toLowerCase(Locale.ROOT).trim())
+            .ifPresent(type -> type.apply(tool, split, player));
+      }
+
+      return;
+    }
+  }
+
+  private static ConfigurationSection getCsFromType(Material material) {
+    if (LevelToolsUtil.isSword(material)) {
+      return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("sword_rewards");
+    } else if (LevelToolsUtil.isProjectileShooter(material)) {
+      return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("bow_rewards");
+    } else {
+      return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("tool_rewards");
+    }
   }
 }

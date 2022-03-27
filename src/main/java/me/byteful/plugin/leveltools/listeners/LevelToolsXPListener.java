@@ -5,18 +5,13 @@ import com.cryptomorin.xseries.messages.ActionBar;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.Text;
-import me.byteful.plugin.leveltools.api.RewardType;
 import me.byteful.plugin.leveltools.api.event.LevelToolsLevelIncreaseEvent;
 import me.byteful.plugin.leveltools.api.event.LevelToolsXPIncreaseEvent;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-
-import java.util.Locale;
 
 public abstract class LevelToolsXPListener implements Listener {
   protected void handle(LevelToolsItem tool, Player player, double modifier) {
@@ -66,7 +61,7 @@ public abstract class LevelToolsXPListener implements Listener {
       tool.setXp(LevelToolsUtil.round(Math.abs(tool.getXp() - tool.getMaxXp()), 1));
       tool.setLevel(levelEvent.getNewLevel());
 
-      handleReward(tool, player);
+      LevelToolsUtil.handleReward(tool, player);
 
       final ConfigurationSection soundCs =
           LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("level_up_sound");
@@ -89,38 +84,5 @@ public abstract class LevelToolsXPListener implements Listener {
     }
 
     LevelToolsUtil.setHand(player, tool.getItemStack());
-  }
-
-  private void handleReward(LevelToolsItem tool, Player player) {
-    final ConfigurationSection rewardCs = getCsFromType(tool.getItemStack().getType());
-
-    for (String key : rewardCs.getKeys(false)) {
-      if (!NumberUtils.isNumber(key) || tool.getLevel() != Integer.parseInt(key)) {
-        continue;
-      }
-
-      for (String rewardStr : rewardCs.getStringList(key)) {
-        final String[] split = rewardStr.split(" ");
-
-        if (split.length < 2) {
-          continue;
-        }
-
-        RewardType.fromConfigKey(split[0].toLowerCase(Locale.ROOT).trim())
-            .ifPresent(type -> type.apply(tool, split, player));
-      }
-
-      return;
-    }
-  }
-
-  private ConfigurationSection getCsFromType(Material material) {
-    if (LevelToolsUtil.isSword(material)) {
-      return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("sword_rewards");
-    } else if (LevelToolsUtil.isProjectileShooter(material)) {
-      return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("bow_rewards");
-    } else {
-      return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("tool_rewards");
-    }
   }
 }

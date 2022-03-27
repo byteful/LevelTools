@@ -70,7 +70,11 @@ public class LevelToolsCommand extends BaseCommand {
 
     if (LevelToolsUtil.isSupportedTool(item.getType())) {
       final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+      final int initial = tool.getLevel();
       tool.setLevel(level);
+      if (initial != tool.getLevel()) {
+        LevelToolsUtil.handleReward(tool, player);
+      }
       player.setItemInHand(tool.getItemStack());
       player.sendMessage(
           Text.colorize(
@@ -95,6 +99,7 @@ public class LevelToolsCommand extends BaseCommand {
     if (LevelToolsUtil.isSupportedTool(item.getType())) {
       final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
       tool.setLevel(tool.getLevel() + 1);
+      LevelToolsUtil.handleReward(tool, player);
       player.setItemInHand(tool.getItemStack());
       player.sendMessage(
           Text.colorize(
