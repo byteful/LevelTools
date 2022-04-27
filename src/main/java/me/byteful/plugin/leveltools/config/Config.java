@@ -1,6 +1,11 @@
 package me.byteful.plugin.leveltools.config;
 
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import redempt.redlib.config.annotations.ConfigName;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Config {
 
@@ -17,13 +22,13 @@ public class Config {
     @ConfigName("actionBar.enabled")
     public static boolean actionBarEnabled;
     @ConfigName("actionBar.display")
-    public static String display;
+    public static String actionBarDisplay;
     @ConfigName("level_up_sound.sound")
-    public static String sound;
+    public static String levelUpSound;
     @ConfigName("level_up_sound.pitch")
-    public static double pitch;
+    public static float pitch;
     @ConfigName("level_up_sound.volume")
-    public static double volume;
+    public static float volume;
     @ConfigName("default_block_xp_modifier.min")
     public static double blockXPModifierMin;
     @ConfigName("default_block_xp_modifier.max")
@@ -32,4 +37,8 @@ public class Config {
     public static double combatXPModifierMin;
     @ConfigName("default_combat_xp_modifier.max")
     public static double combatXPModifierMax;
+    @ConfigName("blockBlacklist")
+    public static List<Material> blockBlacklist = new ArrayList<>();
+    @ConfigName("entityBlacklist")
+    public static List<EntityType> entityBlacklist = new ArrayList<>();
 }
