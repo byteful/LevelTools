@@ -56,17 +56,17 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
     switch (params.toLowerCase(Locale.ROOT).replace(" ", "_")) {
       case "level":
         {
-          return "" + item.getLevel();
+          return String.valueOf(item.getLevel());
         }
 
       case "xp":
         {
-          return "" + item.getXp();
+          return String.valueOf(item.getXp());
         }
 
       case "max_xp":
         {
-          return "" + item.getMaxXp();
+          return String.valueOf(item.getMaxXp());
         }
 
       case "progress_bar":
