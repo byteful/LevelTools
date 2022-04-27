@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import redempt.redlib.commandmanager.Messages;
+import redempt.redlib.config.ConfigManager;
 
 @CommandAlias("leveltools")
 public class LevelToolsCommand extends BaseCommand {
@@ -27,7 +28,8 @@ public class LevelToolsCommand extends BaseCommand {
       return;
     }
 
-    plugin.reloadConfig();
+    ConfigManager configManager = LevelToolsPlugin.getInstance().getConfigManager();
+    configManager.reload();
     plugin.setAnvilCombineMode();
     sender.sendMessage(Messages.msg("successfulReload"));
   }

@@ -27,6 +27,8 @@ public final class LevelToolsPlugin extends JavaPlugin {
     private BukkitCommandManager commandManager;
     private AnvilCombineMode anvilCombineMode;
 
+    private ConfigManager configManager;
+
     public static LevelToolsPlugin getInstance() {
         return instance;
     }
@@ -134,5 +136,9 @@ public final class LevelToolsPlugin extends JavaPlugin {
 
     public AnvilCombineMode getAnvilCombineMode() {
         return anvilCombineMode;
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
     }
 }
