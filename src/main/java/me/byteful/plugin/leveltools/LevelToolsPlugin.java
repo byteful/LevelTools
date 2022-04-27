@@ -3,11 +3,13 @@ package me.byteful.plugin.leveltools;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.PaperCommandManager;
 import me.byteful.plugin.leveltools.api.AnvilCombineMode;
+import me.byteful.plugin.leveltools.config.BlockXPMultiplier;
 import me.byteful.plugin.leveltools.config.Config;
 import me.byteful.plugin.leveltools.listeners.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockEventListener;
 import me.byteful.plugin.leveltools.listeners.EntityEventListener;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import redempt.redlib.blockdata.BlockDataManager;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Map;
 import java.util.Objects;
 
 public final class LevelToolsPlugin extends JavaPlugin {
@@ -74,7 +77,10 @@ public final class LevelToolsPlugin extends JavaPlugin {
         getLogger().info("Loaded BlockDataManager...");
 
         saveDefaultConfig();
-        ConfigManager.create(this).target(Config.class).load();
+        ConfigManager.create(this)
+                .addConverter(Material.class, Material::valueOf, Material::toString)
+                .target(Config.class)
+                .load();
         Messages.load(this);
         getLogger().info(Messages.msg("noPermission"));
         getLogger().info(Messages.msg("successfulReload"));
@@ -102,6 +108,11 @@ public final class LevelToolsPlugin extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new LevelToolsPlaceholders().register();
         }
+
+//        Config.getBlockXPMultiplierMap().forEach((s, blockXPMultiplier) -> {
+//            getLogger().info("s: " + s);
+////            getLogger().info("blockXPMultiplier: " + blockXPMultiplier);
+//        });
 
         getLogger().info("Successfully started " + getDescription().getFullName() + "!");
     }

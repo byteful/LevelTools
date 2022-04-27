@@ -5,7 +5,9 @@ import org.bukkit.entity.EntityType;
 import redempt.redlib.config.annotations.ConfigName;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Config {
 
@@ -37,8 +39,15 @@ public class Config {
     public static double combatXPModifierMin;
     @ConfigName("default_combat_xp_modifier.max")
     public static double combatXPModifierMax;
+
+//    @ConfigName("block_xp_modifiers")
+//    public static Map<String, Double> blockXPMultiplierMap = new HashMap<>();
     @ConfigName("blockBlacklist")
     public static List<Material> blockBlacklist = new ArrayList<>();
     @ConfigName("entityBlacklist")
     public static List<EntityType> entityBlacklist = new ArrayList<>();
+
+//    public static Map<String, Double> getBlockXPMultiplierMap() {
+//        return blockXPMultiplierMap;
+//    }
 }
