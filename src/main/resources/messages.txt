@@ -1,0 +1,4 @@
+noPermission: &cYou do not have permission to execute this command!
+successfulReload: &aSuccessfully reloaded LevelTools!
+successfullyExecutedAction: &aSuccessfully executed action for item in hand.
+itemNotTool: &cThe item in hand is not supported by LevelTools!

@@ -2,7 +2,7 @@ package me.byteful.plugin.leveltools.listeners;
 
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.LevelToolsUtil;
-import org.bukkit.Material;
+import me.byteful.plugin.leveltools.config.Config;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +24,7 @@ public class BlockEventListener extends LevelToolsXPListener {
     final Block block = e.getBlock();
     final ItemStack hand = LevelToolsUtil.getHand(player);
 
-    if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
+    if (!Config.playerPlacedBlocks) {
       final DataBlock db =
           LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block, false);
 
@@ -33,11 +33,7 @@ public class BlockEventListener extends LevelToolsXPListener {
       }
     }
 
-    if (LevelToolsPlugin.getInstance().getConfig().getStringList("blockBlacklist").stream()
-        .map(Material::getMaterial)
-        .anyMatch(material -> block.getType() == material)) {
-      return;
-    }
+    if (Config.blockBlacklist.stream().anyMatch(material -> block.getType() == material)) return;
 
     if ((LevelToolsUtil.isAxe(hand.getType())
             || LevelToolsUtil.isPickaxe(hand.getType())
@@ -52,7 +48,7 @@ public class BlockEventListener extends LevelToolsXPListener {
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onBlockPlace(BlockPlaceEvent e) {
-    if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
+    if (!Config.playerPlacedBlocks) {
       LevelToolsPlugin.getInstance()
           .getBlockDataManager()
           .getDataBlockAsync(e.getBlockPlaced(), true)

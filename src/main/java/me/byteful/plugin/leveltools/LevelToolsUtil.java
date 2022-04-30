@@ -7,6 +7,7 @@ import me.byteful.plugin.leveltools.api.RewardType;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.NBTLevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.PDCLevelToolsItem;
+import me.byteful.plugin.leveltools.config.Config;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
