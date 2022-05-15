@@ -120,4 +120,8 @@ public final class LevelToolsPlugin extends JavaPlugin {
   public AnvilCombineMode getAnvilCombineMode() {
     return anvilCombineMode;
   }
+
+  public BukkitCommandManager getCommandManager() {
+    return commandManager;
+  }
 }

@@ -3,8 +3,8 @@ version: "${version}"
 main: "me.byteful.plugin.leveltools.LevelToolsPlugin"
 author: byteful
 description: "A plugin that adds a leveling system to tools, swords, and bows."
-website: "https://byteful.me"
-api-version: "1.14"
+website: "https://github.com/byteful/LevelTools"
+api-version: "1.13"
 softdepend:
   - PlaceholderAPI
 permissions:

@@ -13,7 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-public abstract class LevelToolsXPListener implements Listener {
+public abstract class XPListener implements Listener {
   protected void handle(LevelToolsItem tool, Player player, double modifier) {
     double newXp = LevelToolsUtil.round(tool.getXp() + modifier, 1);
 
@@ -28,12 +28,12 @@ public abstract class LevelToolsXPListener implements Listener {
 
     tool.setXp(xpEvent.getNewXp());
 
-    if (LevelToolsPlugin.getInstance().getConfig().getBoolean("actionBar.enabled")) {
+    if (LevelToolsPlugin.getInstance().getConfig().getBoolean("display.actionBar.enabled")) {
       final String text =
           Text.colorize(
               LevelToolsPlugin.getInstance()
                   .getConfig()
-                  .getString("actionBar.display")
+                  .getString("display.actionBar.text")
                   .replace(
                       "{progress_bar}",
                       LevelToolsUtil.createDefaultProgressBar(tool.getXp(), tool.getMaxXp()))

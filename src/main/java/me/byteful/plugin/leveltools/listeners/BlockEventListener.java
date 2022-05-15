@@ -12,7 +12,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import redempt.redlib.blockdata.DataBlock;
 
-public class BlockEventListener extends LevelToolsXPListener {
+public class BlockEventListener extends XPListener {
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onBlockBreak(BlockBreakEvent e) {
     final Player player = e.getPlayer();

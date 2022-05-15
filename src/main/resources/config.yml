@@ -36,11 +36,6 @@ level_xp_increase:
 # If this is set to false, all blocks placed beforehand will be counted towards XP.
 playerPlacedBlocks: true
 
-# Sends the progress bar to the action bar of a player when they gain XP on the tool in their hand.
-actionBar:
-  enabled: true
-  display: "{progress_bar} &e{xp}&6/&e{max_xp}"
-
 # Configuration for the sound played during a level up.
 level_up_sound:
   sound: "ENTITY_PLAYER_LEVELUP" # Set to null to disable this.
@@ -125,7 +120,7 @@ bow_rewards:
   1:
     - "enchant2 power 1"
 
-# Configuration for tool lore display.
+# Configuration for tool displays.
 # To create a custom display for a specific tool item type, list that type as a key and set the lore as shown in the default lore.
 # Placeholders:
 # - {level} : The tool's level.
@@ -133,11 +128,20 @@ bow_rewards:
 # - {max_xp} : The tool's max XP needed to reach the next level.
 # - {progress_bar} : The progress bar text built with the configuration under 'progress_bar'.
 display:
-  default:
-    - ""
-    - "&eLevel: &6{level}"
-    - ""
-    - "{progress_bar} &e{xp}&6/&e{max_xp}"
+  # Sends the progress bar to the action bar of a player when they gain XP on the tool in their hand.
+  actionBar:
+    enabled: true
+    text: "{progress_bar} &e{xp}&6/&e{max_xp}"
+  # Manage the lore displayed on the tool.
+  lore:
+    # Should LevelTools override the lore on tools?
+    enabled: true
+    # The lore lines that LevelTools overrides the tool with.
+    lines:
+      - ""
+      - "&eLevel: &6{level}"
+      - ""
+      - "{progress_bar} &e{xp}&6/&e{max_xp}"
 
 # Set to true if leveled items should show attributes. Recommended to keep this true to prevent "lore spam".
 hide_attributes: true

@@ -203,30 +203,24 @@ public final class LevelToolsUtil {
       ItemStack stack, Map<Enchantment, Integer> enchantments, int level, double xp, double maxXp) {
     final ConfigurationSection cs =
         LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("display");
-    List<String> lore = cs.getStringList("default");
-
-    for (String key : cs.getKeys(false)) {
-      if (key.equalsIgnoreCase(stack.getType().name())) {
-        lore = cs.getStringList(key);
-      }
-    }
-
-    lore =
-        lore.stream()
-            .map(
-                str ->
-                    Text.colorize(
-                        str.replace("{level}", String.valueOf(level))
-                            .replace("{xp}", String.valueOf(xp))
-                            .replace("{max_xp}", String.valueOf(maxXp))
-                            .replace(
-                                "{progress_bar}",
-                                LevelToolsUtil.createDefaultProgressBar(xp, maxXp))))
-            .collect(Collectors.toList());
 
     final ItemMeta meta = stack.getItemMeta();
     assert meta != null : "ItemMeta is null! Should not happen.";
-    meta.setLore(lore);
+    if (cs.getBoolean("lore.enabled")) {
+      List<String> lines =
+          cs.getStringList("lore.lines").stream()
+              .map(
+                  str ->
+                      Text.colorize(
+                          str.replace("{level}", String.valueOf(level))
+                              .replace("{xp}", String.valueOf(xp))
+                              .replace("{max_xp}", String.valueOf(maxXp))
+                              .replace(
+                                  "{progress_bar}",
+                                  LevelToolsUtil.createDefaultProgressBar(xp, maxXp))))
+              .collect(Collectors.toList());
+      meta.setLore(lines);
+    }
     for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
       meta.addEnchant(entry.getKey(), entry.getValue(), true);
     }
