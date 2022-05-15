@@ -39,6 +39,7 @@ dependencies {
     implementation 'com.github.Redempt:RedLib:6.5.2'
     implementation 'com.github.cryptomorin:XSeries:8.7.1'
     implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+    implementation 'com.tchristofferson:ConfigUpdater:2.0-SNAPSHOT'
 
     compileOnly 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:23.0.0'
