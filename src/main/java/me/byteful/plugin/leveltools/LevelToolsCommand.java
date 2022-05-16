@@ -28,9 +28,8 @@ public class LevelToolsCommand extends BaseCommand {
       return;
     }
 
-    if (!plugin.loadConfig()) {
-      return;
-    }
+    plugin.reloadConfig();
+    plugin.setAnvilCombineMode();
     sender.sendMessage(
         Text.colorize(
             Objects.requireNonNull(plugin.getConfig().getString("messages.successful_reload"))));
