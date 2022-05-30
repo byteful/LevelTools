@@ -26,12 +26,14 @@ public class EntityEventListener extends XPListener {
       return;
     }
 
-    if (LevelToolsUtil.isSword(hand.getType())
-        || LevelToolsUtil.isProjectileShooter(hand.getType())) {
-      handle(
-          LevelToolsUtil.createLevelToolsItem(hand),
-          killer,
-          LevelToolsUtil.getCombatModifier(e.getEntityType()));
+    if (!LevelToolsUtil.isSword(hand.getType())
+        && !LevelToolsUtil.isProjectileShooter(hand.getType())) {
+      return;
     }
+
+    handle(
+        LevelToolsUtil.createLevelToolsItem(hand),
+        killer,
+        LevelToolsUtil.getCombatModifier(e.getEntityType()));
   }
 }
