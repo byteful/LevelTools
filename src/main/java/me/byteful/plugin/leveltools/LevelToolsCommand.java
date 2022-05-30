@@ -7,6 +7,7 @@ import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Objects;
 
@@ -33,6 +34,26 @@ public class LevelToolsCommand extends BaseCommand {
     sender.sendMessage(
         Text.colorize(
             Objects.requireNonNull(plugin.getConfig().getString("messages.successful_reload"))));
+  }
+
+  @Subcommand("reset")
+  @Description("Resets all XP/Levels for all the items in the target player.")
+  public void onReset(CommandSender sender, Player target) {
+    final PlayerInventory inv = target.getInventory();
+    final ItemStack[] contents = inv.getContents();
+    for (int i = 0; i < contents.length; i++) {
+      final ItemStack item = contents[i];
+      if (item == null || !LevelToolsUtil.isSupportedTool(item.getType())) {
+        continue;
+      }
+      final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+      tool.setLevel(0);
+      tool.setXp(0);
+      inv.setItem(i, tool.getItemStack());
+    }
+    sender.sendMessage(
+        Text.colorize(
+            Objects.requireNonNull(plugin.getConfig().getString("successfully_reset_tools"))));
   }
 
   @Subcommand("xp")

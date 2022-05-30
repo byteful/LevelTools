@@ -16,6 +16,7 @@ messages:
   successful_reload: "&aSuccessfully reloaded LevelTools!"
   successfully_executed_action: "&aSuccessfully executed action for item in hand."
   item_not_tool: "&cThe item in hand is not supported by LevelTools!"
+  successfully_reset_tools: "&aSuccessfully reset all tool XP/Levels for {player}."
 
 # What action should be done when combining items in an anvil?
 # Modes: "HIGHER_OF_BOTH" (Takes level and xp of higher level item), "LOWER_OF_BOTH" (Takes level and xp of lower level item), OR "ADD_BOTH" (Adds the level and XP of both items)
