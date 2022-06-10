@@ -10,6 +10,13 @@
 # - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
 # - https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
 
+# Configuration for update checker.
+update:
+  # Should LevelTools check for updates on start?
+  start: true
+  # Should LevelTools check for updates periodically?
+  periodically: true
+
 # Configuration for messages.
 messages:
   no_permission: "&cYou do not have permission to execute this command!"

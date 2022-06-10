@@ -1,6 +1,7 @@
 package me.byteful.plugin.leveltools;
 
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
+import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +24,7 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
 
   @Override
   public @NotNull String getVersion() {
-    return "1.0.0";
+    return LevelToolsPlugin.getInstance().getDescription().getVersion();
   }
 
   @Override
@@ -43,9 +44,9 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
     }
 
     final ItemStack hand =
-        RedLib.MID_VERSION <= 8
-            ? player.getItemInHand()
-            : player.getInventory().getItemInMainHand();
+      RedLib.MID_VERSION <= 8
+        ? player.getItemInHand()
+        : player.getInventory().getItemInMainHand();
 
     if (!LevelToolsUtil.isSupportedTool(hand.getType())) {
       return "N/A";
@@ -54,30 +55,25 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
     final LevelToolsItem item = LevelToolsUtil.createLevelToolsItem(hand);
 
     switch (params.toLowerCase(Locale.ROOT).replace(" ", "_")) {
-      case "level":
-        {
-          return "" + item.getLevel();
-        }
+      case "level": {
+        return "" + item.getLevel();
+      }
 
-      case "xp":
-        {
-          return "" + item.getXp();
-        }
+      case "xp": {
+        return "" + item.getXp();
+      }
 
-      case "max_xp":
-        {
-          return "" + item.getMaxXp();
-        }
+      case "max_xp": {
+        return "" + item.getMaxXp();
+      }
 
-      case "progress_bar":
-        {
-          return LevelToolsUtil.createDefaultProgressBar(item.getXp(), item.getMaxXp());
-        }
+      case "progress_bar": {
+        return LevelToolsUtil.createDefaultProgressBar(item.getXp(), item.getMaxXp());
+      }
 
-      default:
-        {
-          return "N/A";
-        }
+      default: {
+        return "N/A";
+      }
     }
   }
 }

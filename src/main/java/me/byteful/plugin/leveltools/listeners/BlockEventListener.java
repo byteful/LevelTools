@@ -1,7 +1,7 @@
 package me.byteful.plugin.leveltools.listeners;
 
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
-import me.byteful.plugin.leveltools.LevelToolsUtil;
+import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -26,7 +26,7 @@ public class BlockEventListener extends XPListener {
 
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
       final DataBlock db =
-          LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block, false);
+        LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block, false);
 
       if (db != null && db.contains("level_tools") && db.getBoolean("level_tools")) {
         return;
@@ -34,30 +34,30 @@ public class BlockEventListener extends XPListener {
     }
 
     if (LevelToolsPlugin.getInstance().getConfig().getStringList("blockBlacklist").stream()
-        .map(Material::getMaterial)
-        .anyMatch(material -> block.getType() == material)) {
+      .map(Material::getMaterial)
+      .anyMatch(material -> block.getType() == material)) {
       return;
     }
 
     if (!LevelToolsUtil.isAxe(hand.getType())
-        && !LevelToolsUtil.isPickaxe(hand.getType())
-        && !LevelToolsUtil.isShovel(hand.getType())) {
+      && !LevelToolsUtil.isPickaxe(hand.getType())
+      && !LevelToolsUtil.isShovel(hand.getType())) {
       return;
     }
 
     handle(
-        LevelToolsUtil.createLevelToolsItem(hand),
-        player,
-        LevelToolsUtil.getBlockModifier(block.getType()));
+      LevelToolsUtil.createLevelToolsItem(hand),
+      player,
+      LevelToolsUtil.getBlockModifier(block.getType()));
   }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onBlockPlace(BlockPlaceEvent e) {
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
       LevelToolsPlugin.getInstance()
-          .getBlockDataManager()
-          .getDataBlockAsync(e.getBlockPlaced(), true)
-          .thenAccept(db -> db.set("level_tools", true));
+        .getBlockDataManager()
+        .getDataBlockAsync(e.getBlockPlaced(), true)
+        .thenAccept(db -> db.set("level_tools", true));
     }
   }
 }

@@ -11,8 +11,10 @@ import java.util.Objects;
 
 public class LevelToolsLevelIncreaseEvent extends Event implements Cancellable {
   private static final HandlerList handlers = new HandlerList();
-  @NotNull private final LevelToolsItem item;
-  @NotNull private final Player player;
+  @NotNull
+  private final LevelToolsItem item;
+  @NotNull
+  private final Player player;
   private int newLevel;
   private boolean isCancelled;
 
@@ -22,7 +24,7 @@ public class LevelToolsLevelIncreaseEvent extends Event implements Cancellable {
   }
 
   public LevelToolsLevelIncreaseEvent(
-      @NotNull LevelToolsItem item, @NotNull Player player, int newLevel, boolean isCancelled) {
+    @NotNull LevelToolsItem item, @NotNull Player player, int newLevel, boolean isCancelled) {
     this.item = item;
     this.player = player;
     this.newLevel = newLevel;
@@ -68,9 +70,9 @@ public class LevelToolsLevelIncreaseEvent extends Event implements Cancellable {
     if (o == null || getClass() != o.getClass()) return false;
     LevelToolsLevelIncreaseEvent that = (LevelToolsLevelIncreaseEvent) o;
     return newLevel == that.newLevel
-        && isCancelled == that.isCancelled
-        && item.equals(that.item)
-        && player.equals(that.player);
+      && isCancelled == that.isCancelled
+      && item.equals(that.item)
+      && player.equals(that.player);
   }
 
   @Override
@@ -87,14 +89,14 @@ public class LevelToolsLevelIncreaseEvent extends Event implements Cancellable {
   @Override
   public String toString() {
     return "LevelToolsLevelIncreaseEvent{"
-        + "item="
-        + item
-        + ", player="
-        + player
-        + ", newLevel="
-        + newLevel
-        + ", isCancelled="
-        + isCancelled
-        + '}';
+      + "item="
+      + item
+      + ", player="
+      + player
+      + ", newLevel="
+      + newLevel
+      + ", isCancelled="
+      + isCancelled
+      + '}';
   }
 }

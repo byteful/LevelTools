@@ -17,27 +17,27 @@ public enum RewardType {
   COMMAND("command") {
     @Override
     public void apply(
-        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       Bukkit.dispatchCommand(
-          Bukkit.getConsoleSender(),
-          String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-              .replace("{player}", player.getName()));
+        Bukkit.getConsoleSender(),
+        String.join(" ", Arrays.copyOfRange(split, 1, split.length))
+          .replace("{player}", player.getName()));
     }
   },
-  PLAYER_COMMAND("player_command") {
+  PLAYER_COMMAND("player-command") {
     @Override
     public void apply(
-        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
-      Bukkit.dispatchCommand(
-          player,
-          String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-              .replace("{player}", player.getName()));
+      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+      player.chat(
+        "/"
+          + String.join(" ", Arrays.copyOfRange(split, 1, split.length))
+          .replace("{player}", player.getName()));
     }
   },
   ENCHANT("enchant") {
     @Override
     public void apply(
-        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -52,7 +52,7 @@ public enum RewardType {
   ENCHANT_2("enchant2") {
     @Override
     public void apply(
-        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -63,9 +63,9 @@ public enum RewardType {
         final int level = Integer.parseInt(split[2]);
 
         if (enchant.isPresent()
-            && tool.getItemStack()
-                    .getEnchantmentLevel(Objects.requireNonNull(enchant.get().getEnchant()))
-                < level) {
+          && tool.getItemStack()
+          .getEnchantmentLevel(Objects.requireNonNull(enchant.get().getEnchant()))
+          < level) {
           tool.enchant(enchant.get().getEnchant(), level);
         }
       }
@@ -74,7 +74,7 @@ public enum RewardType {
   ATTRIBUTE("attribute") {
     @Override
     public void apply(
-        @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -84,7 +84,7 @@ public enum RewardType {
       if (NumberUtils.isNumber(split[2])) {
         final double modifier = Double.parseDouble(split[2]);
 
-        if(StringUtils.countMatches(attribute, "_") >= 2) {
+        if (StringUtils.countMatches(attribute, "_") >= 2) {
           attribute = attribute.toLowerCase(Locale.ROOT).replaceFirst("_+", ".").trim();
         }
 
@@ -93,7 +93,8 @@ public enum RewardType {
     }
   };
 
-  @NotNull private final String configKey;
+  @NotNull
+  private final String configKey;
 
   RewardType(@NotNull String configKey) {
     this.configKey = configKey;
@@ -111,7 +112,7 @@ public enum RewardType {
   }
 
   public abstract void apply(
-      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player);
+    @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player);
 
   @NotNull
   public String getConfigKey() {

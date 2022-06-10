@@ -1,7 +1,7 @@
 package me.byteful.plugin.leveltools.listeners;
 
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
-import me.byteful.plugin.leveltools.LevelToolsUtil;
+import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,19 +21,19 @@ public class EntityEventListener extends XPListener {
     final ItemStack hand = LevelToolsUtil.getHand(killer);
 
     if (LevelToolsPlugin.getInstance().getConfig().getStringList("entityBlacklist").stream()
-        .map(EntityType::valueOf)
-        .anyMatch(type -> e.getEntityType() == type)) {
+      .map(EntityType::valueOf)
+      .anyMatch(type -> e.getEntityType() == type)) {
       return;
     }
 
     if (!LevelToolsUtil.isSword(hand.getType())
-        && !LevelToolsUtil.isProjectileShooter(hand.getType())) {
+      && !LevelToolsUtil.isProjectileShooter(hand.getType())) {
       return;
     }
 
     handle(
-        LevelToolsUtil.createLevelToolsItem(hand),
-        killer,
-        LevelToolsUtil.getCombatModifier(e.getEntityType()));
+      LevelToolsUtil.createLevelToolsItem(hand),
+      killer,
+      LevelToolsUtil.getCombatModifier(e.getEntityType()));
   }
 }

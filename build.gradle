@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id "com.github.johnrengelman.shadow" version "7.1.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 repositories {
@@ -46,7 +46,7 @@ dependencies {
 }
 
 group = 'me.byteful.plugin'
-version = '1.2.6'
+version = '1.2.7'
 description = 'LevelTools'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 

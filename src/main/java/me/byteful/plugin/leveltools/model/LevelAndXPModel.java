@@ -1,7 +1,7 @@
 package me.byteful.plugin.leveltools.model;
 
-import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
+import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;

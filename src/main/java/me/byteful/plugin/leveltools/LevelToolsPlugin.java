@@ -6,10 +6,12 @@ import me.byteful.plugin.leveltools.api.AnvilCombineMode;
 import me.byteful.plugin.leveltools.listeners.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockEventListener;
 import me.byteful.plugin.leveltools.listeners.EntityEventListener;
+import me.byteful.plugin.leveltools.util.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import redempt.redlib.blockdata.BlockDataManager;
+import redempt.redlib.misc.Task;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,6 +25,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
   private BlockDataManager blockDataManager;
   private BukkitCommandManager commandManager;
   private AnvilCombineMode anvilCombineMode;
+  private UpdateChecker updateChecker;
 
   public static LevelToolsPlugin getInstance() {
     return instance;
@@ -31,6 +34,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
   @Override
   public void onEnable() {
     instance = this;
+    updateChecker = new UpdateChecker(this);
 
     if (!getDataFolder().exists()) {
       getDataFolder().mkdirs();
@@ -42,14 +46,14 @@ public final class LevelToolsPlugin extends JavaPlugin {
     if (Files.exists(oldFile)) {
       if (Files.exists(blocksFile)) {
         getLogger()
-            .warning(
-                "Found old 'blocks.db' file, but ignored it because a newer 'player_placed_blocks.db' file exists!");
+          .warning(
+            "Found old 'blocks.db' file, but ignored it because a newer 'player_placed_blocks.db' file exists!");
       } else {
         try {
           Files.move(oldFile, blocksFile, StandardCopyOption.COPY_ATTRIBUTES);
           getLogger()
-              .warning(
-                  "Found old 'blocks.db' file... Moved to newer 'player_placed_blocks.db' file.");
+            .warning(
+              "Found old 'blocks.db' file... Renamed to newer 'player_placed_blocks.db' file.");
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -71,6 +75,14 @@ public final class LevelToolsPlugin extends JavaPlugin {
     saveDefaultConfig();
     setAnvilCombineMode();
     getLogger().info("Loaded configuration...");
+
+    if (getConfig().getBoolean("update.start")) {
+      updateChecker.check();
+    }
+
+    if (getConfig().getBoolean("update.periodically")) {
+      Task.syncRepeating(() -> updateChecker.check(), 20L * 60L * 60L, 20L * 60L * 60L);
+    }
 
     registerListeners();
     getLogger().info("Registered listeners...");
@@ -109,7 +121,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
 
   public void setAnvilCombineMode() {
     anvilCombineMode =
-        AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
+      AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
   }
 
   public BlockDataManager getBlockDataManager() {

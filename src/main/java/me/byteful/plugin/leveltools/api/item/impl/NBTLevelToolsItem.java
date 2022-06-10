@@ -3,8 +3,8 @@ package me.byteful.plugin.leveltools.api.item.impl;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTListCompound;
-import me.byteful.plugin.leveltools.LevelToolsUtil;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
+import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -14,11 +14,15 @@ import java.util.Map;
 import java.util.Objects;
 
 public class NBTLevelToolsItem implements LevelToolsItem {
-  @NotNull public static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
+  @NotNull
+  public static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
 
-  @NotNull private NBTItem nbt;
-  @NotNull private Map<Enchantment, Integer> enchantments;
-  @NotNull private Map<String, Double> attributes;
+  @NotNull
+  private NBTItem nbt;
+  @NotNull
+  private Map<Enchantment, Integer> enchantments;
+  @NotNull
+  private Map<String, Double> attributes;
 
   public NBTLevelToolsItem(@NotNull ItemStack stack) {
     this.nbt = new NBTItem(stack);
@@ -30,21 +34,21 @@ public class NBTLevelToolsItem implements LevelToolsItem {
   @Override
   public ItemStack getItemStack() {
     final ItemStack stack =
-        LevelToolsUtil.buildItemStack(
-            nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
+      LevelToolsUtil.buildItemStack(
+        nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
 
     nbt = new NBTItem(stack);
     final NBTCompoundList attr = nbt.getCompoundList("AttributeModifiers");
     attributes.forEach(
-        (attribute, modifier) -> {
-          final NBTListCompound list = attr.addCompound();
-          list.setDouble("Amount", modifier);
-          list.setString("AttributeName", attribute);
-          list.setString("Name", attribute);
-          list.setInteger("Operation", 0);
-          list.setInteger("UUIDLeast", 59664);
-          list.setInteger("UUIDMost", 31453);
-        });
+      (attribute, modifier) -> {
+        final NBTListCompound list = attr.addCompound();
+        list.setDouble("Amount", modifier);
+        list.setString("AttributeName", attribute);
+        list.setString("Name", attribute);
+        list.setInteger("Operation", 0);
+        list.setInteger("UUIDLeast", 59664);
+        list.setInteger("UUIDMost", 31453);
+      });
 
     return nbt.getItem();
   }
@@ -139,8 +143,8 @@ public class NBTLevelToolsItem implements LevelToolsItem {
     if (o == null || getClass() != o.getClass()) return false;
     NBTLevelToolsItem that = (NBTLevelToolsItem) o;
     return nbt.equals(that.nbt)
-        && enchantments.equals(that.enchantments)
-        && attributes.equals(that.attributes);
+      && enchantments.equals(that.enchantments)
+      && attributes.equals(that.attributes);
   }
 
   @Override
@@ -151,12 +155,12 @@ public class NBTLevelToolsItem implements LevelToolsItem {
   @Override
   public String toString() {
     return "NBTLevelToolsItem{"
-        + "nbt="
-        + nbt
-        + ", enchantments="
-        + enchantments
-        + ", attributes="
-        + attributes
-        + '}';
+      + "nbt="
+      + nbt
+      + ", enchantments="
+      + enchantments
+      + ", attributes="
+      + attributes
+      + '}';
   }
 }

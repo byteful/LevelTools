@@ -4,6 +4,8 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
+import me.byteful.plugin.leveltools.util.LevelToolsUtil;
+import me.byteful.plugin.leveltools.util.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +15,8 @@ import java.util.Objects;
 
 @CommandAlias("leveltools")
 public class LevelToolsCommand extends BaseCommand {
-  @Dependency private LevelToolsPlugin plugin;
+  @Dependency
+  private LevelToolsPlugin plugin;
 
   @Default
   @HelpCommand
@@ -32,8 +35,8 @@ public class LevelToolsCommand extends BaseCommand {
     plugin.reloadConfig();
     plugin.setAnvilCombineMode();
     sender.sendMessage(
-        Text.colorize(
-            Objects.requireNonNull(plugin.getConfig().getString("messages.successful_reload"))));
+      Text.colorize(
+        Objects.requireNonNull(plugin.getConfig().getString("messages.successful_reload"))));
   }
 
   @Subcommand("reset")
@@ -52,8 +55,8 @@ public class LevelToolsCommand extends BaseCommand {
       inv.setItem(i, tool.getItemStack());
     }
     sender.sendMessage(
-        Text.colorize(
-            Objects.requireNonNull(plugin.getConfig().getString("successfully_reset_tools"))));
+      Text.colorize(
+        Objects.requireNonNull(plugin.getConfig().getString("successfully_reset_tools"))));
   }
 
   @Subcommand("xp")
@@ -70,13 +73,13 @@ public class LevelToolsCommand extends BaseCommand {
       tool.setXp(xp);
       player.setItemInHand(tool.getItemStack());
       player.sendMessage(
-          Text.colorize(
-              Objects.requireNonNull(
-                  plugin.getConfig().getString("messages.successfully_executed_action"))));
+        Text.colorize(
+          Objects.requireNonNull(
+            plugin.getConfig().getString("messages.successfully_executed_action"))));
     } else {
       player.sendMessage(
-          Text.colorize(
-              Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
+        Text.colorize(
+          Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
     }
   }
 
@@ -98,13 +101,13 @@ public class LevelToolsCommand extends BaseCommand {
       }
       player.setItemInHand(tool.getItemStack());
       player.sendMessage(
-          Text.colorize(
-              Objects.requireNonNull(
-                  plugin.getConfig().getString("messages.successfully_executed_action"))));
+        Text.colorize(
+          Objects.requireNonNull(
+            plugin.getConfig().getString("messages.successfully_executed_action"))));
     } else {
       player.sendMessage(
-          Text.colorize(
-              Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
+        Text.colorize(
+          Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
     }
   }
 
@@ -123,21 +126,21 @@ public class LevelToolsCommand extends BaseCommand {
       LevelToolsUtil.handleReward(tool, player);
       player.setItemInHand(tool.getItemStack());
       player.sendMessage(
-          Text.colorize(
-              Objects.requireNonNull(
-                  plugin.getConfig().getString("messages.successfully_executed_action"))));
+        Text.colorize(
+          Objects.requireNonNull(
+            plugin.getConfig().getString("messages.successfully_executed_action"))));
     } else {
       player.sendMessage(
-          Text.colorize(
-              Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
+        Text.colorize(
+          Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
     }
   }
 
   private boolean checkPerm(CommandSender sender) {
     if (!sender.hasPermission("leveltools.admin")) {
       sender.sendMessage(
-          Text.colorize(
-              Objects.requireNonNull(plugin.getConfig().getString("messages.no_permission"))));
+        Text.colorize(
+          Objects.requireNonNull(plugin.getConfig().getString("messages.no_permission"))));
 
       return false;
     }
