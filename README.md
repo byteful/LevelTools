@@ -49,8 +49,32 @@ dependencies {
 </repositories>
 
 <dependency>
-<groupId>com.github.byteful</groupId>
-<artifactId>LevelTools</artifactId>
-<version>Tag</version> <!-- Replace Tag with the version. (Ex: v1.2.7) -->
+    <groupId>com.github.byteful</groupId>
+    <artifactId>LevelTools</artifactId>
+    <version>Tag</version> <!-- Replace Tag with the version. (Ex: v1.2.7) -->
 </dependency>
+```
+
+### Example Usage:
+
+```java
+// Items
+
+ItemStack hand = player.getInventory().getItemInMainHand();
+LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(hand);
+tool.setLevel(69);
+tool.setXp(420);
+player.getInventory().setItemInMainHand(tool.getItemStack());
+
+// Events
+
+@EventHandler
+public void onLevelEvent(LevelToolsLevelIncreaseEvent event) {
+    event.setNewLevel(69);
+}
+
+@EventHandler
+public void onXPEvent(LevelToolsXPIncreaseEvent event) {
+    event.setNewXp(420);
+}
 ```
