@@ -1,5 +1,6 @@
 [![Java CI with Gradle](https://github.com/byteful/LevelTools/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/byteful/LevelTools/actions/workflows/gradle.yml)
 [![Discord](https://img.shields.io/discord/911029017472270357?color=7289da&logo=discord)](https://discord.gg/G8BDgqsuyw)
+[![](https://jitpack.io/v/byteful/LevelTools.svg)](https://jitpack.io/#byteful/LevelTools)
 
 <h5 align="center">SpigotMC: https://www.spigotmc.org/resources/leveltools-rpg-item-leveling.97516/</h5>
 <h5 align="center">Support/Help Server: https://discord.gg/G8BDgqsuyw</h5>
@@ -10,7 +11,7 @@
 
 ## Features
 
-- Supports versions 1.8 - 1.18.
+- Supports versions 1.8 - 1.19.
 - No dependencies.
 - Super efficient, no lag.
 - Simple developer API.
@@ -18,3 +19,38 @@
 - Supports blacklisting for blocks and items for XP.
 - ActionBar notifications.
 - Item lore modification.
+
+## Developer API
+
+### Gradle:
+
+```groovy
+repositories {
+    maven {
+        name = 'jitpack'
+        url = 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    implementation 'com.github.byteful:LevelTools:Tag' // Replace Tag with the version. (Ex: v1.2.7)
+}
+```
+
+### Maven:
+
+```xml
+
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependency>
+<groupId>com.github.byteful</groupId>
+<artifactId>LevelTools</artifactId>
+<version>Tag</version> <!-- Replace Tag with the version. (Ex: v1.2.7) -->
+</dependency>
+```

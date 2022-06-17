@@ -30,6 +30,11 @@ public class UpdateChecker {
         }
 
         final String currentVersion = plugin.getDescription().getVersion();
+        if (currentVersion.contains("BETA")) {
+          plugin.getLogger().info("Update check was cancelled because you are running a beta build!");
+
+          return;
+        }
         final String latestVersion = scanner.next();
 
         if (currentVersion.equals(latestVersion)) {
