@@ -1,4 +1,5 @@
 jdk:
   - openjdk8
 install:
-  - ./gradlew clean build shadowJar
+  - chmod +x ./gradlew
+  - ./gradlew clean build shadowJar publishMavenPublicationToMavenLocal

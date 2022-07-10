@@ -4,6 +4,7 @@
 
 <h5 align="center">SpigotMC: https://www.spigotmc.org/resources/leveltools-rpg-item-leveling.97516/</h5>
 <h5 align="center">Support/Help Server: https://discord.gg/G8BDgqsuyw</h5>
+<h5 align="center">WIKI: https://github.com/byteful/LevelTools/wiki</h5>
 
 ![Logo](https://github.com/byteful/LevelTools/blob/master/LevelTools%20Large%20Logo.png?raw=true)
 
