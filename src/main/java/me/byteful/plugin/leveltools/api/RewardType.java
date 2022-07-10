@@ -71,6 +71,26 @@ public enum RewardType {
       }
     }
   },
+  ENCHANT_3("enchant3") {
+    @Override
+    public void apply(
+      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+      if (split.length < 3) {
+        return;
+      }
+
+      final Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(split[1]);
+
+      if (NumberUtils.isNumber(split[2])) {
+        final int level = Integer.parseInt(split[2]);
+
+        if (enchant.isPresent()) {
+          final int currentLvl = tool.getItemStack().getEnchantmentLevel(Objects.requireNonNull(enchant.get().getEnchant()));
+          tool.enchant(enchant.get().getEnchant(), currentLvl + level);
+        }
+      }
+    }
+  },
   ATTRIBUTE("attribute") {
     @Override
     public void apply(

@@ -74,8 +74,9 @@ combat_xp_modifiers:
     min: 5.0
     max: 7.5
 
-# A blacklist that prevents the blocks listed from giving XP on break.
-blockBlacklist:
+# A list that prevents/allows the blocks listed from giving XP on break.
+block_list_type: "BLACKLIST" # Types: WHITELIST, BLACKLIST (blacklist by default)
+block_list:
   - "FIRE"
   - "SOUL_FIRE"
   - "CRIMSON_FUNGUS"
@@ -91,8 +92,9 @@ blockBlacklist:
   - "SUNFLOWER"
   - "CORNFLOWER"
 
-# A blacklist that prevents the entities listed from giving XP on kill.
-entityBlacklist:
+# A list that prevents/allows the entities listed from giving XP on kill.
+entity_list_type: "BLACKLIST" # Types: WHITELIST, BLACKLIST (blacklist by default)
+entity_list:
   - "PLAYER"
 
 # Configuration for tool rewards given at level ups.
@@ -101,10 +103,11 @@ entityBlacklist:
 # - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
 # - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
 # - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
+# - "enchant3" : Increases the existing level value of the enchant. (Ex: "enchant3 efficiency 1")
 # - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10") OR (Ex: "attribute GENERIC_ATTACK_SPEED 10")
 tool_rewards:
   1:
-    - "enchant2 efficiency 1"
+    - "enchant3 efficiency 1"
 
 # Configuration for sword rewards given at level ups.
 # Handlers:
@@ -112,10 +115,11 @@ tool_rewards:
 # - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
 # - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
 # - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
+# - "enchant3" : Increases the existing level value of the enchant. (Ex: "enchant3 efficiency 1")
 # - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10") OR (Ex: "attribute GENERIC_ATTACK_SPEED 10")
 sword_rewards:
   1:
-    - "enchant2 sharpness 1"
+    - "enchant3 sharpness 1"
 
 # Configuration for bow and crossbow rewards given at level ups.
 # Handlers:
@@ -123,10 +127,11 @@ sword_rewards:
 # - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
 # - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
 # - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
+# - "enchant3" : Increases the existing level value of the enchant. (Ex: "enchant3 efficiency 1")
 # - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10") OR (Ex: "attribute GENERIC_ATTACK_SPEED 10")
 bow_rewards:
   1:
-    - "enchant2 power 1"
+    - "enchant3 power 1"
 
 # Configuration for tool displays.
 # To create a custom display for a specific tool item type, list that type as a key and set the lore as shown in the default lore.

@@ -9,6 +9,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.stream.Stream;
+
 public class EntityEventListener extends XPListener {
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onEntityKillEntity(EntityDeathEvent e) {
@@ -20,9 +22,15 @@ public class EntityEventListener extends XPListener {
 
     final ItemStack hand = LevelToolsUtil.getHand(killer);
 
-    if (LevelToolsPlugin.getInstance().getConfig().getStringList("entityBlacklist").stream()
-      .map(EntityType::valueOf)
-      .anyMatch(type -> e.getEntityType() == type)) {
+    final String ltype = LevelToolsPlugin.getInstance().getConfig().getString("entity_list_type", "blacklist");
+    final Stream<EntityType> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("entity_list").stream()
+      .map(EntityType::valueOf);
+
+    if (ltype.equalsIgnoreCase("whitelist") && stream.noneMatch(type -> e.getEntityType() == type)) {
+      return;
+    }
+
+    if (ltype.equalsIgnoreCase("blacklist") && stream.anyMatch(type -> e.getEntityType() == type)) {
       return;
     }
 
