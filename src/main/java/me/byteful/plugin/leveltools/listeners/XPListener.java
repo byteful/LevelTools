@@ -46,6 +46,10 @@ public abstract class XPListener implements Listener {
     if (tool.getXp() >= tool.getMaxXp()) {
       int newLevel = tool.getLevel() + 1;
 
+      if (newLevel >= LevelToolsPlugin.getInstance().getConfig().getInt("max_level")) {
+        return;
+      }
+
       final LevelToolsLevelIncreaseEvent levelEvent =
         new LevelToolsLevelIncreaseEvent(tool, player, newLevel, false);
 

@@ -17,6 +17,9 @@ update:
   # Should LevelTools check for updates periodically?
   periodically: true
 
+# The max level that tools can reach.
+max_level: 500
+
 # Configuration for messages.
 messages:
   no_permission: "&cYou do not have permission to execute this command!"
