@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class EntityEventListener extends XPListener {
@@ -24,7 +25,13 @@ public class EntityEventListener extends XPListener {
 
     final String ltype = LevelToolsPlugin.getInstance().getConfig().getString("entity_list_type", "blacklist");
     final Stream<EntityType> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("entity_list").stream()
-      .map(EntityType::valueOf);
+      .map(str -> {
+        try {
+          return EntityType.valueOf(str);
+        } catch (Exception ignored) {
+          return null;
+        }
+      }).filter(Objects::nonNull);
 
     if (ltype.equalsIgnoreCase("whitelist") && stream.noneMatch(type -> e.getEntityType() == type)) {
       return;

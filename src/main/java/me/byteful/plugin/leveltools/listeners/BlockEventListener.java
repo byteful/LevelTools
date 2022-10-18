@@ -12,6 +12,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import redempt.redlib.blockdata.DataBlock;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class BlockEventListener extends XPListener {
@@ -37,7 +38,7 @@ public class BlockEventListener extends XPListener {
 
     final String type = LevelToolsPlugin.getInstance().getConfig().getString("block_list_type", "blacklist");
     final Stream<Material> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("block_list").stream()
-      .map(Material::getMaterial);
+      .map(Material::getMaterial).filter(Objects::nonNull);
 
     if (type.equalsIgnoreCase("whitelist") && stream.noneMatch(material -> block.getType() == material)) {
       return;
