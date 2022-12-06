@@ -61,57 +61,59 @@ public final class LevelToolsUtil {
     final ConfigurationSection combat_xp_modifiers =
       LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("combat_xp_modifiers");
 
-    for (String modifier : combat_xp_modifiers.getKeys(false)) {
-      if (modifier.equalsIgnoreCase(entityType.name())) {
-        final ConfigurationSection modifierCs =
-          combat_xp_modifiers.getConfigurationSection(modifier);
-
-        return round(
-          ThreadLocalRandom.current()
-            .nextDouble(modifierCs.getDouble("min"), modifierCs.getDouble("max")),
-          1);
-      }
-    }
+    final Double custom = getCustomModifier(combat_xp_modifiers, entityType.name());
+    if (custom != null) return custom;
 
     final ConfigurationSection default_combat_xp_modifier =
       LevelToolsPlugin.getInstance()
         .getConfig()
         .getConfigurationSection("default_combat_xp_modifier");
 
-    return round(
-      ThreadLocalRandom.current()
-        .nextDouble(
-          default_combat_xp_modifier.getDouble("min"),
-          default_combat_xp_modifier.getDouble("max")),
-      1);
+    return calculateFromRange(default_combat_xp_modifier);
   }
 
   public static double getBlockModifier(Material material) {
     final ConfigurationSection block_xp_modifiers =
       LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("block_xp_modifiers");
 
-    for (String modifier : block_xp_modifiers.getKeys(false)) {
-      if (modifier.equalsIgnoreCase(material.name())) {
-        final ConfigurationSection modifierCs =
-          block_xp_modifiers.getConfigurationSection(modifier);
-
-        return round(
-          ThreadLocalRandom.current()
-            .nextDouble(modifierCs.getDouble("min"), modifierCs.getDouble("max")),
-          1);
-      }
-    }
+    final Double custom = getCustomModifier(block_xp_modifiers, material.name());
+    if (custom != null) return custom;
 
     final ConfigurationSection default_block_xp_modifier =
       LevelToolsPlugin.getInstance()
         .getConfig()
         .getConfigurationSection("default_block_xp_modifier");
 
+    return calculateFromRange(default_block_xp_modifier);
+  }
+
+  private static Double getCustomModifier(ConfigurationSection config, String type) {
+    for (String modifier : config.getKeys(false)) {
+      if (modifier.equalsIgnoreCase(type)) {
+        final ConfigurationSection modifierCs =
+          config.getConfigurationSection(modifier);
+
+        return calculateFromRange(modifierCs);
+      }
+    }
+    return null;
+  }
+
+  @NotNull
+  private static Double calculateFromRange(ConfigurationSection modifierCs) {
+    double min = modifierCs.getDouble("min");
+    double max = modifierCs.getDouble("max");
+    if (Double.compare(min, max) == 0) {
+      return min;
+    }
+    if (min > max) {
+      double hold = min;
+      min = max;
+      max = hold;
+    }
     return round(
       ThreadLocalRandom.current()
-        .nextDouble(
-          default_block_xp_modifier.getDouble("min"),
-          default_block_xp_modifier.getDouble("max")),
+        .nextDouble(min, max),
       1);
   }
 

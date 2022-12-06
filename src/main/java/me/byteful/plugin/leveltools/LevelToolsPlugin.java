@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public final class LevelToolsPlugin extends JavaPlugin {
   private static LevelToolsPlugin instance;
@@ -81,7 +82,8 @@ public final class LevelToolsPlugin extends JavaPlugin {
     }
 
     if (getConfig().getBoolean("update.periodically")) {
-      Task.syncRepeating(() -> updateChecker.check(), 20L * 60L * 60L, 20L * 60L * 60L);
+      final long delay = 20L * TimeUnit.DAYS.toSeconds(1);
+      Task.syncRepeating(() -> updateChecker.check(), delay, delay);
     }
 
     registerListeners();
