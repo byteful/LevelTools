@@ -20,10 +20,8 @@ public abstract class XPListener implements Listener {
   protected void handle(LevelToolsItem tool, Player player, double modifier) {
     World world = player.getWorld();
 
-    if (LevelToolsPlugin.getInstance().getConfig().getList("disabled_worlds") != null
-        && Objects.requireNonNull(
-            LevelToolsPlugin.getInstance().getConfig().getList("disabled_worlds"))
-        .contains(world.getName())) {
+    final List<String> disabledWorlds = LevelToolsPlugin.getInstance().getConfig().getStringList("disabled_worlds");
+    if (disabledWorlds.contains(world.getName())) {
       return;
     }
 
