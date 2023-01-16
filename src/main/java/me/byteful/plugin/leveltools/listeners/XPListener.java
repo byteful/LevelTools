@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import java.util.List;
 
 public abstract class XPListener implements Listener {
 
