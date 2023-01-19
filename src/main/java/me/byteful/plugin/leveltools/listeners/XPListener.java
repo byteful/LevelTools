@@ -73,18 +73,20 @@ public abstract class XPListener implements Listener {
       final ConfigurationSection soundCs = LevelToolsPlugin.getInstance().getConfig()
           .getConfigurationSection("level_up_sound");
 
-      final String sound = soundCs.getString("sound", null);
+      final String sound;
+      final XSound parsed;
 
-      if (sound == null) {
-        return;
-      }
+      if (soundCs != null) {
+        sound = soundCs.getString("sound", null);
+        if (sound != null) {
+          parsed = XSound.matchXSound(sound).orElse(null);
 
-      final XSound parsed = XSound.matchXSound(sound).orElse(null);
-
-      if (parsed != null && parsed.isSupported()) {
-        if (parsed.parseSound() != null) {
-          player.playSound(player.getLocation(), parsed.parseSound(),
-              (float) soundCs.getDouble("pitch"), (float) soundCs.getDouble("volume"));
+          if (parsed != null && parsed.isSupported()) {
+            if (parsed.parseSound() != null) {
+              player.playSound(player.getLocation(), parsed.parseSound(),
+                  (float) soundCs.getDouble("pitch"), (float) soundCs.getDouble("volume"));
+            }
+          }
         }
       }
     }

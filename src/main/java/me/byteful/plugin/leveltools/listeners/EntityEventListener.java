@@ -33,11 +33,13 @@ public class EntityEventListener extends XPListener {
         }
       }).filter(Objects::nonNull);
 
-    if (ltype.equalsIgnoreCase("whitelist") && stream.noneMatch(type -> e.getEntityType() == type)) {
+    if (ltype != null && ltype.equalsIgnoreCase("whitelist") && stream.noneMatch(
+        type -> e.getEntityType() == type)) {
       return;
     }
 
-    if (ltype.equalsIgnoreCase("blacklist") && stream.anyMatch(type -> e.getEntityType() == type)) {
+    if (ltype != null && ltype.equalsIgnoreCase("blacklist") && stream.anyMatch(
+        type -> e.getEntityType() == type)) {
       return;
     }
 
