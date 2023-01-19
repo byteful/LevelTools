@@ -58,11 +58,6 @@ public class LevelToolsCommand extends BaseCommand {
       tool.setXp(0);
       inv.setItem(i, tool.getItemStack());
     }
-//    if (plugin.getConfig().getString("messages.successfully_reset_tools") == null) {
-//      Bukkit.broadcastMessage("the reset tools string was null!");
-//    } else {
-//      Bukkit.broadcastMessage("it wasn't null.");
-//    }
     sender.sendMessage(
       Text.colorize(
         Objects.requireNonNull(plugin.getConfig().getString("messages.successfully_reset_tools"))));
