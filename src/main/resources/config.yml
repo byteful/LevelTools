@@ -100,7 +100,7 @@ entity_list_type: "BLACKLIST" # Types: WHITELIST, BLACKLIST (blacklist by defaul
 entity_list:
   - "PLAYER"
 
-# A list of worlds where leveltools is disabled
+# A list of worlds where LevelTools is disabled. Plugins using LevelTools' API will not be affected. Only LevelTools' core logic will be disabled in these worlds.
 disabled_worlds:
   - "disabled_world"
 
