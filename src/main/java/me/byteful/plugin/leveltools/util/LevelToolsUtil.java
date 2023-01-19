@@ -61,30 +61,40 @@ public final class LevelToolsUtil {
     final ConfigurationSection combat_xp_modifiers =
       LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("combat_xp_modifiers");
 
-    final Double custom = getCustomModifier(combat_xp_modifiers, entityType.name());
-    if (custom != null) return custom;
+    final Double custom;
+    if (combat_xp_modifiers != null) {
+      custom = getCustomModifier(combat_xp_modifiers, entityType.name());
+    }
 
     final ConfigurationSection default_combat_xp_modifier =
       LevelToolsPlugin.getInstance()
         .getConfig()
         .getConfigurationSection("default_combat_xp_modifier");
 
-    return calculateFromRange(default_combat_xp_modifier);
+    if (default_combat_xp_modifier != null) {
+      return calculateFromRange(default_combat_xp_modifier);
+    }
+    return 0.0;
   }
 
   public static double getBlockModifier(Material material) {
     final ConfigurationSection block_xp_modifiers =
       LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("block_xp_modifiers");
 
-    final Double custom = getCustomModifier(block_xp_modifiers, material.name());
-    if (custom != null) return custom;
+    final Double custom;
+
+    if (block_xp_modifiers != null) {
+      custom = getCustomModifier(block_xp_modifiers, material.name());
+    }
 
     final ConfigurationSection default_block_xp_modifier =
       LevelToolsPlugin.getInstance()
         .getConfig()
         .getConfigurationSection("default_block_xp_modifier");
-
-    return calculateFromRange(default_block_xp_modifier);
+    if (default_block_xp_modifier != null) {
+      return calculateFromRange(default_block_xp_modifier);
+    }
+    return 0.0;
   }
 
   private static Double getCustomModifier(ConfigurationSection config, String type) {
@@ -93,7 +103,9 @@ public final class LevelToolsUtil {
         final ConfigurationSection modifierCs =
           config.getConfigurationSection(modifier);
 
-        return calculateFromRange(modifierCs);
+        if (modifierCs != null) {
+          return calculateFromRange(modifierCs);
+        }
       }
     }
     return null;

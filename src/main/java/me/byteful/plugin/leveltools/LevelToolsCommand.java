@@ -2,7 +2,13 @@ package me.byteful.plugin.leveltools;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
-import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Dependency;
+import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.HelpCommand;
+import co.aikar.commands.annotation.Subcommand;
+import java.util.Objects;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import me.byteful.plugin.leveltools.util.Text;
@@ -10,8 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import java.util.Objects;
 
 @CommandAlias("leveltools")
 public class LevelToolsCommand extends BaseCommand {
@@ -54,9 +58,14 @@ public class LevelToolsCommand extends BaseCommand {
       tool.setXp(0);
       inv.setItem(i, tool.getItemStack());
     }
+//    if (plugin.getConfig().getString("messages.successfully_reset_tools") == null) {
+//      Bukkit.broadcastMessage("the reset tools string was null!");
+//    } else {
+//      Bukkit.broadcastMessage("it wasn't null.");
+//    }
     sender.sendMessage(
       Text.colorize(
-        Objects.requireNonNull(plugin.getConfig().getString("successfully_reset_tools"))));
+        Objects.requireNonNull(plugin.getConfig().getString("messages.successfully_reset_tools"))));
   }
 
   @Subcommand("xp")
