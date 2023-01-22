@@ -40,11 +40,13 @@ public class BlockEventListener extends XPListener {
     final Stream<Material> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("block_list").stream()
       .map(Material::getMaterial).filter(Objects::nonNull);
 
-    if (type.equalsIgnoreCase("whitelist") && stream.noneMatch(material -> block.getType() == material)) {
+    if (type != null && type.equalsIgnoreCase("whitelist") && stream.noneMatch(
+        material -> block.getType() == material)) {
       return;
     }
 
-    if (type.equalsIgnoreCase("blacklist") && stream.anyMatch(material -> block.getType() == material)) {
+    if (type != null && type.equalsIgnoreCase("blacklist") && stream.anyMatch(
+        material -> block.getType() == material)) {
       return;
     }
 

@@ -1,8 +1,18 @@
 package me.byteful.plugin.leveltools.util;
 
+import static me.byteful.plugin.leveltools.util.Text.colorize;
+import static me.byteful.plugin.leveltools.util.Text.decolorize;
+
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Strings;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.api.RewardType;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
@@ -21,79 +31,65 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import redempt.redlib.RedLib;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-
-import static me.byteful.plugin.leveltools.util.Text.colorize;
-import static me.byteful.plugin.leveltools.util.Text.decolorize;
-
 public final class LevelToolsUtil {
+
   private static final String LORE_PREFIX = "&f&l&o&n&m&k";
 
-  public static String getProgressBar(
-    double percent,
-    int totalBars,
-    String prefixSymbol,
-    String suffixSymbol,
-    String barSymbol,
-    ChatColor prefixColor,
-    ChatColor suffixColor,
-    ChatColor completedColor,
-    ChatColor placeholderColor) {
+  public static String getProgressBar(double percent, int totalBars, String prefixSymbol,
+      String suffixSymbol, String barSymbol, ChatColor prefixColor, ChatColor suffixColor,
+      ChatColor completedColor, ChatColor placeholderColor) {
     int progressBars = roundDown(totalBars * percent);
 
     return colorize(
-      ""
-        + prefixColor
-        + prefixSymbol
-        + Strings.repeat("" + completedColor + barSymbol, progressBars)
-        + Strings.repeat("" + placeholderColor + barSymbol, Math.abs(totalBars - progressBars))
-        + suffixColor
-        + suffixSymbol);
+        "" + prefixColor + prefixSymbol + Strings.repeat("" + completedColor + barSymbol,
+            progressBars) + Strings.repeat("" + placeholderColor + barSymbol,
+            Math.abs(totalBars - progressBars)) + suffixColor + suffixSymbol);
   }
 
   public static double getCombatModifier(EntityType entityType) {
-    final ConfigurationSection combat_xp_modifiers =
-      LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("combat_xp_modifiers");
+    final ConfigurationSection combat_xp_modifiers = LevelToolsPlugin.getInstance().getConfig()
+        .getConfigurationSection("combat_xp_modifiers");
 
-    final Double custom = getCustomModifier(combat_xp_modifiers, entityType.name());
-    if (custom != null) return custom;
+    final Double custom;
+    if (combat_xp_modifiers != null) {
+      custom = getCustomModifier(combat_xp_modifiers, entityType.name());
+    }
 
-    final ConfigurationSection default_combat_xp_modifier =
-      LevelToolsPlugin.getInstance()
-        .getConfig()
-        .getConfigurationSection("default_combat_xp_modifier");
+    final ConfigurationSection default_combat_xp_modifier = LevelToolsPlugin.getInstance()
+        .getConfig().getConfigurationSection("default_combat_xp_modifier");
 
-    return calculateFromRange(default_combat_xp_modifier);
+    if (default_combat_xp_modifier != null) {
+      return calculateFromRange(default_combat_xp_modifier);
+    }
+    return 0.0;
   }
 
   public static double getBlockModifier(Material material) {
-    final ConfigurationSection block_xp_modifiers =
-      LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("block_xp_modifiers");
+    final ConfigurationSection block_xp_modifiers = LevelToolsPlugin.getInstance().getConfig()
+        .getConfigurationSection("block_xp_modifiers");
 
-    final Double custom = getCustomModifier(block_xp_modifiers, material.name());
-    if (custom != null) return custom;
+    final Double custom;
 
-    final ConfigurationSection default_block_xp_modifier =
-      LevelToolsPlugin.getInstance()
-        .getConfig()
-        .getConfigurationSection("default_block_xp_modifier");
+    if (block_xp_modifiers != null) {
+      custom = getCustomModifier(block_xp_modifiers, material.name());
+    }
 
-    return calculateFromRange(default_block_xp_modifier);
+    final ConfigurationSection default_block_xp_modifier = LevelToolsPlugin.getInstance()
+        .getConfig().getConfigurationSection("default_block_xp_modifier");
+    if (default_block_xp_modifier != null) {
+      return calculateFromRange(default_block_xp_modifier);
+    }
+    return 0.0;
   }
 
   private static Double getCustomModifier(ConfigurationSection config, String type) {
     for (String modifier : config.getKeys(false)) {
       if (modifier.equalsIgnoreCase(type)) {
-        final ConfigurationSection modifierCs =
-          config.getConfigurationSection(modifier);
+        final ConfigurationSection modifierCs = config.getConfigurationSection(modifier);
 
-        return calculateFromRange(modifierCs);
+        if (modifierCs != null) {
+          return calculateFromRange(modifierCs);
+        }
       }
     }
     return null;
@@ -111,10 +107,7 @@ public final class LevelToolsUtil {
       min = max;
       max = hold;
     }
-    return round(
-      ThreadLocalRandom.current()
-        .nextDouble(min, max),
-      1);
+    return round(ThreadLocalRandom.current().nextDouble(min, max), 1);
   }
 
   public static boolean isPickaxe(Material material) {
@@ -134,22 +127,18 @@ public final class LevelToolsUtil {
   }
 
   public static boolean isProjectileShooter(Material material) {
-    return material == XMaterial.BOW.parseMaterial()
-      || (RedLib.MID_VERSION >= 14 && material == XMaterial.CROSSBOW.parseMaterial());
+    return material == XMaterial.BOW.parseMaterial() || (RedLib.MID_VERSION >= 14
+        && material == XMaterial.CROSSBOW.parseMaterial());
   }
 
   public static boolean isSupportedTool(Material material) {
-    return isPickaxe(material)
-      || isAxe(material)
-      || isShovel(material)
-      || isSword(material)
-      || isProjectileShooter(material);
+    return isPickaxe(material) || isAxe(material) || isShovel(material) || isSword(material)
+        || isProjectileShooter(material);
   }
 
   public static ItemStack getHand(Player player) {
-    return RedLib.MID_VERSION >= 9
-      ? player.getInventory().getItemInMainHand().clone()
-      : player.getItemInHand().clone();
+    return RedLib.MID_VERSION >= 9 ? player.getInventory().getItemInMainHand().clone()
+        : player.getItemInHand().clone();
   }
 
   public static void setHand(Player player, ItemStack stack) {
@@ -161,23 +150,35 @@ public final class LevelToolsUtil {
   }
 
   public static String createDefaultProgressBar(double xp, double maxXp) {
-    ConfigurationSection cs =
-      LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("progress_bar");
+    ConfigurationSection cs = LevelToolsPlugin.getInstance().getConfig()
+        .getConfigurationSection("progress_bar");
+    if (cs != null) {
 
-    return LevelToolsUtil.getProgressBar(
-      (xp / maxXp),
-      cs.getInt("total_bars"),
-      cs.getString("prefix_symbol"),
-      cs.getString("suffix_symbol"),
-      cs.getString("bar_symbol"),
-      ChatColor.getByChar(cs.getString("prefix_color")),
-      ChatColor.getByChar(cs.getString("suffix_color")),
-      ChatColor.getByChar(cs.getString("completed_color")),
-      ChatColor.getByChar(cs.getString("placeholder_color")));
+      String prefixColor = cs.getString("prefix_color");
+      String suffixColor = cs.getString("suffix_color");
+      String completedColor = cs.getString("completed_color");
+      String placeholderColor = cs.getString("placeholder_color");
+
+      if (prefixColor != null && suffixColor != null && completedColor != null
+          && placeholderColor != null) {
+        return LevelToolsUtil.getProgressBar((xp / maxXp),
+            cs.getInt("total_bars"),
+            cs.getString("prefix_symbol"),
+            cs.getString("suffix_symbol"),
+            cs.getString("bar_symbol"),
+            ChatColor.getByChar(prefixColor),
+            ChatColor.getByChar(suffixColor),
+            ChatColor.getByChar(completedColor),
+            ChatColor.getByChar(placeholderColor));
+      }
+    }
+    return "";
   }
 
   public static double round(double value, int places) {
-    if (places < 0) throw new IllegalArgumentException();
+    if (places < 0) {
+      throw new IllegalArgumentException();
+    }
 
     BigDecimal bd = BigDecimal.valueOf(value);
     bd = bd.setScale(places, RoundingMode.HALF_UP);
@@ -198,7 +199,7 @@ public final class LevelToolsUtil {
         final NBTItem nbt = new NBTItem(stack);
         if (nbt.getKeys().stream().anyMatch(s -> s.startsWith("levelTools"))) {
           return new NBTLevelToolsItem(
-            stack); // Support tools created with "old" NBT system for 1.14+.
+              stack); // Support tools created with "old" NBT system for 1.14+.
         }
       }
 
@@ -208,26 +209,19 @@ public final class LevelToolsUtil {
     }
   }
 
-  public static ItemStack buildItemStack(
-    ItemStack stack, Map<Enchantment, Integer> enchantments, int level, double xp, double maxXp) {
-    final ConfigurationSection cs =
-      LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("display");
+  public static ItemStack buildItemStack(ItemStack stack, Map<Enchantment, Integer> enchantments,
+      int level, double xp, double maxXp) {
+    final ConfigurationSection cs = LevelToolsPlugin.getInstance().getConfig()
+        .getConfigurationSection("display");
 
     final ItemMeta meta = stack.getItemMeta();
     assert meta != null : "ItemMeta is null! Should not happen.";
-    if (cs.getBoolean("lore.enabled")) {
-      List<String> lines =
-        cs.getStringList("lore.lines").stream()
-          .map(str -> LORE_PREFIX + str)
-          .map(
-            str ->
-              colorize(
-                str.replace("{level}", String.valueOf(level))
-                  .replace("{xp}", String.valueOf(xp))
+    if (cs != null && cs.getBoolean("lore.enabled")) {
+      List<String> lines = cs.getStringList("lore.lines").stream().map(str -> LORE_PREFIX + str)
+          .map(str -> colorize(
+              str.replace("{level}", String.valueOf(level)).replace("{xp}", String.valueOf(xp))
                   .replace("{max_xp}", String.valueOf(maxXp))
-                  .replace(
-                    "{progress_bar}",
-                    LevelToolsUtil.createDefaultProgressBar(xp, maxXp))))
+                  .replace("{progress_bar}", LevelToolsUtil.createDefaultProgressBar(xp, maxXp))))
           .collect(Collectors.toList());
       smartSetLore(meta, lines);
     }
@@ -325,7 +319,9 @@ public final class LevelToolsUtil {
           continue;
         }
 
-        RewardType.fromConfigKey(split[0].toLowerCase(Locale.ROOT).trim().replace(" ", "-").replace("_", "-")).ifPresent(type -> type.apply(tool, split, player));
+        RewardType.fromConfigKey(
+                split[0].toLowerCase(Locale.ROOT).trim().replace(" ", "-").replace("_", "-"))
+            .ifPresent(type -> type.apply(tool, split, player));
       }
 
       return;
