@@ -21,7 +21,7 @@ public enum RewardType {
       Bukkit.dispatchCommand(
         Bukkit.getConsoleSender(),
         String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-          .replace("{player}", player.getName()));
+          .replace("{player}", player.getName()).replace("%player%", player.getName()));
     }
   },
   PLAYER_COMMAND("player-command") {
@@ -31,7 +31,7 @@ public enum RewardType {
       player.chat(
         "/"
           + String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-          .replace("{player}", player.getName()));
+          .replace("{player}", player.getName()).replace("%player%", player.getName()));
     }
   },
   ENCHANT("enchant") {

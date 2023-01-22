@@ -18,7 +18,7 @@ update:
   periodically: true
 
 # The max level that tools can reach.
-max_level: 500
+max_level: 100
 
 # Configuration for messages.
 messages:
@@ -110,7 +110,43 @@ entity_list:
 # - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10") OR (Ex: "attribute GENERIC_ATTACK_SPEED 10")
 tool_rewards:
   1:
-    - "enchant3 efficiency 1"
+    - "enchant2 efficiency 1"
+  3:
+    - "enchant2 efficiency 2"
+  5:
+    - "enchant2 efficiency 3"
+  8:
+    - "enchant2 efficiency 4"
+  10:
+    - "enchant2 efficiency 5"
+  11:
+    - "enchant2 unbreaking 1"
+  13:
+    - "enchant2 unbreaking 2"
+  15:
+    - "enchant2 unbreaking 3"
+  20:
+    - "enchant2 mending 1"
+  24:
+    - "enchant2 fortune 1"
+  26:
+    - "enchant2 fortune 2"
+  30:
+    - "enchant2 fortune 3"
+  40:
+    - "enchant2 efficiency 6"
+  50:
+    - "enchant2 fortune 4"
+  65:
+    - "enchant2 efficiency 7"
+    - "enchant2 unbreaking 10"
+  80:
+    - "enchant2 efficiency 8"
+  90:
+    - "enchant2 efficiency 9"
+  100:
+    - "enchant2 efficiency 10"
+    - "enchant2 fortune 5"
 
 # Configuration for sword rewards given at level ups.
 # Handlers:
@@ -122,7 +158,43 @@ tool_rewards:
 # - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10") OR (Ex: "attribute GENERIC_ATTACK_SPEED 10")
 sword_rewards:
   1:
-    - "enchant3 sharpness 1"
+    - "enchant2 sharpness 1"
+  3:
+    - "enchant2 sharpness 2"
+  5:
+    - "enchant2 sharpness 3"
+  8:
+    - "enchant2 sharpness 4"
+  10:
+    - "enchant2 sharpness 5"
+  11:
+    - "enchant2 unbreaking 1"
+  13:
+    - "enchant2 unbreaking 2"
+  15:
+    - "enchant2 unbreaking 3"
+  20:
+    - "enchant2 mending 1"
+  24:
+    - "enchant2 looting 1"
+  26:
+    - "enchant2 looting 2"
+  30:
+    - "enchant2 looting 3"
+  40:
+    - "enchant2 sharpness 6"
+  50:
+    - "enchant2 looting 4"
+  65:
+    - "enchant2 sharpness 7"
+    - "enchant2 unbreaking 10"
+  80:
+    - "enchant2 sharpness 8"
+  90:
+    - "enchant2 sharpness 9"
+  100:
+    - "enchant2 sharpness 10"
+    - "enchant2 looting 5"
 
 # Configuration for bow and crossbow rewards given at level ups.
 # Handlers:
@@ -134,16 +206,54 @@ sword_rewards:
 # - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10") OR (Ex: "attribute GENERIC_ATTACK_SPEED 10")
 bow_rewards:
   1:
-    - "enchant3 power 1"
+    - "enchant2 power 1"
+  3:
+    - "enchant2 power 2"
+  5:
+    - "enchant2 power 3"
+  8:
+    - "enchant2 power 4"
+  10:
+    - "enchant2 power 5"
+  11:
+    - "enchant2 unbreaking 1"
+  13:
+    - "enchant2 unbreaking 2"
+  15:
+    - "enchant2 unbreaking 3"
+  20:
+    - "enchant2 mending 1"
+  24:
+    - "enchant2 punch 1"
+  26:
+    - "enchant2 punch 2"
+  30:
+    - "enchant2 punch 3"
+  40:
+    - "enchant2 power 6"
+  50:
+    - "enchant2 flame 1"
+  65:
+    - "enchant2 power 7"
+    - "enchant2 unbreaking 10"
+  80:
+    - "enchant2 power 8"
+  90:
+    - "enchant2 power 9"
+  100:
+    - "enchant2 power 10"
+    - "enchant2 infinity 1"
 
 # Configuration for tool displays.
-# To create a custom display for a specific tool item type, list that type as a key and set the lore as shown in the default lore.
 # Placeholders:
 # - {level} : The tool's level.
 # - {xp} : The tool's xp.
 # - {max_xp} : The tool's max XP needed to reach the next level.
 # - {progress_bar} : The progress bar text built with the configuration under 'progress_bar'.
 display:
+  name:
+    enabled: false
+    text: "{item} &7- &b{level}"
   # Sends the progress bar to the action bar of a player when they gain XP on the tool in their hand.
   actionBar:
     enabled: true

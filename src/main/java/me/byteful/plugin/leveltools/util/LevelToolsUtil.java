@@ -20,12 +20,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import redempt.redlib.RedLib;
+import xyz.mackan.ItemNames.ItemNames;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -208,6 +210,10 @@ public final class LevelToolsUtil {
     }
   }
 
+  public static String getLocalizedName(ItemStack item) {
+    return RedLib.MID_VERSION > 16 ? Objects.requireNonNull(item.getItemMeta()).getLocalizedName() : ItemNames.getItemName(item);
+  }
+
   public static ItemStack buildItemStack(
     ItemStack stack, Map<Enchantment, Integer> enchantments, int level, double xp, double maxXp) {
     final ConfigurationSection cs =
@@ -215,6 +221,15 @@ public final class LevelToolsUtil {
 
     final ItemMeta meta = stack.getItemMeta();
     assert meta != null : "ItemMeta is null! Should not happen.";
+    final String progressBar = LevelToolsUtil.createDefaultProgressBar(xp, maxXp);
+    if (cs.getBoolean("name.enabled")) {
+      meta.setDisplayName(Text.colorize(cs.getString("name.text")
+        .replace("{item}", getLocalizedName(stack))
+        .replace("{level}", String.valueOf(level))
+        .replace("{xp}", String.valueOf(xp))
+        .replace("{max_xp}", String.valueOf(maxXp))
+        .replace("{progress_bar}", progressBar)));
+    }
     if (cs.getBoolean("lore.enabled")) {
       List<String> lines =
         cs.getStringList("lore.lines").stream()
@@ -225,9 +240,7 @@ public final class LevelToolsUtil {
                 str.replace("{level}", String.valueOf(level))
                   .replace("{xp}", String.valueOf(xp))
                   .replace("{max_xp}", String.valueOf(maxXp))
-                  .replace(
-                    "{progress_bar}",
-                    LevelToolsUtil.createDefaultProgressBar(xp, maxXp))))
+                  .replace("{progress_bar}", progressBar)))
           .collect(Collectors.toList());
       smartSetLore(meta, lines);
     }
@@ -270,37 +283,6 @@ public final class LevelToolsUtil {
   }
 
   private static int findPrefixStart(@NotNull List<String> lore) {
-//    int sourceSize = source.size();
-//    int targetSize = target.size();
-//    int maxCandidate = sourceSize - targetSize;
-//
-//    if (sourceSize < 35 ||
-//      (source instanceof RandomAccess &&target instanceof RandomAccess)) {
-//      nextCand:
-//      for (int candidate = 0; candidate <= maxCandidate; candidate++) {
-//        for (int i=0, j=candidate; i<targetSize; i++, j++)
-//          if (!source.get(j).startsWith(target.get(i)))
-//            continue nextCand;  // Element mismatch, try next cand
-//        return candidate;  // All elements of candidate matched target
-//      }
-//    } else {  // Iterator version of above algorithm
-//      ListIterator<?> si = source.listIterator();
-//      nextCand:
-//      for (int candidate = 0; candidate <= maxCandidate; candidate++) {
-//        ListIterator<?> ti = target.listIterator();
-//        for (int i=0; i<targetSize; i++) {
-//          if (!((String) si.next()).startsWith((String) ti.next())) {
-//            // Back up source iterator to next candidate
-//            for (int j=0; j<i; j++)
-//              si.previous();
-//            continue nextCand;
-//          }
-//        }
-//        return candidate;
-//      }
-//    }
-//    return -1;  // No candidate matched the target
-
     for (int i = 0; i < lore.size(); i++) {
       if (decolorize(lore.get(i)).startsWith(LORE_PREFIX)) {
         return i;
