@@ -109,6 +109,7 @@ disabled_worlds:
 # Handlers:
 # - "command" : Runs the command provided as the console. (Ex: "command say test")
 # - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
+# - "player-opcommand" : Runs the command provided as the player with OP permissions. ("Ex: player-opcommand specialenchant enchantment")
 # - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
 # - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
 # - "enchant3" : Increases the existing level value of the enchant. (Ex: "enchant3 efficiency 1")
@@ -157,6 +158,7 @@ tool_rewards:
 # Handlers:
 # - "command" : Runs the command provided as the console. (Ex: "command say test")
 # - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
+# - "player-opcommand" : Runs the command provided as the player with OP permissions. ("Ex: player-opcommand specialenchant enchantment")
 # - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
 # - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
 # - "enchant3" : Increases the existing level value of the enchant. (Ex: "enchant3 efficiency 1")
@@ -205,6 +207,7 @@ sword_rewards:
 # Handlers:
 # - "command" : Runs the command provided as the console. (Ex: "command say test")
 # - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
+# - "player-opcommand" : Runs the command provided as the player with OP permissions. ("Ex: player-opcommand specialenchant enchantment")
 # - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
 # - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
 # - "enchant3" : Increases the existing level value of the enchant. (Ex: "enchant3 efficiency 1")

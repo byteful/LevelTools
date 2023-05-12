@@ -28,8 +28,7 @@ public class BlockEventListener extends XPListener {
     final ItemStack hand = LevelToolsUtil.getHand(player);
 
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
-      final DataBlock db =
-        LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block, false);
+      final DataBlock db = LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block, false);
 
       if (db != null && db.contains("level_tools") && db.getBoolean("level_tools")) {
         return;
@@ -37,38 +36,27 @@ public class BlockEventListener extends XPListener {
     }
 
     final String type = LevelToolsPlugin.getInstance().getConfig().getString("block_list_type", "blacklist");
-    final Stream<Material> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("block_list").stream()
-      .map(Material::getMaterial).filter(Objects::nonNull);
+    final Stream<Material> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("block_list").stream().map(Material::getMaterial).filter(Objects::nonNull);
 
-    if (type != null && type.equalsIgnoreCase("whitelist") && stream.noneMatch(
-        material -> block.getType() == material)) {
+    if (type != null && type.equalsIgnoreCase("whitelist") && stream.noneMatch(material -> block.getType() == material)) {
       return;
     }
 
-    if (type != null && type.equalsIgnoreCase("blacklist") && stream.anyMatch(
-        material -> block.getType() == material)) {
+    if (type != null && type.equalsIgnoreCase("blacklist") && stream.anyMatch(material -> block.getType() == material)) {
       return;
     }
 
-    if (!LevelToolsUtil.isAxe(hand.getType())
-      && !LevelToolsUtil.isPickaxe(hand.getType())
-      && !LevelToolsUtil.isShovel(hand.getType())) {
+    if (!LevelToolsUtil.isAxe(hand.getType()) && !LevelToolsUtil.isPickaxe(hand.getType()) && !LevelToolsUtil.isShovel(hand.getType())) {
       return;
     }
 
-    handle(
-      LevelToolsUtil.createLevelToolsItem(hand),
-      player,
-      LevelToolsUtil.getBlockModifier(block.getType()));
+    handle(LevelToolsUtil.createLevelToolsItem(hand), player, LevelToolsUtil.getBlockModifier(block.getType()));
   }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onBlockPlace(BlockPlaceEvent e) {
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
-      LevelToolsPlugin.getInstance()
-        .getBlockDataManager()
-        .getDataBlockAsync(e.getBlockPlaced(), true)
-        .thenAccept(db -> db.set("level_tools", true));
+      LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlockAsync(e.getBlockPlaced(), true).thenAccept(db -> db.set("level_tools", true));
     }
   }
 }

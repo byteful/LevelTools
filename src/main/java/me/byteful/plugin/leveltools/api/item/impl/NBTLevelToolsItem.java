@@ -33,22 +33,19 @@ public class NBTLevelToolsItem implements LevelToolsItem {
   @NotNull
   @Override
   public ItemStack getItemStack() {
-    final ItemStack stack =
-      LevelToolsUtil.buildItemStack(
-        nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
+    final ItemStack stack = LevelToolsUtil.buildItemStack(nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
 
     nbt = new NBTItem(stack);
     final NBTCompoundList attr = nbt.getCompoundList("AttributeModifiers");
-    attributes.forEach(
-      (attribute, modifier) -> {
-        final NBTListCompound list = attr.addCompound();
-        list.setDouble("Amount", modifier);
-        list.setString("AttributeName", attribute);
-        list.setString("Name", attribute);
-        list.setInteger("Operation", 0);
-        list.setInteger("UUIDLeast", 59664);
-        list.setInteger("UUIDMost", 31453);
-      });
+    attributes.forEach((attribute, modifier) -> {
+      final NBTListCompound list = attr.addCompound();
+      list.setDouble("Amount", modifier);
+      list.setString("AttributeName", attribute);
+      list.setString("Name", attribute);
+      list.setInteger("Operation", 0);
+      list.setInteger("UUIDLeast", 59664);
+      list.setInteger("UUIDMost", 31453);
+    });
 
     return nbt.getItem();
   }
@@ -142,9 +139,7 @@ public class NBTLevelToolsItem implements LevelToolsItem {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     NBTLevelToolsItem that = (NBTLevelToolsItem) o;
-    return nbt.equals(that.nbt)
-      && enchantments.equals(that.enchantments)
-      && attributes.equals(that.attributes);
+    return nbt.equals(that.nbt) && enchantments.equals(that.enchantments) && attributes.equals(that.attributes);
   }
 
   @Override
@@ -154,13 +149,6 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
   @Override
   public String toString() {
-    return "NBTLevelToolsItem{"
-      + "nbt="
-      + nbt
-      + ", enchantments="
-      + enchantments
-      + ", attributes="
-      + attributes
-      + '}';
+    return "NBTLevelToolsItem{" + "nbt=" + nbt + ", enchantments=" + enchantments + ", attributes=" + attributes + '}';
   }
 }

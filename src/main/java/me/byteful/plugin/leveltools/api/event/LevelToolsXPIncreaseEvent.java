@@ -23,8 +23,7 @@ public class LevelToolsXPIncreaseEvent extends Event implements Cancellable {
     this.player = player;
   }
 
-  public LevelToolsXPIncreaseEvent(
-    @NotNull LevelToolsItem item, @NotNull Player player, double newXp, boolean isCancelled) {
+  public LevelToolsXPIncreaseEvent(@NotNull LevelToolsItem item, @NotNull Player player, double newXp, boolean isCancelled) {
     this.item = item;
     this.player = player;
     this.newXp = newXp;
@@ -75,10 +74,7 @@ public class LevelToolsXPIncreaseEvent extends Event implements Cancellable {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     LevelToolsXPIncreaseEvent that = (LevelToolsXPIncreaseEvent) o;
-    return Double.compare(that.newXp, newXp) == 0
-      && isCancelled == that.isCancelled
-      && item.equals(that.item)
-      && player.equals(that.player);
+    return Double.compare(that.newXp, newXp) == 0 && isCancelled == that.isCancelled && item.equals(that.item) && player.equals(that.player);
   }
 
   @Override

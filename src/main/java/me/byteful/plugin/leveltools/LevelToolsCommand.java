@@ -15,21 +15,21 @@ import static me.byteful.plugin.leveltools.util.Text.colorize;
 
 @Command("leveltools")
 public class LevelToolsCommand {
-    @Dependency
-    private LevelToolsPlugin plugin;
+  @Dependency
+  private LevelToolsPlugin plugin;
 
-    @DefaultFor("leveltools")
-    @Subcommand("help")
-    @Description("Shows the list of LevelTools commands.")
-    public void onHelp(CommandSender sender, CommandHelp<String> help, @Default("1") int page) {
-        sender.sendMessage(colorize("&6&lLevelTools Command Help:"));
-        for (String entry : help.paginate(page, 7)) {
-            sender.sendMessage(colorize(entry));
-        }
+  @DefaultFor("leveltools")
+  @Subcommand("help")
+  @Description("Shows the list of LevelTools commands.")
+  public void onHelp(CommandSender sender, CommandHelp<String> help, @Default("1") int page) {
+    sender.sendMessage(colorize("&6&lLevelTools Command Help:"));
+    for (String entry : help.paginate(page, 7)) {
+      sender.sendMessage(colorize(entry));
     }
+  }
 
-    @Subcommand("reload")
-    @Description("Reloads LevelTools' plugin configuration.")
+  @Subcommand("reload")
+  @Description("Reloads LevelTools' plugin configuration.")
   public void onReload(CommandSender sender) {
     if (!checkPerm(sender)) {
       return;
@@ -40,38 +40,38 @@ public class LevelToolsCommand {
     sender.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.successful_reload"))));
   }
 
-    @Subcommand("reset")
-    @Description("Resets all XP/Levels for all the items in the target player.")
-    public void onReset(CommandSender sender, Player target, @Switch("all") boolean all) {
-        if (!all) {
-            if (!LevelToolsUtil.isSupportedTool(target.getInventory().getItemInMainHand().getType())) {
-                sender.sendMessage(colorize(plugin.getConfig().getString("messages.item_not_tool")));
+  @Subcommand("reset")
+  @Description("Resets all XP/Levels for all the items in the target player.")
+  public void onReset(CommandSender sender, Player target, @Switch("all") boolean all) {
+    if (!all) {
+      if (!LevelToolsUtil.isSupportedTool(target.getInventory().getItemInMainHand().getType())) {
+        sender.sendMessage(colorize(plugin.getConfig().getString("messages.item_not_tool")));
 
-                return;
-            }
+        return;
+      }
 
-            final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(target.getInventory().getItemInMainHand());
-            tool.setLevel(0);
-            tool.setXp(0);
-            target.getInventory().setItemInMainHand(tool.getItemStack());
-            sender.sendMessage(colorize(plugin.getConfig().getString("messages.successfully_reset_hand_tool", "&aSuccessfully reset tool in hand's XP/Levels for {player}.").replace("{player}", target.getName())));
+      final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(target.getInventory().getItemInMainHand());
+      tool.setLevel(0);
+      tool.setXp(0);
+      target.getInventory().setItemInMainHand(tool.getItemStack());
+      sender.sendMessage(colorize(plugin.getConfig().getString("messages.successfully_reset_hand_tool", "&aSuccessfully reset tool in hand's XP/Levels for {player}.").replace("{player}", target.getName())));
 
-            return;
-        }
+      return;
+    }
 
-        final PlayerInventory inv = target.getInventory();
-        final ItemStack[] contents = inv.getContents();
-        for (int i = 0; i < contents.length; i++) {
-            final ItemStack item = contents[i];
-            if (item == null || !LevelToolsUtil.isSupportedTool(item.getType())) {
-                continue;
-            }
-            final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
-            tool.setLevel(0);
+    final PlayerInventory inv = target.getInventory();
+    final ItemStack[] contents = inv.getContents();
+    for (int i = 0; i < contents.length; i++) {
+      final ItemStack item = contents[i];
+      if (item == null || !LevelToolsUtil.isSupportedTool(item.getType())) {
+        continue;
+      }
+      final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+      tool.setLevel(0);
       tool.setXp(0);
       inv.setItem(i, tool.getItemStack());
     }
-        sender.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.successfully_reset_tools")).replace("{player}", target.getName())));
+    sender.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.successfully_reset_tools")).replace("{player}", target.getName())));
   }
 
   @Subcommand("xp")

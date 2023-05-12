@@ -16,28 +16,30 @@ import java.util.Optional;
 public enum RewardType {
   COMMAND("command") {
     @Override
-    public void apply(
-      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
-      Bukkit.dispatchCommand(
-        Bukkit.getConsoleSender(),
-        String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-          .replace("{player}", player.getName()).replace("%player%", player.getName()));
+    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+      Bukkit.dispatchCommand(Bukkit.getConsoleSender(), String.join(" ", Arrays.copyOfRange(split, 1, split.length)).replace("{player}", player.getName()).replace("%player%", player.getName()));
     }
   },
   PLAYER_COMMAND("player-command") {
     @Override
-    public void apply(
-      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
-      player.chat(
-        "/"
-          + String.join(" ", Arrays.copyOfRange(split, 1, split.length))
-          .replace("{player}", player.getName()).replace("%player%", player.getName()));
+    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+      player.chat("/" + String.join(" ", Arrays.copyOfRange(split, 1, split.length)).replace("{player}", player.getName()).replace("%player%", player.getName()));
+    }
+  },
+  PLAYER_OPCOMMAND("player-opcommand") {
+    @Override
+    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+      final boolean isOP = player.isOp();
+      if (!isOP) {
+        player.setOp(true);
+      }
+      PLAYER_COMMAND.apply(tool, split, player);
+      player.setOp(isOP);
     }
   },
   ENCHANT("enchant") {
     @Override
-    public void apply(
-      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -51,8 +53,7 @@ public enum RewardType {
   },
   ENCHANT_2("enchant2") {
     @Override
-    public void apply(
-      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -62,10 +63,7 @@ public enum RewardType {
       if (NumberUtils.isNumber(split[2])) {
         final int level = Integer.parseInt(split[2]);
 
-        if (enchant.isPresent()
-          && tool.getItemStack()
-          .getEnchantmentLevel(Objects.requireNonNull(enchant.get().getEnchant()))
-          < level) {
+        if (enchant.isPresent() && tool.getItemStack().getEnchantmentLevel(Objects.requireNonNull(enchant.get().getEnchant())) < level) {
           tool.enchant(enchant.get().getEnchant(), level);
         }
       }
@@ -73,8 +71,7 @@ public enum RewardType {
   },
   ENCHANT_3("enchant3") {
     @Override
-    public void apply(
-      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -93,8 +90,7 @@ public enum RewardType {
   },
   ATTRIBUTE("attribute") {
     @Override
-    public void apply(
-      @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
+    public void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       if (split.length < 3) {
         return;
       }
@@ -131,8 +127,7 @@ public enum RewardType {
     return Optional.empty();
   }
 
-  public abstract void apply(
-    @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player);
+  public abstract void apply(@NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player);
 
   @NotNull
   public String getConfigKey() {

@@ -24,33 +24,26 @@ public class EntityEventListener extends XPListener {
     final ItemStack hand = LevelToolsUtil.getHand(killer);
 
     final String ltype = LevelToolsPlugin.getInstance().getConfig().getString("entity_list_type", "blacklist");
-    final Stream<EntityType> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("entity_list").stream()
-      .map(str -> {
-        try {
-          return EntityType.valueOf(str);
-        } catch (Exception ignored) {
-          return null;
-        }
-      }).filter(Objects::nonNull);
+    final Stream<EntityType> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("entity_list").stream().map(str -> {
+      try {
+        return EntityType.valueOf(str);
+      } catch (Exception ignored) {
+        return null;
+      }
+    }).filter(Objects::nonNull);
 
-    if (ltype != null && ltype.equalsIgnoreCase("whitelist") && stream.noneMatch(
-        type -> e.getEntityType() == type)) {
+    if (ltype != null && ltype.equalsIgnoreCase("whitelist") && stream.noneMatch(type -> e.getEntityType() == type)) {
       return;
     }
 
-    if (ltype != null && ltype.equalsIgnoreCase("blacklist") && stream.anyMatch(
-        type -> e.getEntityType() == type)) {
+    if (ltype != null && ltype.equalsIgnoreCase("blacklist") && stream.anyMatch(type -> e.getEntityType() == type)) {
       return;
     }
 
-    if (!LevelToolsUtil.isSword(hand.getType())
-      && !LevelToolsUtil.isProjectileShooter(hand.getType())) {
+    if (!LevelToolsUtil.isSword(hand.getType()) && !LevelToolsUtil.isProjectileShooter(hand.getType())) {
       return;
     }
 
-    handle(
-      LevelToolsUtil.createLevelToolsItem(hand),
-      killer,
-      LevelToolsUtil.getCombatModifier(e.getEntityType()));
+    handle(LevelToolsUtil.createLevelToolsItem(hand), killer, LevelToolsUtil.getCombatModifier(e.getEntityType()));
   }
 }

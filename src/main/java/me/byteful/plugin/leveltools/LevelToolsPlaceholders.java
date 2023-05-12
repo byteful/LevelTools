@@ -43,10 +43,7 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
       return null;
     }
 
-    final ItemStack hand =
-      RedLib.MID_VERSION <= 8
-        ? player.getItemInHand()
-        : player.getInventory().getItemInMainHand();
+    final ItemStack hand = RedLib.MID_VERSION <= 8 ? player.getItemInHand() : player.getInventory().getItemInMainHand();
 
     if (!LevelToolsUtil.isSupportedTool(hand.getType())) {
       return "N/A";

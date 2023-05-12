@@ -20,20 +20,13 @@ public class AnvilListener implements Listener {
     final ItemStack secondItem = inv.getItem(1);
     final ItemStack result = e.getResult();
 
-    if (result == null
-      || !LevelToolsUtil.isSupportedTool(result.getType())
-      || firstItem == null
-      || secondItem == null
-      || !LevelToolsUtil.isSupportedTool(firstItem.getType())
-      || !LevelToolsUtil.isSupportedTool(secondItem.getType())) {
+    if (result == null || !LevelToolsUtil.isSupportedTool(result.getType()) || firstItem == null || secondItem == null || !LevelToolsUtil.isSupportedTool(firstItem.getType()) || !LevelToolsUtil.isSupportedTool(secondItem.getType())) {
       return;
     }
 
     final AnvilCombineMode mode = LevelToolsPlugin.getInstance().getAnvilCombineMode();
-    final LevelAndXPModel first =
-      LevelAndXPModel.fromItem(LevelToolsUtil.createLevelToolsItem(firstItem));
-    final LevelAndXPModel second =
-      LevelAndXPModel.fromItem(LevelToolsUtil.createLevelToolsItem(secondItem));
+    final LevelAndXPModel first = LevelAndXPModel.fromItem(LevelToolsUtil.createLevelToolsItem(firstItem));
+    final LevelAndXPModel second = LevelAndXPModel.fromItem(LevelToolsUtil.createLevelToolsItem(secondItem));
     final LevelAndXPModel finished = mode.getHandler().apply(first, second);
     final LevelToolsItem finalItem = LevelToolsUtil.createLevelToolsItem(result);
     finalItem.setLevel(finished.getLevel());
@@ -49,11 +42,7 @@ public class AnvilListener implements Listener {
     final ItemStack secondItem = inv.getItem(1);
     final ItemStack result = e.getResult();
 
-    if (result == null
-      || !LevelToolsUtil.isSupportedTool(result.getType())
-      || firstItem == null
-      || secondItem == null
-      || !LevelToolsUtil.isSupportedTool(firstItem.getType())) {
+    if (result == null || !LevelToolsUtil.isSupportedTool(result.getType()) || firstItem == null || secondItem == null || !LevelToolsUtil.isSupportedTool(firstItem.getType())) {
       return;
     }
 
