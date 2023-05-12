@@ -1,7 +1,5 @@
 package me.byteful.plugin.leveltools;
 
-import co.aikar.commands.BukkitCommandManager;
-import co.aikar.commands.PaperCommandManager;
 import me.byteful.plugin.leveltools.api.AnvilCombineMode;
 import me.byteful.plugin.leveltools.listeners.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockEventListener;
@@ -12,6 +10,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import redempt.redlib.blockdata.BlockDataManager;
 import redempt.redlib.misc.Task;
+import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 public final class LevelToolsPlugin extends JavaPlugin {
   private static LevelToolsPlugin instance;
 
-  private BlockDataManager blockDataManager;
-  private BukkitCommandManager commandManager;
-  private AnvilCombineMode anvilCombineMode;
+    private BlockDataManager blockDataManager;
+    private BukkitCommandHandler commandManager;
+    private AnvilCombineMode anvilCombineMode;
   private UpdateChecker updateChecker;
 
   public static LevelToolsPlugin getInstance() {
@@ -73,33 +72,34 @@ public final class LevelToolsPlugin extends JavaPlugin {
     blockDataManager.migrate();
     getLogger().info("Loaded BlockDataManager...");
 
-    saveDefaultConfig();
-    setAnvilCombineMode();
+      saveDefaultConfig();
+      getConfig().options().copyDefaults();
+      setAnvilCombineMode();
     getLogger().info("Loaded configuration...");
 
     if (getConfig().getBoolean("update.start")) {
       updateChecker.check();
     }
 
-    if (getConfig().getBoolean("update.periodically")) {
-      final long delay = 20L * TimeUnit.DAYS.toSeconds(1);
-      Task.syncRepeating(() -> updateChecker.check(), delay, delay);
-    }
+      if (getConfig().getBoolean("update.periodically")) {
+          final long delay = 20L * TimeUnit.DAYS.toSeconds(1);
+          Task.syncRepeating(() -> updateChecker.check(), delay, delay);
+      }
 
-    registerListeners();
-    getLogger().info("Registered listeners...");
+      registerListeners();
+      getLogger().info("Registered listeners...");
 
-    commandManager = new PaperCommandManager(this);
-    commandManager.enableUnstableAPI("brigadier");
-    commandManager.enableUnstableAPI("help");
-    commandManager.registerCommand(new LevelToolsCommand());
-    getLogger().info("Registered commands...");
+      commandManager = BukkitCommandHandler.create(this);
+      commandManager.setHelpWriter((command, actor) -> String.format("&7- &b/%s %s&7: &e%s", command.getPath().toRealString(), command.getUsage(), command.getDescription()));
+      commandManager.register(new LevelToolsCommand());
+      commandManager.registerBrigadier();
+      getLogger().info("Registered commands...");
 
-    if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-      new LevelToolsPlaceholders().register();
-    }
+      if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+          new LevelToolsPlaceholders().register();
+      }
 
-    getLogger().info("Successfully started " + getDescription().getFullName() + "!");
+      getLogger().info("Successfully started " + getDescription().getFullName() + "!");
   }
 
   @Override
@@ -134,7 +134,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
     return anvilCombineMode;
   }
 
-  public BukkitCommandManager getCommandManager() {
-    return commandManager;
-  }
+    public BukkitCommandHandler getCommandManager() {
+        return commandManager;
+    }
 }

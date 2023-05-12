@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import static me.byteful.plugin.leveltools.util.Text.colorize;
 import static me.byteful.plugin.leveltools.util.Text.decolorize;
+import static redempt.redlib.misc.FormatUtils.formatMoney;
 
 public final class LevelToolsUtil {
   private static final String LORE_PREFIX = "&f&l&o&n&m&k";
@@ -223,24 +224,14 @@ public final class LevelToolsUtil {
     assert meta != null : "ItemMeta is null! Should not happen.";
     final String progressBar = LevelToolsUtil.createDefaultProgressBar(xp, maxXp);
     if (cs.getBoolean("name.enabled")) {
-      meta.setDisplayName(Text.colorize(cs.getString("name.text")
-        .replace("{item}", getLocalizedName(stack))
-        .replace("{level}", String.valueOf(level))
-        .replace("{xp}", String.valueOf(xp))
-        .replace("{max_xp}", String.valueOf(maxXp))
+      meta.setDisplayName(Text.colorize(cs.getString("name.text").replace("{item}", getLocalizedName(stack)).replace("{level}", String.valueOf(level)).replace("{xp}", String.valueOf(xp)).replace("{max_xp}", String.valueOf(maxXp)).replace("{max_xp_formatted}", formatMoney(maxXp)).replace("{xp_formatted}", formatMoney(xp))
         .replace("{progress_bar}", progressBar)));
     }
     if (cs.getBoolean("lore.enabled")) {
       List<String> lines =
         cs.getStringList("lore.lines").stream()
           .map(str -> LORE_PREFIX + str)
-          .map(
-            str ->
-              colorize(
-                str.replace("{level}", String.valueOf(level))
-                  .replace("{xp}", String.valueOf(xp))
-                  .replace("{max_xp}", String.valueOf(maxXp))
-                  .replace("{progress_bar}", progressBar)))
+          .map(str -> colorize(str.replace("{level}", String.valueOf(level)).replace("{xp}", String.valueOf(xp)).replace("{max_xp}", String.valueOf(maxXp)).replace("{progress_bar}", progressBar)).replace("{max_xp_formatted}", formatMoney(maxXp)).replace("{xp_formatted}", formatMoney(xp)))
           .collect(Collectors.toList());
       smartSetLore(meta, lines);
     }

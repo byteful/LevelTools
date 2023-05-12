@@ -1,36 +1,35 @@
 package me.byteful.plugin.leveltools;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.CommandHelp;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Dependency;
-import co.aikar.commands.annotation.Description;
-import co.aikar.commands.annotation.HelpCommand;
-import co.aikar.commands.annotation.Subcommand;
-import java.util.Objects;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
-import me.byteful.plugin.leveltools.util.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import revxrsal.commands.annotation.*;
+import revxrsal.commands.help.CommandHelp;
 
-@CommandAlias("leveltools")
-public class LevelToolsCommand extends BaseCommand {
-  @Dependency
-  private LevelToolsPlugin plugin;
+import java.util.Objects;
 
-  @Default
-  @HelpCommand
-  @Description("Shows the list of LevelTools commands.")
-  public void onHelp(CommandSender sender, CommandHelp help) {
-    help.showHelp();
-  }
+import static me.byteful.plugin.leveltools.util.Text.colorize;
 
-  @Subcommand("reload")
-  @Description("Reloads LevelTools' plugin configuration.")
+@Command("leveltools")
+public class LevelToolsCommand {
+    @Dependency
+    private LevelToolsPlugin plugin;
+
+    @DefaultFor("leveltools")
+    @Subcommand("help")
+    @Description("Shows the list of LevelTools commands.")
+    public void onHelp(CommandSender sender, CommandHelp<String> help, @Default("1") int page) {
+        sender.sendMessage(colorize("&6&lLevelTools Command Help:"));
+        for (String entry : help.paginate(page, 7)) {
+            sender.sendMessage(colorize(entry));
+        }
+    }
+
+    @Subcommand("reload")
+    @Description("Reloads LevelTools' plugin configuration.")
   public void onReload(CommandSender sender) {
     if (!checkPerm(sender)) {
       return;
@@ -38,29 +37,41 @@ public class LevelToolsCommand extends BaseCommand {
 
     plugin.reloadConfig();
     plugin.setAnvilCombineMode();
-    sender.sendMessage(
-      Text.colorize(
-        Objects.requireNonNull(plugin.getConfig().getString("messages.successful_reload"))));
+    sender.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.successful_reload"))));
   }
 
-  @Subcommand("reset")
-  @Description("Resets all XP/Levels for all the items in the target player.")
-  public void onReset(CommandSender sender, Player target) {
-    final PlayerInventory inv = target.getInventory();
-    final ItemStack[] contents = inv.getContents();
-    for (int i = 0; i < contents.length; i++) {
-      final ItemStack item = contents[i];
-      if (item == null || !LevelToolsUtil.isSupportedTool(item.getType())) {
-        continue;
-      }
-      final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
-      tool.setLevel(0);
+    @Subcommand("reset")
+    @Description("Resets all XP/Levels for all the items in the target player.")
+    public void onReset(CommandSender sender, Player target, @Switch("all") boolean all) {
+        if (!all) {
+            if (!LevelToolsUtil.isSupportedTool(target.getInventory().getItemInMainHand().getType())) {
+                sender.sendMessage(colorize(plugin.getConfig().getString("messages.item_not_tool")));
+
+                return;
+            }
+
+            final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(target.getInventory().getItemInMainHand());
+            tool.setLevel(0);
+            tool.setXp(0);
+            target.getInventory().setItemInMainHand(tool.getItemStack());
+            sender.sendMessage(colorize(plugin.getConfig().getString("messages.successfully_reset_hand_tool", "&aSuccessfully reset tool in hand's XP/Levels for {player}.").replace("{player}", target.getName())));
+
+            return;
+        }
+
+        final PlayerInventory inv = target.getInventory();
+        final ItemStack[] contents = inv.getContents();
+        for (int i = 0; i < contents.length; i++) {
+            final ItemStack item = contents[i];
+            if (item == null || !LevelToolsUtil.isSupportedTool(item.getType())) {
+                continue;
+            }
+            final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+            tool.setLevel(0);
       tool.setXp(0);
       inv.setItem(i, tool.getItemStack());
     }
-    sender.sendMessage(
-      Text.colorize(
-        Objects.requireNonNull(plugin.getConfig().getString("messages.successfully_reset_tools"))));
+        sender.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.successfully_reset_tools")).replace("{player}", target.getName())));
   }
 
   @Subcommand("xp")
@@ -76,14 +87,9 @@ public class LevelToolsCommand extends BaseCommand {
       final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
       tool.setXp(xp);
       player.setItemInHand(tool.getItemStack());
-      player.sendMessage(
-        Text.colorize(
-          Objects.requireNonNull(
-            plugin.getConfig().getString("messages.successfully_executed_action"))));
+      player.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.successfully_executed_action"))));
     } else {
-      player.sendMessage(
-        Text.colorize(
-          Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
+      player.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
     }
   }
 
@@ -104,14 +110,9 @@ public class LevelToolsCommand extends BaseCommand {
         LevelToolsUtil.handleReward(tool, player);
       }
       player.setItemInHand(tool.getItemStack());
-      player.sendMessage(
-        Text.colorize(
-          Objects.requireNonNull(
-            plugin.getConfig().getString("messages.successfully_executed_action"))));
+      player.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.successfully_executed_action"))));
     } else {
-      player.sendMessage(
-        Text.colorize(
-          Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
+      player.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
     }
   }
 
@@ -129,22 +130,15 @@ public class LevelToolsCommand extends BaseCommand {
       tool.setLevel(tool.getLevel() + 1);
       LevelToolsUtil.handleReward(tool, player);
       player.setItemInHand(tool.getItemStack());
-      player.sendMessage(
-        Text.colorize(
-          Objects.requireNonNull(
-            plugin.getConfig().getString("messages.successfully_executed_action"))));
+      player.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.successfully_executed_action"))));
     } else {
-      player.sendMessage(
-        Text.colorize(
-          Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
+      player.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
     }
   }
 
   private boolean checkPerm(CommandSender sender) {
     if (!sender.hasPermission("leveltools.admin")) {
-      sender.sendMessage(
-        Text.colorize(
-          Objects.requireNonNull(plugin.getConfig().getString("messages.no_permission"))));
+      sender.sendMessage(colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.no_permission"))));
 
       return false;
     }

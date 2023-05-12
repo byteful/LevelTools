@@ -27,6 +27,7 @@ messages:
   successfully_executed_action: "&aSuccessfully executed action for item in hand."
   item_not_tool: "&cThe item in hand is not supported by LevelTools!"
   successfully_reset_tools: "&aSuccessfully reset all tool XP/Levels for {player}."
+  successfully_reset_hand_tool: "&aSuccessfully reset tool in hand's XP/Levels for {player}."
 
 # What action should be done when combining items in an anvil?
 # Modes: "HIGHER_OF_BOTH" (Takes level and xp of higher level item), "LOWER_OF_BOTH" (Takes level and xp of lower level item), OR "ADD_BOTH" (Adds the level and XP of both items)
@@ -44,7 +45,7 @@ level_xp_increase:
 
 # Should blocks that are placed by a player count towards XP?
 # May cause lag on a large server. Recommended to keep this true.
-# If this is set to false, all blocks placed beforehand will be counted towards XP.
+# If this is set to false, all blocks placed beforehand will still be counted towards XP.
 playerPlacedBlocks: true
 
 # Configuration for the sound played during a level up.
@@ -253,6 +254,8 @@ bow_rewards:
 # - {level} : The tool's level.
 # - {xp} : The tool's xp.
 # - {max_xp} : The tool's max XP needed to reach the next level.
+# - {xp_formatted} : The tool's xp. (formatted with K,M,B, etc suffixes) (e.g 100K, 250B, 5K, 1M)
+# - {max_xp_formatted} : The tool's max XP needed to reach the next level. (formatted with K,M,B, etc suffixes) (e.g 100K, 250B, 5K, 1M)
 # - {progress_bar} : The progress bar text built with the configuration under 'progress_bar'.
 display:
   name:
@@ -261,7 +264,7 @@ display:
   # Sends the progress bar to the action bar of a player when they gain XP on the tool in their hand.
   actionBar:
     enabled: true
-    text: "{progress_bar} &e{xp}&6/&e{max_xp}"
+    text: "{progress_bar} &e{xp_formatted}&6/&e{max_xp_formatted}"
   # Manage the lore displayed on the tool.
   lore:
     # Should LevelTools override the lore on tools?
@@ -271,7 +274,7 @@ display:
       - ""
       - "&eLevel: &6{level}"
       - ""
-      - "{progress_bar} &e{xp}&6/&e{max_xp}"
+      - "{progress_bar} &e{xp_formatted}&6/&e{max_xp_formatted}"
 
 # Set to true if leveled items should show attributes. Recommended to keep this true to prevent "lore spam".
 hide_attributes: true
