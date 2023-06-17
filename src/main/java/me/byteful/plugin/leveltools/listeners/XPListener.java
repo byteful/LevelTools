@@ -31,7 +31,6 @@ public abstract class XPListener implements Listener {
     double newXp = LevelToolsUtil.round(tool.getXp() + modifier, 1);
 
     final LevelToolsXPIncreaseEvent xpEvent = new LevelToolsXPIncreaseEvent(tool, player, newXp, false);
-
     Bukkit.getPluginManager().callEvent(xpEvent);
 
     if (xpEvent.isCancelled()) {
@@ -53,6 +52,7 @@ public abstract class XPListener implements Listener {
       }
 
       final LevelToolsLevelIncreaseEvent levelEvent = new LevelToolsLevelIncreaseEvent(tool, player, newLevel, false);
+      Bukkit.getPluginManager().callEvent(levelEvent);
 
       if (levelEvent.isCancelled()) {
         return;

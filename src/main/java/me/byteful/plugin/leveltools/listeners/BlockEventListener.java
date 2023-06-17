@@ -13,7 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import redempt.redlib.blockdata.DataBlock;
 
 import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BlockEventListener extends XPListener {
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -35,16 +36,16 @@ public class BlockEventListener extends XPListener {
       }
     }
 
-    final String type = LevelToolsPlugin.getInstance().getConfig().getString("block_list_type", "blacklist");
-    final Stream<Material> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("block_list").stream().map(Material::getMaterial).filter(Objects::nonNull);
+      final String type = LevelToolsPlugin.getInstance().getConfig().getString("block_list_type", "blacklist");
+      final Set<Material> blocks = LevelToolsPlugin.getInstance().getConfig().getStringList("block_list").stream().map(Material::getMaterial).filter(Objects::nonNull).collect(Collectors.toSet());
 
-    if (type != null && type.equalsIgnoreCase("whitelist") && stream.noneMatch(material -> block.getType() == material)) {
-      return;
-    }
+      if (type != null && type.equalsIgnoreCase("whitelist") && !blocks.contains(block.getType())) {
+          return;
+      }
 
-    if (type != null && type.equalsIgnoreCase("blacklist") && stream.anyMatch(material -> block.getType() == material)) {
-      return;
-    }
+      if (type != null && type.equalsIgnoreCase("blacklist") && blocks.contains(block.getType())) {
+          return;
+      }
 
     if (!LevelToolsUtil.isAxe(hand.getType()) && !LevelToolsUtil.isPickaxe(hand.getType()) && !LevelToolsUtil.isShovel(hand.getType())) {
       return;

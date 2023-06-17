@@ -10,7 +10,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class EntityEventListener extends XPListener {
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -23,22 +24,22 @@ public class EntityEventListener extends XPListener {
 
     final ItemStack hand = LevelToolsUtil.getHand(killer);
 
-    final String ltype = LevelToolsPlugin.getInstance().getConfig().getString("entity_list_type", "blacklist");
-    final Stream<EntityType> stream = LevelToolsPlugin.getInstance().getConfig().getStringList("entity_list").stream().map(str -> {
-      try {
-        return EntityType.valueOf(str);
-      } catch (Exception ignored) {
-        return null;
+      final String ltype = LevelToolsPlugin.getInstance().getConfig().getString("entity_list_type", "blacklist");
+      final Set<EntityType> entities = LevelToolsPlugin.getInstance().getConfig().getStringList("entity_list").stream().map(str -> {
+          try {
+              return EntityType.valueOf(str);
+          } catch (Exception ignored) {
+              return null;
+          }
+      }).filter(Objects::nonNull).collect(Collectors.toSet());
+
+      if (ltype != null && ltype.equalsIgnoreCase("whitelist") && !entities.contains(e.getEntityType())) {
+          return;
       }
-    }).filter(Objects::nonNull);
 
-    if (ltype != null && ltype.equalsIgnoreCase("whitelist") && stream.noneMatch(type -> e.getEntityType() == type)) {
-      return;
-    }
-
-    if (ltype != null && ltype.equalsIgnoreCase("blacklist") && stream.anyMatch(type -> e.getEntityType() == type)) {
-      return;
-    }
+      if (ltype != null && ltype.equalsIgnoreCase("blacklist") && entities.contains(e.getEntityType())) {
+          return;
+      }
 
     if (!LevelToolsUtil.isSword(hand.getType()) && !LevelToolsUtil.isProjectileShooter(hand.getType())) {
       return;
