@@ -20,142 +20,142 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PDCLevelToolsItem implements LevelToolsItem {
-  @NotNull
-  public static final NamespacedKey LEVEL_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsLevel"), XP_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsXp");
+    @NotNull
+    public static final NamespacedKey LEVEL_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsLevel"), XP_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsXp");
 
-  @NotNull
-  private ItemStack stack;
-  @NotNull
-  private Map<Enchantment, Integer> enchantments;
-  @NotNull
-  private Map<String, Double> attributes;
+    @NotNull
+    private ItemStack stack;
+    @NotNull
+    private Map<Enchantment, Integer> enchantments;
+    @NotNull
+    private Map<String, Double> attributes;
 
-  public PDCLevelToolsItem(@NotNull ItemStack stack) {
-    this.stack = stack;
-    this.enchantments = new HashMap<>();
-    this.attributes = new HashMap<>();
-  }
-
-  @Override
-  public @NotNull ItemStack getItemStack() {
-    final ItemStack stack = LevelToolsUtil.buildItemStack(this.stack, enchantments, getLevel(), getXp(), getMaxXp());
-
-    attributes.forEach((attribute, modifier) -> {
-      final ItemMeta meta = stack.getItemMeta();
-      assert meta != null : "ItemMeta is null! Should not happen.";
-
-      final Attribute attr = Attribute.valueOf(attribute.replace(".", "_").toUpperCase(Locale.ROOT).trim());
-      final AttributeModifier mod = new AttributeModifier(attribute, modifier, AttributeModifier.Operation.ADD_NUMBER);
-      meta.addAttributeModifier(attr, mod);
-      stack.setItemMeta(meta);
-    });
-
-    return stack;
-  }
-
-  @Override
-  public int getLevel() {
-    final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
-
-    Integer value = pdc.get(LEVEL_KEY, PersistentDataType.INTEGER);
-
-    if (value == null) {
-      setLevel(0);
-
-      value = 0;
+    public PDCLevelToolsItem(@NotNull ItemStack stack) {
+        this.stack = stack;
+        this.enchantments = new HashMap<>();
+        this.attributes = new HashMap<>();
     }
 
-    return value;
-  }
+    @Override
+    public @NotNull ItemStack getItemStack() {
+        final ItemStack stack = LevelToolsUtil.buildItemStack(this.stack, enchantments, getLevel(), getXp(), getMaxXp());
 
-  @Override
-  public void setLevel(int level) {
-    final PersistentDataHolder holder = getItemPDC();
-    final PersistentDataContainer pdc = holder.getPersistentDataContainer();
+        attributes.forEach((attribute, modifier) -> {
+            final ItemMeta meta = stack.getItemMeta();
+            assert meta != null : "ItemMeta is null! Should not happen.";
 
-    pdc.set(LEVEL_KEY, PersistentDataType.INTEGER, Math.max(level, 0));
-    stack.setItemMeta((ItemMeta) holder);
-  }
+            final Attribute attr = Attribute.valueOf(attribute.replace(".", "_").toUpperCase(Locale.ROOT).trim());
+            final AttributeModifier mod = new AttributeModifier(attribute, modifier, AttributeModifier.Operation.ADD_NUMBER);
+            meta.addAttributeModifier(attr, mod);
+            stack.setItemMeta(meta);
+        });
 
-  @Override
-  public double getXp() {
-    final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
-
-    Double value = pdc.get(XP_KEY, PersistentDataType.DOUBLE);
-
-    if (value == null) {
-      setXp(0.0D);
-
-      value = 0.0D;
+        return stack;
     }
 
-    return value;
-  }
+    @Override
+    public int getLevel() {
+        final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
 
-  @Override
-  public void setXp(double xp) {
-    final PersistentDataHolder holder = getItemPDC();
-    final PersistentDataContainer pdc = holder.getPersistentDataContainer();
+        Integer value = pdc.get(LEVEL_KEY, PersistentDataType.INTEGER);
 
-    pdc.set(XP_KEY, PersistentDataType.DOUBLE, Math.max(xp, 0.0));
-    stack.setItemMeta((ItemMeta) holder);
-  }
+        if (value == null) {
+            setLevel(0);
 
-  @Override
-  public void enchant(Enchantment enchantment, int level) {
-    enchantments.put(enchantment, level);
-  }
+            value = 0;
+        }
 
-  @Override
-  public void modifyAttribute(String attribute, double modifier) {
-    attributes.put(attribute, modifier);
-  }
+        return value;
+    }
 
-  private PersistentDataHolder getItemPDC() {
-    return stack.getItemMeta();
-  }
+    @Override
+    public void setLevel(int level) {
+        final PersistentDataHolder holder = getItemPDC();
+        final PersistentDataContainer pdc = holder.getPersistentDataContainer();
 
-  @NotNull
-  public ItemStack getStack() {
-    return stack;
-  }
+        pdc.set(LEVEL_KEY, PersistentDataType.INTEGER, Math.max(level, 0));
+        stack.setItemMeta((ItemMeta) holder);
+    }
 
-  public void setStack(@NotNull ItemStack stack) {
-    this.stack = stack;
-  }
+    @Override
+    public double getXp() {
+        final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
 
-  @NotNull
-  public Map<Enchantment, Integer> getEnchantments() {
-    return enchantments;
-  }
+        Double value = pdc.get(XP_KEY, PersistentDataType.DOUBLE);
 
-  public void setEnchantments(@NotNull Map<Enchantment, Integer> enchantments) {
-    this.enchantments = enchantments;
-  }
+        if (value == null) {
+            setXp(0.0D);
 
-  public @NotNull Map<String, Double> getAttributes() {
-    return attributes;
-  }
+            value = 0.0D;
+        }
 
-  public void setAttributes(@NotNull Map<String, Double> attributes) {
-    this.attributes = attributes;
-  }
+        return value;
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    PDCLevelToolsItem that = (PDCLevelToolsItem) o;
-    return stack.equals(that.stack) && enchantments.equals(that.enchantments) && attributes.equals(that.attributes);
-  }
+    @Override
+    public void setXp(double xp) {
+        final PersistentDataHolder holder = getItemPDC();
+        final PersistentDataContainer pdc = holder.getPersistentDataContainer();
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(stack, enchantments, attributes);
-  }
+        pdc.set(XP_KEY, PersistentDataType.DOUBLE, Math.max(xp, 0.0));
+        stack.setItemMeta((ItemMeta) holder);
+    }
 
-  @Override
-  public String toString() {
-    return "PDCLevelToolsItem{" + "stack=" + stack + ", enchantments=" + enchantments + ", attributes=" + attributes + '}';
-  }
+    @Override
+    public void enchant(Enchantment enchantment, int level) {
+        enchantments.put(enchantment, level);
+    }
+
+    @Override
+    public void modifyAttribute(String attribute, double modifier) {
+        attributes.put(attribute, modifier);
+    }
+
+    private PersistentDataHolder getItemPDC() {
+        return stack.getItemMeta();
+    }
+
+    @NotNull
+    public ItemStack getStack() {
+        return stack;
+    }
+
+    public void setStack(@NotNull ItemStack stack) {
+        this.stack = stack;
+    }
+
+    @NotNull
+    public Map<Enchantment, Integer> getEnchantments() {
+        return enchantments;
+    }
+
+    public void setEnchantments(@NotNull Map<Enchantment, Integer> enchantments) {
+        this.enchantments = enchantments;
+    }
+
+    public @NotNull Map<String, Double> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(@NotNull Map<String, Double> attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PDCLevelToolsItem that = (PDCLevelToolsItem) o;
+        return stack.equals(that.stack) && enchantments.equals(that.enchantments) && attributes.equals(that.attributes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stack, enchantments, attributes);
+    }
+
+    @Override
+    public String toString() {
+        return "PDCLevelToolsItem{" + "stack=" + stack + ", enchantments=" + enchantments + ", attributes=" + attributes + '}';
+    }
 }

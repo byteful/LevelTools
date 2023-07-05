@@ -20,116 +20,116 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public final class LevelToolsPlugin extends JavaPlugin {
-  private static LevelToolsPlugin instance;
+    private static LevelToolsPlugin instance;
 
-  private BlockDataManager blockDataManager;
-  private BukkitCommandHandler commandManager;
-  private AnvilCombineMode anvilCombineMode;
-  private UpdateChecker updateChecker;
+    private BlockDataManager blockDataManager;
+    private BukkitCommandHandler commandManager;
+    private AnvilCombineMode anvilCombineMode;
+    private UpdateChecker updateChecker;
 
-  public static LevelToolsPlugin getInstance() {
-    return instance;
-  }
-
-  @Override
-  public void onEnable() {
-    instance = this;
-    updateChecker = new UpdateChecker(this);
-
-    if (!getDataFolder().exists()) {
-      getDataFolder().mkdirs();
+    public static LevelToolsPlugin getInstance() {
+        return instance;
     }
 
-    // Support older file names.
-    final Path blocksFile = getDataFolder().toPath().resolve("player_placed_blocks.db");
-    final Path oldFile = getDataFolder().toPath().resolve("blocks.db");
-    if (Files.exists(oldFile)) {
-      if (Files.exists(blocksFile)) {
-        getLogger().warning("Found old 'blocks.db' file, but ignored it because a newer 'player_placed_blocks.db' file exists!");
-      } else {
-        try {
-          Files.move(oldFile, blocksFile, StandardCopyOption.COPY_ATTRIBUTES);
-          getLogger().warning("Found old 'blocks.db' file... Renamed to newer 'player_placed_blocks.db' file.");
-        } catch (IOException e) {
-          e.printStackTrace();
+    @Override
+    public void onEnable() {
+        instance = this;
+        updateChecker = new UpdateChecker(this);
+
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdirs();
         }
-      }
+
+        // Support older file names.
+        final Path blocksFile = getDataFolder().toPath().resolve("player_placed_blocks.db");
+        final Path oldFile = getDataFolder().toPath().resolve("blocks.db");
+        if (Files.exists(oldFile)) {
+            if (Files.exists(blocksFile)) {
+                getLogger().warning("Found old 'blocks.db' file, but ignored it because a newer 'player_placed_blocks.db' file exists!");
+            } else {
+                try {
+                    Files.move(oldFile, blocksFile, StandardCopyOption.COPY_ATTRIBUTES);
+                    getLogger().warning("Found old 'blocks.db' file... Renamed to newer 'player_placed_blocks.db' file.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (!Files.exists(blocksFile)) {
+            try {
+                blocksFile.toFile().createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        blockDataManager = BlockDataManager.createSQLite(this, blocksFile, true, true);
+        blockDataManager.migrate();
+        getLogger().info("Loaded BlockDataManager...");
+
+        saveDefaultConfig();
+        getConfig().options().copyDefaults();
+        setAnvilCombineMode();
+        getLogger().info("Loaded configuration...");
+
+        if (getConfig().getBoolean("update.start")) {
+            updateChecker.check();
+        }
+
+        if (getConfig().getBoolean("update.periodically")) {
+            final long delay = 20L * TimeUnit.DAYS.toSeconds(1);
+            Task.syncRepeating(() -> updateChecker.check(), delay, delay);
+        }
+
+        registerListeners();
+        getLogger().info("Registered listeners...");
+
+        commandManager = BukkitCommandHandler.create(this);
+        commandManager.setHelpWriter((command, actor) -> String.format("&7- &b/%s %s&7: &e%s", command.getPath().toRealString(), command.getUsage(), command.getDescription()));
+        commandManager.register(new LevelToolsCommand());
+        commandManager.registerBrigadier();
+        getLogger().info("Registered commands...");
+
+        if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new LevelToolsPlaceholders().register();
+        }
+
+        getLogger().info("Successfully started " + getDescription().getFullName() + "!");
     }
 
-    if (!Files.exists(blocksFile)) {
-      try {
-        blocksFile.toFile().createNewFile();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    @Override
+    public void onDisable() {
+        if (blockDataManager != null) {
+            blockDataManager.saveAndClose();
+            blockDataManager = null;
+        }
+
+        instance = null;
+
+        getLogger().info("Successfully stopped " + getDescription().getFullName() + ".");
     }
 
-    blockDataManager = BlockDataManager.createSQLite(this, blocksFile, true, true);
-    blockDataManager.migrate();
-    getLogger().info("Loaded BlockDataManager...");
-
-    saveDefaultConfig();
-    getConfig().options().copyDefaults();
-    setAnvilCombineMode();
-    getLogger().info("Loaded configuration...");
-
-    if (getConfig().getBoolean("update.start")) {
-      updateChecker.check();
+    private void registerListeners() {
+        final PluginManager pm = Bukkit.getPluginManager();
+        pm.registerEvents(new BlockEventListener(), this);
+        pm.registerEvents(new EntityEventListener(), this);
+        pm.registerEvents(new AnvilListener(), this);
     }
 
-    if (getConfig().getBoolean("update.periodically")) {
-      final long delay = 20L * TimeUnit.DAYS.toSeconds(1);
-      Task.syncRepeating(() -> updateChecker.check(), delay, delay);
+    public void setAnvilCombineMode() {
+        anvilCombineMode = AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
     }
 
-    registerListeners();
-    getLogger().info("Registered listeners...");
-
-    commandManager = BukkitCommandHandler.create(this);
-    commandManager.setHelpWriter((command, actor) -> String.format("&7- &b/%s %s&7: &e%s", command.getPath().toRealString(), command.getUsage(), command.getDescription()));
-    commandManager.register(new LevelToolsCommand());
-    commandManager.registerBrigadier();
-    getLogger().info("Registered commands...");
-
-    if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-      new LevelToolsPlaceholders().register();
+    public BlockDataManager getBlockDataManager() {
+        return blockDataManager;
     }
 
-    getLogger().info("Successfully started " + getDescription().getFullName() + "!");
-  }
-
-  @Override
-  public void onDisable() {
-    if (blockDataManager != null) {
-      blockDataManager.saveAndClose();
-      blockDataManager = null;
+    public AnvilCombineMode getAnvilCombineMode() {
+        return anvilCombineMode;
     }
 
-    instance = null;
-
-    getLogger().info("Successfully stopped " + getDescription().getFullName() + ".");
-  }
-
-  private void registerListeners() {
-    final PluginManager pm = Bukkit.getPluginManager();
-    pm.registerEvents(new BlockEventListener(), this);
-    pm.registerEvents(new EntityEventListener(), this);
-    pm.registerEvents(new AnvilListener(), this);
-  }
-
-  public void setAnvilCombineMode() {
-    anvilCombineMode = AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
-  }
-
-  public BlockDataManager getBlockDataManager() {
-    return blockDataManager;
-  }
-
-  public AnvilCombineMode getAnvilCombineMode() {
-    return anvilCombineMode;
-  }
-
-  public BukkitCommandHandler getCommandManager() {
-    return commandManager;
-  }
+    public BukkitCommandHandler getCommandManager() {
+        return commandManager;
+    }
 }

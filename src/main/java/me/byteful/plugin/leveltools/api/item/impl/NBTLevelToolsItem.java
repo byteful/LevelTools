@@ -14,141 +14,141 @@ import java.util.Map;
 import java.util.Objects;
 
 public class NBTLevelToolsItem implements LevelToolsItem {
-  @NotNull
-  public static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
+    @NotNull
+    public static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
 
-  @NotNull
-  private NBTItem nbt;
-  @NotNull
-  private Map<Enchantment, Integer> enchantments;
-  @NotNull
-  private Map<String, Double> attributes;
+    @NotNull
+    private NBTItem nbt;
+    @NotNull
+    private Map<Enchantment, Integer> enchantments;
+    @NotNull
+    private Map<String, Double> attributes;
 
-  public NBTLevelToolsItem(@NotNull ItemStack stack) {
-    this.nbt = new NBTItem(stack);
-    this.enchantments = new HashMap<>();
-    this.attributes = new HashMap<>();
-  }
-
-  @NotNull
-  @Override
-  public ItemStack getItemStack() {
-    final ItemStack stack = LevelToolsUtil.buildItemStack(nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
-
-    nbt = new NBTItem(stack);
-    final NBTCompoundList attr = nbt.getCompoundList("AttributeModifiers");
-    attributes.forEach((attribute, modifier) -> {
-      final NBTListCompound list = attr.addCompound();
-      list.setDouble("Amount", modifier);
-      list.setString("AttributeName", attribute);
-      list.setString("Name", attribute);
-      list.setInteger("Operation", 0);
-      list.setInteger("UUIDLeast", 59664);
-      list.setInteger("UUIDMost", 31453);
-    });
-
-    return nbt.getItem();
-  }
-
-  @Override
-  public int getLevel() {
-    if (!nbt.hasKey(LEVEL_KEY)) {
-      setLevel(0);
+    public NBTLevelToolsItem(@NotNull ItemStack stack) {
+        this.nbt = new NBTItem(stack);
+        this.enchantments = new HashMap<>();
+        this.attributes = new HashMap<>();
     }
 
-    return nbt.getInteger(LEVEL_KEY);
-  }
+    @NotNull
+    @Override
+    public ItemStack getItemStack() {
+        final ItemStack stack = LevelToolsUtil.buildItemStack(nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
 
-  @Override
-  public void setLevel(int level) {
-    if (level < 0) {
-      setLevel0(0);
+        nbt = new NBTItem(stack);
+        final NBTCompoundList attr = nbt.getCompoundList("AttributeModifiers");
+        attributes.forEach((attribute, modifier) -> {
+            final NBTListCompound list = attr.addCompound();
+            list.setDouble("Amount", modifier);
+            list.setString("AttributeName", attribute);
+            list.setString("Name", attribute);
+            list.setInteger("Operation", 0);
+            list.setInteger("UUIDLeast", 59664);
+            list.setInteger("UUIDMost", 31453);
+        });
 
-      return;
+        return nbt.getItem();
     }
 
-    setLevel0(level);
-  }
+    @Override
+    public int getLevel() {
+        if (!nbt.hasKey(LEVEL_KEY)) {
+            setLevel(0);
+        }
 
-  @Override
-  public double getXp() {
-    if (!nbt.hasKey(XP_KEY)) {
-      setXp(0.0D);
+        return nbt.getInteger(LEVEL_KEY);
     }
 
-    return nbt.getDouble(XP_KEY);
-  }
+    @Override
+    public void setLevel(int level) {
+        if (level < 0) {
+            setLevel0(0);
 
-  @Override
-  public void setXp(double xp) {
-    if (xp < 0.0D) {
-      setXp0(0.0D);
+            return;
+        }
 
-      return;
+        setLevel0(level);
     }
 
-    setXp0(xp);
-  }
+    @Override
+    public double getXp() {
+        if (!nbt.hasKey(XP_KEY)) {
+            setXp(0.0D);
+        }
 
-  private void setLevel0(int level) {
-    nbt.setInteger(LEVEL_KEY, level);
-  }
+        return nbt.getDouble(XP_KEY);
+    }
 
-  private void setXp0(double xp) {
-    nbt.setDouble(XP_KEY, xp);
-  }
+    @Override
+    public void setXp(double xp) {
+        if (xp < 0.0D) {
+            setXp0(0.0D);
 
-  @Override
-  public void enchant(Enchantment enchantment, int level) {
-    enchantments.put(enchantment, level);
-  }
+            return;
+        }
 
-  @Override
-  public void modifyAttribute(String attribute, double modifier) {
-    attributes.put(attribute, modifier);
-  }
+        setXp0(xp);
+    }
 
-  @NotNull
-  public NBTItem getNBT() {
-    return nbt;
-  }
+    private void setLevel0(int level) {
+        nbt.setInteger(LEVEL_KEY, level);
+    }
 
-  public void setNBT(@NotNull NBTItem nbt) {
-    this.nbt = nbt;
-  }
+    private void setXp0(double xp) {
+        nbt.setDouble(XP_KEY, xp);
+    }
 
-  @NotNull
-  public Map<Enchantment, Integer> getEnchantments() {
-    return enchantments;
-  }
+    @Override
+    public void enchant(Enchantment enchantment, int level) {
+        enchantments.put(enchantment, level);
+    }
 
-  public void setEnchantments(@NotNull Map<Enchantment, Integer> enchantments) {
-    this.enchantments = enchantments;
-  }
+    @Override
+    public void modifyAttribute(String attribute, double modifier) {
+        attributes.put(attribute, modifier);
+    }
 
-  public @NotNull Map<String, Double> getAttributes() {
-    return attributes;
-  }
+    @NotNull
+    public NBTItem getNBT() {
+        return nbt;
+    }
 
-  public void setAttributes(@NotNull Map<String, Double> attributes) {
-    this.attributes = attributes;
-  }
+    public void setNBT(@NotNull NBTItem nbt) {
+        this.nbt = nbt;
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    NBTLevelToolsItem that = (NBTLevelToolsItem) o;
-    return nbt.equals(that.nbt) && enchantments.equals(that.enchantments) && attributes.equals(that.attributes);
-  }
+    @NotNull
+    public Map<Enchantment, Integer> getEnchantments() {
+        return enchantments;
+    }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(nbt, enchantments, attributes);
-  }
+    public void setEnchantments(@NotNull Map<Enchantment, Integer> enchantments) {
+        this.enchantments = enchantments;
+    }
 
-  @Override
-  public String toString() {
-    return "NBTLevelToolsItem{" + "nbt=" + nbt + ", enchantments=" + enchantments + ", attributes=" + attributes + '}';
-  }
+    public @NotNull Map<String, Double> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(@NotNull Map<String, Double> attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NBTLevelToolsItem that = (NBTLevelToolsItem) o;
+        return nbt.equals(that.nbt) && enchantments.equals(that.enchantments) && attributes.equals(that.attributes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nbt, enchantments, attributes);
+    }
+
+    @Override
+    public String toString() {
+        return "NBTLevelToolsItem{" + "nbt=" + nbt + ", enchantments=" + enchantments + ", attributes=" + attributes + '}';
+    }
 }
