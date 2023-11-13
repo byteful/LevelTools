@@ -21,7 +21,7 @@ import java.util.Objects;
 
 public class PDCLevelToolsItem implements LevelToolsItem {
     @NotNull
-    public static final NamespacedKey LEVEL_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsLevel"), XP_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsXp");
+    public static final NamespacedKey LEVEL_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsLevel"), XP_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsXp"), LAST_REWARD_KEY = new NamespacedKey(LevelToolsPlugin.getInstance(), "levelToolsReward");
 
     @NotNull
     private ItemStack stack;
@@ -98,6 +98,28 @@ public class PDCLevelToolsItem implements LevelToolsItem {
         final PersistentDataContainer pdc = holder.getPersistentDataContainer();
 
         pdc.set(XP_KEY, PersistentDataType.DOUBLE, Math.max(xp, 0.0));
+        stack.setItemMeta((ItemMeta) holder);
+    }
+
+    @Override
+    public int getLastHandledReward() {
+        final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
+
+        Integer value = pdc.get(LAST_REWARD_KEY, PersistentDataType.INTEGER);
+        if (value == null) {
+            setLastHandledReward(-1);
+            value = -1;
+        }
+
+        return value;
+    }
+
+    @Override
+    public void setLastHandledReward(int rewardKey) {
+        final PersistentDataHolder holder = getItemPDC();
+        final PersistentDataContainer pdc = holder.getPersistentDataContainer();
+
+        pdc.set(LAST_REWARD_KEY, PersistentDataType.INTEGER, rewardKey);
         stack.setItemMeta((ItemMeta) holder);
     }
 

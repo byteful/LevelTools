@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class NBTLevelToolsItem implements LevelToolsItem {
     @NotNull
-    public static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp";
+    public static final String LEVEL_KEY = "levelToolsLevel", XP_KEY = "levelToolsXp", LAST_REWARD_KEY = "levelToolsReward";
 
     @NotNull
     private NBTItem nbt;
@@ -72,7 +72,7 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
     @Override
     public double getXp() {
-        if (!nbt.hasKey(XP_KEY)) {
+        if (!nbt.hasTag(XP_KEY)) {
             setXp(0.0D);
         }
 
@@ -88,6 +88,20 @@ public class NBTLevelToolsItem implements LevelToolsItem {
         }
 
         setXp0(xp);
+    }
+
+    @Override
+    public int getLastHandledReward() {
+        if (!nbt.hasTag(LAST_REWARD_KEY)) {
+            setLastHandledReward(-1);
+        }
+
+        return nbt.getInteger(LAST_REWARD_KEY);
+    }
+
+    @Override
+    public void setLastHandledReward(int rewardKey) {
+        nbt.setInteger(LAST_REWARD_KEY, rewardKey);
     }
 
     private void setLevel0(int level) {

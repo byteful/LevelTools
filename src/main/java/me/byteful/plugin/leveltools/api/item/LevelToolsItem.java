@@ -17,6 +17,10 @@ public interface LevelToolsItem {
 
     void setXp(double xp);
 
+    int getLastHandledReward();
+
+    void setLastHandledReward(int rewardKey);
+
     default double getMaxXp() {
         final double xpStart = LevelToolsPlugin.getInstance().getConfig().getDouble("level_xp_start");
         double increaseAmount = LevelToolsPlugin.getInstance().getConfig().getDouble("level_xp_increase.amount");

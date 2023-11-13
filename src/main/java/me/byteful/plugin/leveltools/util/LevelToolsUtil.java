@@ -234,9 +234,14 @@ public final class LevelToolsUtil {
         final ConfigurationSection rewardCs = getCsFromType(tool.getItemStack().getType());
 
         for (String key : rewardCs.getKeys(false)) {
-            if (!NumberUtils.isNumber(key) || tool.getLevel() != Integer.parseInt(key)) {
+            if (!NumberUtils.isNumber(key)) {
                 continue;
             }
+
+            final int keyNum = Integer.parseInt(key);
+            if (keyNum < 0) continue;
+            if (keyNum != tool.getLevel()) continue;
+            if (tool.getLastHandledReward() == keyNum) return;
 
             for (String rewardStr : rewardCs.getStringList(key)) {
                 final String[] split = rewardStr.split(" ");
