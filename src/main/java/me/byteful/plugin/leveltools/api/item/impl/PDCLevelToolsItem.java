@@ -40,15 +40,14 @@ public class PDCLevelToolsItem implements LevelToolsItem {
     public @NotNull ItemStack getItemStack() {
         final ItemStack stack = LevelToolsUtil.buildItemStack(this.stack, enchantments, getLevel(), getXp(), getMaxXp());
 
+        final ItemMeta meta = stack.getItemMeta();
+        assert meta != null : "ItemMeta is null! Should not happen.";
         attributes.forEach((attribute, modifier) -> {
-            final ItemMeta meta = stack.getItemMeta();
-            assert meta != null : "ItemMeta is null! Should not happen.";
-
             final Attribute attr = Attribute.valueOf(attribute.replace(".", "_").toUpperCase(Locale.ROOT).trim());
             final AttributeModifier mod = new AttributeModifier(attribute, modifier, AttributeModifier.Operation.ADD_NUMBER);
             meta.addAttributeModifier(attr, mod);
-            stack.setItemMeta(meta);
         });
+        stack.setItemMeta(meta);
 
         return stack;
     }

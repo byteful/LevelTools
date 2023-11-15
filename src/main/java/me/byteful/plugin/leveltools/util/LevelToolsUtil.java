@@ -257,6 +257,7 @@ public final class LevelToolsUtil {
                     }
                 });
             }
+            tool.setLastHandledReward(keyNum);
 
             return;
         }
