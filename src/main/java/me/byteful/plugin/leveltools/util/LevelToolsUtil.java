@@ -243,6 +243,8 @@ public final class LevelToolsUtil {
             if (keyNum != tool.getLevel()) continue;
             if (tool.getLastHandledReward() == keyNum) return;
 
+            tool.setLastHandledReward(keyNum);
+            setHand(player, tool.getItemStack());
             for (String rewardStr : rewardCs.getStringList(key)) {
                 final String[] split = rewardStr.split(" ");
 
@@ -257,7 +259,6 @@ public final class LevelToolsUtil {
                     }
                 });
             }
-            tool.setLastHandledReward(keyNum);
 
             return;
         }
