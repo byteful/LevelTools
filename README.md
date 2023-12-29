@@ -12,7 +12,7 @@
 
 ## Features
 
-- Supports versions 1.8 - 1.19.
+- Supports versions 1.8 - 1.20.
 - No dependencies.
 - Super efficient, no lag.
 - Simple developer API.
@@ -28,13 +28,13 @@
 ```groovy
 repositories {
     maven {
-        name = 'jitpack'
-        url = 'https://jitpack.io'
+        name = 'byteful'
+        url = 'https://mvn.byteful.me/repository/maven-releases/'
     }
 }
 
 dependencies {
-    implementation 'com.github.byteful:LevelTools:Tag' // Replace Tag with the version. (Ex: v1.2.7)
+    implementation 'me.byteful.plugin:LevelTools:Tag' // Replace Tag with the version. (Ex: v1.3.6)
 }
 ```
 
@@ -44,16 +44,16 @@ dependencies {
 
 <repositories>
     <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
+        <id>byteful</id>
+        <url>https://mvn.byteful.me/repository/maven-releases/</url>
     </repository>
 </repositories>
 
 <dependency>
-    <groupId>com.github.byteful</groupId>
+<groupId>me.byteful.plugin</groupId>
     <artifactId>LevelTools</artifactId>
-    <version>Tag</version> <!-- Replace Tag with the version. (Ex: v1.2.7) -->
-</dependency>
+<version>Tag</version> <!-- Replace Tag with the version. (Ex: v1.3.6) -->
+</dependency> 
 ```
 
 ### Example Usage:
