@@ -10,7 +10,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import redempt.crunch.CompiledExpression;
 import redempt.crunch.Crunch;
-import redempt.crunch.functional.EvaluationEnvironment;
+import redempt.redlib.RedLib;
 import redempt.redlib.blockdata.BlockDataManager;
 import redempt.redlib.misc.Task;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
@@ -20,6 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import static me.byteful.plugin.leveltools.util.Text.colorize;
 
 public final class LevelToolsPlugin extends JavaPlugin {
     private static LevelToolsPlugin instance;
@@ -36,6 +38,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        sendStartupBanner();
         instance = this;
         updateChecker = new UpdateChecker(this);
 
@@ -100,6 +103,14 @@ public final class LevelToolsPlugin extends JavaPlugin {
         getLogger().info("Successfully stopped " + getDescription().getFullName() + ".");
     }
 
+    private void sendStartupBanner() {
+        Bukkit.getConsoleSender().sendMessage(colorize("&b         _____"));
+        Bukkit.getConsoleSender().sendMessage(colorize("&d|          &b|      &8Created by &2byteful"));
+        Bukkit.getConsoleSender().sendMessage(colorize(String.format("&d|          &b|      &8Running &6%s &7on &eMC %s", getDescription().getFullName(), RedLib.getServerVersion())));
+        Bukkit.getConsoleSender().sendMessage(colorize("&d|_____     &b|      &8Join &9&nhttps://discord.gg/G8BDgqsuyw &8for support!"));
+        Bukkit.getConsoleSender().sendMessage("");
+    }
+
     private void registerListeners() {
         final PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new BlockEventListener(), this);
@@ -112,9 +123,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
     }
 
     public void setLevelXpFormula() {
-        final EvaluationEnvironment env = new EvaluationEnvironment();
-        env.setVariableNames("{current_level}");
-        levelXpFormula = Crunch.compileExpression(getConfig().getString("level_xp_formula"), env);
+        levelXpFormula = Crunch.compileExpression(getConfig().getString("level_xp_formula").replace("{current_level}", "$1"));
     }
 
     public BlockDataManager getBlockDataManager() {
