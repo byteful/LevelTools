@@ -106,8 +106,8 @@ public final class LevelToolsPlugin extends JavaPlugin {
     private void sendStartupBanner() {
         Bukkit.getConsoleSender().sendMessage(colorize("&b         _____"));
         Bukkit.getConsoleSender().sendMessage(colorize("&d|          &b|      &8Created by &2byteful"));
-        Bukkit.getConsoleSender().sendMessage(colorize(String.format("&d|          &b|      &8Running &6%s &7on &eMC %s", getDescription().getFullName(), RedLib.getServerVersion())));
-        Bukkit.getConsoleSender().sendMessage(colorize("&d|_____     &b|      &8Join &9&nhttps://discord.gg/G8BDgqsuyw &8for support!"));
+        Bukkit.getConsoleSender().sendMessage(colorize(String.format("&d|          &b|      &8Running &6%s &8on &6MC %s", getDescription().getFullName(), RedLib.getServerVersion())));
+        Bukkit.getConsoleSender().sendMessage(colorize("&d|_____     &b|      &8Join &9&nhttps://discord.gg/G8BDgqsuyw&8 for support!"));
         Bukkit.getConsoleSender().sendMessage("");
     }
 
