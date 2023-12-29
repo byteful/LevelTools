@@ -8,6 +8,7 @@ import me.byteful.plugin.leveltools.api.event.LevelToolsXPIncreaseEvent;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import me.byteful.plugin.leveltools.util.Text;
+import me.byteful.plugin.leveltools.util.XPBooster;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -28,6 +29,7 @@ public abstract class XPListener implements Listener {
             return;
         }
 
+        modifier = Math.max(0, XPBooster.apply(player, modifier)); // It's best if we just prevent negative XP addition :)
         double newXp = LevelToolsUtil.round(tool.getXp() + modifier, 1);
 
         final LevelToolsXPIncreaseEvent xpEvent = new LevelToolsXPIncreaseEvent(tool, player, newXp, false);

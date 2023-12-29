@@ -33,15 +33,9 @@ messages:
 # Modes: "HIGHER_OF_BOTH" (Takes level and xp of higher level item), "LOWER_OF_BOTH" (Takes level and xp of lower level item), OR "ADD_BOTH" (Adds the level and XP of both items)
 anvil_combine: "ADD_BOTH"
 
-# The amount of XP needed to get from level 0 to level 1.
-level_xp_start: 100.0
-
-# The increase in amount of XP needed to get from level to level.
-# Ex: If we are on level 1 and the level_xp_start is on 100.0 and the mode is ADD with 100.0, it would take 200.0 XP to get to level 2 from level 1.
-# Ex 2: If we are on level 1 and the level_xp_start is on 100.0 and the mode is MULTIPLY with 2.0, it would take 200.0 XP to get to level 2 from level 1.
-level_xp_increase:
-  mode: "ADD" # Modes: "ADD" or "MULTIPLY"
-  amount: 100.0
+# The mathematical formula to calculate the required XP for next level.
+# Placeholders/Variables provided: {current_level}
+level_xp_formula: "100 + {current_level} * 100"
 
 # Should blocks that are placed by a player count towards XP?
 # May cause lag on a large server. Recommended to keep this true.

@@ -5,6 +5,7 @@ import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import redempt.crunch.CompiledExpression;
 
 public interface LevelToolsItem {
     @NotNull ItemStack getItemStack();
@@ -22,41 +23,14 @@ public interface LevelToolsItem {
     void setLastHandledReward(int rewardKey);
 
     default double getMaxXp() {
-        final double xpStart = LevelToolsPlugin.getInstance().getConfig().getDouble("level_xp_start");
-        double increaseAmount = LevelToolsPlugin.getInstance().getConfig().getDouble("level_xp_increase.amount");
-        final String mode = LevelToolsPlugin.getInstance().getConfig().getString("level_xp_increase.mode");
+        final CompiledExpression formula = LevelToolsPlugin.getInstance().getLevelXpFormula();
+        final double nextXpRequirement = LevelToolsUtil.round(formula.evaluate(getLevel()), 1);
 
-        if (xpStart < 1.0) {
-            throw new RuntimeException("Failed to find valid value for 'level_xp_start'. Please make sure it is equal to or over 1.0. Check your configuration!");
+        if (nextXpRequirement <= 0.0) {
+            throw new RuntimeException("The next XP requirement formula returned a value too small! Please optimize your formula.");
         }
 
-        if (increaseAmount < 1.0) {
-            throw new RuntimeException("Failed to find valid value for 'level_xp_increase -> amount'. Please make sure it is equal to or over 1.0. Check your configuration!");
-        }
-
-        if (mode == null) {
-            throw new RuntimeException("Failed to find valid value for 'level_xp_increase -> mode'. Please check your configuration!");
-        }
-
-        double nextXp = xpStart;
-
-        if (getLevel() > 0) {
-            if (mode.equalsIgnoreCase("ADD")) {
-                nextXp = xpStart + (getLevel() * increaseAmount);
-            } else if (mode.equalsIgnoreCase("MULTIPLY")) {
-                nextXp = xpStart * (Math.pow(increaseAmount, getLevel() * 1.0));
-            } else {
-                throw new RuntimeException("Mode for 'level_xp_increase' is not 'ADD' or 'MULTIPLY'. Please check your configuration!");
-            }
-        }
-
-        final double rounded = LevelToolsUtil.round(nextXp, 1);
-
-        if (rounded <= 0.0) {
-            throw new RuntimeException("Failed to round " + nextXp + " to the first place. Please modify your values to get a better result! Check your configuration!");
-        }
-
-        return rounded;
+        return nextXpRequirement;
     }
 
     void enchant(Enchantment enchantment, int level);
