@@ -1,5 +1,12 @@
 package me.byteful.plugin.leveltools;
 
+import static me.byteful.plugin.leveltools.util.Text.colorize;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import me.byteful.plugin.leveltools.api.AnvilCombineMode;
 import me.byteful.plugin.leveltools.listeners.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockEventListener;
@@ -14,14 +21,6 @@ import redempt.redlib.RedLib;
 import redempt.redlib.blockdata.BlockDataManager;
 import redempt.redlib.misc.Task;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
-import static me.byteful.plugin.leveltools.util.Text.colorize;
 
 public final class LevelToolsPlugin extends JavaPlugin {
     private static LevelToolsPlugin instance;
@@ -104,10 +103,10 @@ public final class LevelToolsPlugin extends JavaPlugin {
     }
 
     private void sendStartupBanner() {
-        Bukkit.getConsoleSender().sendMessage(colorize("&b         _____"));
-        Bukkit.getConsoleSender().sendMessage(colorize("&d|          &b|      &8Created by &2byteful"));
-        Bukkit.getConsoleSender().sendMessage(colorize(String.format("&d|          &b|      &8Running &6%s &8on &6MC %s", getDescription().getFullName(), RedLib.getServerVersion())));
-        Bukkit.getConsoleSender().sendMessage(colorize("&d|_____     &b|      &8Join &9&nhttps://discord.gg/G8BDgqsuyw&8 for support!"));
+        Bukkit.getConsoleSender().sendMessage(colorize(" &b         _____"));
+        Bukkit.getConsoleSender().sendMessage(colorize(" &d|          &b|     &8Created by &2byteful"));
+        Bukkit.getConsoleSender().sendMessage(colorize(String.format(" &d|          &b|     &8Running &6%s &8on &6MC %s", getDescription().getFullName(), RedLib.getServerVersion())));
+        Bukkit.getConsoleSender().sendMessage(colorize(" &d|_____     &b|     &8Join &9&nhttps://discord.gg/G8BDgqsuyw&8 for support!"));
         Bukkit.getConsoleSender().sendMessage("");
     }
 
