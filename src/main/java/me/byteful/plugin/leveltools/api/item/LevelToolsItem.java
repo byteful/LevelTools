@@ -8,32 +8,34 @@ import org.jetbrains.annotations.NotNull;
 import redempt.crunch.CompiledExpression;
 
 public interface LevelToolsItem {
-    @NotNull ItemStack getItemStack();
+  @NotNull
+  ItemStack getItemStack();
 
-    int getLevel();
+  int getLevel();
 
-    void setLevel(int level);
+  void setLevel(int level);
 
-    double getXp();
+  double getXp();
 
-    void setXp(double xp);
+  void setXp(double xp);
 
-    int getLastHandledReward();
+  int getLastHandledReward();
 
-    void setLastHandledReward(int rewardKey);
+  void setLastHandledReward(int rewardKey);
 
-    default double getMaxXp() {
-        final CompiledExpression formula = LevelToolsPlugin.getInstance().getLevelXpFormula();
-        final double nextXpRequirement = LevelToolsUtil.round(formula.evaluate(getLevel()), 1);
+  default double getMaxXp() {
+    final CompiledExpression formula = LevelToolsPlugin.getInstance().getLevelXpFormula();
+    final double nextXpRequirement = LevelToolsUtil.round(formula.evaluate(getLevel()), 1);
 
-        if (nextXpRequirement <= 0.0) {
-            throw new RuntimeException("The next XP requirement formula returned a value too small! Please optimize your formula.");
-        }
-
-        return nextXpRequirement;
+    if (nextXpRequirement <= 0.0) {
+      throw new RuntimeException(
+          "The next XP requirement formula returned a value too small! Please optimize your formula.");
     }
 
-    void enchant(Enchantment enchantment, int level);
+    return nextXpRequirement;
+  }
 
-    void modifyAttribute(String attribute, double modifier);
+  void enchant(Enchantment enchantment, int level);
+
+  void modifyAttribute(String attribute, double modifier);
 }

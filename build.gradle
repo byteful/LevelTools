@@ -27,21 +27,19 @@ repositories {
         url = uri('https://redempt.dev')
     }
     maven {
-        url = uri('https://repo.aikar.co/content/groups/aikar/')
-    }
-    maven {
         url = uri('https://repo.extendedclip.com/content/repositories/placeholderapi/')
     }
 }
 
 dependencies {
-    implementation 'de.tr7zw:item-nbt-api:2.12.2'
-    implementation 'com.github.Redempt:RedLib:6.5.9'
+    implementation 'de.tr7zw:item-nbt-api:2.12.3'
+    implementation 'com.github.Redempt:RedLib:6.6.1'
     implementation 'com.github.Redempt:Crunch:2.0.3'
     implementation 'com.github.cryptomorin:XSeries:9.9.0'
-    implementation 'com.github.Revxrsal.Lamp:common:3.1.9'
-    implementation 'com.github.Revxrsal.Lamp:bukkit:3.1.9'
+    implementation 'com.github.Revxrsal.Lamp:common:3.2.0'
+    implementation 'com.github.Revxrsal.Lamp:bukkit:3.2.0'
     implementation 'com.github.Sven65:Item-Names:1.0.2'
+    implementation 'org.bstats:bstats-bukkit:3.0.2'
 
     compileOnly 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:24.1.0'
@@ -49,7 +47,7 @@ dependencies {
 }
 
 group = 'me.byteful.plugin'
-version = '1.3.6.1'
+version = '1.3.7'
 description = 'LevelTools'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -69,8 +67,8 @@ shadowJar {
     relocate "de.tr7zw.changeme.nbtapi", "me.byteful.plugin.leveltools.libs.nbtapi"
     relocate "com.cryptomorin.xseries", "me.byteful.plugin.leveltools.libs.xseries"
     relocate "redempt.redlib", "me.byteful.plugin.leveltools.libs.redlib"
-    relocate 'co.aikar.commands', 'me.byteful.plugin.leveltools.libs.aikar.acf'
-    relocate 'co.aikar.locales', 'me.byteful.plugin.leveltools.libs.aikar.locales'
+    relocate 'revxrsal.commands', 'me.byteful.plugin.leveltools.libs.lamp'
+    relocate 'org.bstats', 'me.byteful.plugin.leveltools.libs.bstats'
 }
 
 def targetJavaVersion = 8

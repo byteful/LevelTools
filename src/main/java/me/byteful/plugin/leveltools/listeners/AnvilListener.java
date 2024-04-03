@@ -13,40 +13,51 @@ import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 
 public class AnvilListener implements Listener {
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onAnvilCombine(PrepareAnvilEvent e) {
-        final AnvilInventory inv = e.getInventory();
-        final ItemStack firstItem = inv.getItem(0);
-        final ItemStack secondItem = inv.getItem(1);
-        final ItemStack result = e.getResult();
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+  public void onAnvilCombine(PrepareAnvilEvent e) {
+    final AnvilInventory inv = e.getInventory();
+    final ItemStack firstItem = inv.getItem(0);
+    final ItemStack secondItem = inv.getItem(1);
+    final ItemStack result = e.getResult();
 
-        if (result == null || !LevelToolsUtil.isSupportedTool(result.getType()) || firstItem == null || secondItem == null || !LevelToolsUtil.isSupportedTool(firstItem.getType()) || !LevelToolsUtil.isSupportedTool(secondItem.getType())) {
-            return;
-        }
-
-        final AnvilCombineMode mode = LevelToolsPlugin.getInstance().getAnvilCombineMode();
-        final LevelAndXPModel first = LevelAndXPModel.fromItem(LevelToolsUtil.createLevelToolsItem(firstItem));
-        final LevelAndXPModel second = LevelAndXPModel.fromItem(LevelToolsUtil.createLevelToolsItem(secondItem));
-        final LevelAndXPModel finished = mode.getHandler().apply(first, second);
-        final LevelToolsItem finalItem = LevelToolsUtil.createLevelToolsItem(result);
-        finalItem.setLevel(finished.getLevel());
-        finalItem.setXp(finished.getXp());
-
-        e.setResult(finalItem.getItemStack());
+    if (result == null
+        || !LevelToolsUtil.isSupportedTool(result.getType())
+        || firstItem == null
+        || secondItem == null
+        || !LevelToolsUtil.isSupportedTool(firstItem.getType())
+        || !LevelToolsUtil.isSupportedTool(secondItem.getType())) {
+      return;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onAnvilRepair(PrepareAnvilEvent e) {
-        final AnvilInventory inv = e.getInventory();
-        final ItemStack firstItem = inv.getItem(0);
-        final ItemStack secondItem = inv.getItem(1);
-        final ItemStack result = e.getResult();
+    final AnvilCombineMode mode = LevelToolsPlugin.getInstance().getAnvilCombineMode();
+    final LevelAndXPModel first =
+        LevelAndXPModel.fromItem(LevelToolsUtil.createLevelToolsItem(firstItem));
+    final LevelAndXPModel second =
+        LevelAndXPModel.fromItem(LevelToolsUtil.createLevelToolsItem(secondItem));
+    final LevelAndXPModel finished = mode.getHandler().apply(first, second);
+    final LevelToolsItem finalItem = LevelToolsUtil.createLevelToolsItem(result);
+    finalItem.setLevel(finished.getLevel());
+    finalItem.setXp(finished.getXp());
 
-        if (result == null || !LevelToolsUtil.isSupportedTool(result.getType()) || firstItem == null || secondItem == null || !LevelToolsUtil.isSupportedTool(firstItem.getType())) {
-            return;
-        }
+    e.setResult(finalItem.getItemStack());
+  }
 
-        final LevelToolsItem finalItem = LevelToolsUtil.createLevelToolsItem(result);
-        e.setResult(finalItem.getItemStack()); // This has to be done to patch lore issues.
+  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+  public void onAnvilRepair(PrepareAnvilEvent e) {
+    final AnvilInventory inv = e.getInventory();
+    final ItemStack firstItem = inv.getItem(0);
+    final ItemStack secondItem = inv.getItem(1);
+    final ItemStack result = e.getResult();
+
+    if (result == null
+        || !LevelToolsUtil.isSupportedTool(result.getType())
+        || firstItem == null
+        || secondItem == null
+        || !LevelToolsUtil.isSupportedTool(firstItem.getType())) {
+      return;
     }
+
+    final LevelToolsItem finalItem = LevelToolsUtil.createLevelToolsItem(result);
+    e.setResult(finalItem.getItemStack()); // This has to be done to patch lore issues.
+  }
 }

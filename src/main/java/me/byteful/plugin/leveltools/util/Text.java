@@ -8,13 +8,13 @@ import org.jetbrains.annotations.NotNull;
  * helper, I removed the lib to minimize the size of LevelTools' jar.
  */
 public final class Text {
-    @NotNull
-    public static String colorize(@NotNull String string) {
-        return ChatColor.translateAlternateColorCodes('&', string);
-    }
+  @NotNull
+  public static String colorize(@NotNull String string) {
+    return ChatColor.translateAlternateColorCodes('&', string);
+  }
 
-    @NotNull
-    public static String decolorize(@NotNull String string) {
-        return colorize(string).replace("" + ChatColor.COLOR_CHAR, "&");
-    }
+  @NotNull
+  public static String decolorize(@NotNull String string) {
+    return colorize(string).replace("" + ChatColor.COLOR_CHAR, "&");
+  }
 }
