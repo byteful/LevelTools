@@ -3,7 +3,6 @@ package me.byteful.plugin.leveltools.listeners;
 import static redempt.redlib.misc.FormatUtils.formatMoney;
 
 import com.cryptomorin.xseries.XSound;
-import com.cryptomorin.xseries.messages.ActionBar;
 import java.util.List;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.api.event.LevelToolsLevelIncreaseEvent;
@@ -60,7 +59,7 @@ public abstract class XPListener implements Listener {
                   .replace("{level}", String.valueOf(tool.getLevel()))
                   .replace("{max_xp_formatted}", formatMoney(tool.getMaxXp()))
                   .replace("{xp_formatted}", formatMoney(tool.getXp())));
-      ActionBar.sendActionBar(player, text);
+      LevelToolsUtil.sendActionBar(player, text);
     }
 
     if (tool.getXp() >= tool.getMaxXp()) {

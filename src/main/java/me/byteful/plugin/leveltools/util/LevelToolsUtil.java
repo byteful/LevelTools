@@ -5,6 +5,7 @@ import static me.byteful.plugin.leveltools.util.Text.decolorize;
 import static redempt.redlib.misc.FormatUtils.formatMoney;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.messages.ActionBar;
 import com.google.common.base.Strings;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import java.math.BigDecimal;
@@ -20,6 +21,8 @@ import me.byteful.plugin.leveltools.api.RewardType;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.NBTLevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.PDCLevelToolsItem;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -340,6 +343,14 @@ public final class LevelToolsUtil {
       return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("bow_rewards");
     } else {
       return LevelToolsPlugin.getInstance().getConfig().getConfigurationSection("tool_rewards");
+    }
+  }
+
+  public static void sendActionBar(Player player, String msg) {
+    if (RedLib.MID_VERSION > 12) {
+      player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
+    } else {
+      ActionBar.sendActionBar(player, msg);
     }
   }
 }
