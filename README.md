@@ -63,17 +63,9 @@ dependencies {
 
 ItemStack hand = player.getInventory().getItemInMainHand();
 LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(hand);
-tool.
-
-setLevel(69);
-tool.
-
-setXp(420);
-player.
-
-getInventory().
-
-setItemInMainHand(tool.getItemStack());
+tool.setLevel(69);
+tool.setXp(420);
+player.getInventory().setItemInMainHand(tool.getItemStack());
 
 // Events
 
