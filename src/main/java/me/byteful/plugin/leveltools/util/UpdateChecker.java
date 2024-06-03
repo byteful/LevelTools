@@ -5,14 +5,16 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Scanner;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
+import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import org.jetbrains.annotations.NotNull;
-import redempt.redlib.misc.Task;
 
 public class UpdateChecker {
   @NotNull private final LevelToolsPlugin plugin;
+  private final Scheduler scheduler;
 
-  public UpdateChecker(@NotNull LevelToolsPlugin plugin) {
+  public UpdateChecker(@NotNull LevelToolsPlugin plugin, Scheduler scheduler) {
     this.plugin = plugin;
+    this.scheduler = scheduler;
   }
 
   public void check() {
@@ -24,41 +26,41 @@ public class UpdateChecker {
       return;
     }
 
-    Task.asyncDelayed(
-        plugin,
-        () -> {
-          try (final InputStream inputStream =
-                  new URL("https://api.byteful.me/leveltools").openStream();
-              final Scanner scanner = new Scanner(inputStream)) {
-            if (!scanner.hasNext()) {
-              return;
-            }
+    scheduler.asyncDelayed(() -> check0(currentVersion), 1L);
+  }
 
-            final String latestVersion = scanner.next();
+  private void check0(String currentVersion) {
+    try (final InputStream inputStream =
+            new URL("https://api.byteful.me/leveltools").openStream();
+        final Scanner scanner = new Scanner(inputStream)) {
+      if (!scanner.hasNext()) {
+        return;
+      }
 
-            if (currentVersion.equals(latestVersion)) {
-              plugin.getLogger().info("No new updates found.");
-            } else {
-              plugin
-                  .getLogger()
-                  .info(
-                      "A new update was found. You are on "
-                          + currentVersion
-                          + " while the latest version is "
-                          + latestVersion
-                          + ".");
-              plugin
-                  .getLogger()
-                  .info(
-                      "Please install this update from: https://github.com/byteful/LevelTools/releases/download/v"
-                          + latestVersion
-                          + "/LevelTools-"
-                          + latestVersion
-                          + ".jar");
-            }
-          } catch (IOException e) {
-            plugin.getLogger().info("Unable to check for updates: " + e.getMessage());
-          }
-        });
+      final String latestVersion = scanner.next();
+
+      if (currentVersion.equals(latestVersion)) {
+        plugin.getLogger().info("No new updates found.");
+      } else {
+        plugin
+            .getLogger()
+            .info(
+                "A new update was found. You are on "
+                    + currentVersion
+                    + " while the latest version is "
+                    + latestVersion
+                    + ".");
+        plugin
+            .getLogger()
+            .info(
+                "Please install this update from: https://github.com/byteful/LevelTools/releases/download/v"
+                    + latestVersion
+                    + "/LevelTools-"
+                    + latestVersion
+                    + ".jar");
+      }
+    } catch (IOException e) {
+      plugin.getLogger().info("Unable to check for updates: " + e.getMessage());
+    }
   }
 }

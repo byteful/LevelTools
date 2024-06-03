@@ -1,11 +1,12 @@
 package me.byteful.plugin.leveltools.listeners;
 
-import java.util.Objects;
-import java.util.Set;
+import com.jeff_media.morepersistentdatatypes.DataType;
+import java.util.*;
 import java.util.stream.Collectors;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,9 +14,30 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-import redempt.redlib.blockdata.DataBlock;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.util.Vector;
 
 public class BlockEventListener extends XPListener {
+  private final NamespacedKey trackedBlocks = new NamespacedKey(LevelToolsPlugin.getInstance(), "tracked_blocks");
+
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void onBlockPlaceTracker(BlockPlaceEvent event) {
+    if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
+      final PersistentDataContainer pdc = event.getBlock().getChunk().getPersistentDataContainer();
+      if (!pdc.has(trackedBlocks)) {
+        pdc.set(trackedBlocks, DataType.asList(DataType.VECTOR), new ArrayList<>());
+      }
+
+      List<Vector> blocks = pdc.get(trackedBlocks, DataType.asList(DataType.VECTOR));
+      if (blocks == null) {
+        blocks = new ArrayList<>();
+      }
+
+      blocks.add(event.getBlock().getLocation().toVector());
+      pdc.set(trackedBlocks, DataType.asList(DataType.VECTOR), blocks);
+    }
+  }
+
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onBlockBreak(BlockBreakEvent e) {
     final Player player = e.getPlayer();
@@ -28,11 +50,13 @@ public class BlockEventListener extends XPListener {
     final ItemStack hand = LevelToolsUtil.getHand(player);
 
     if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
-      final DataBlock db =
-          LevelToolsPlugin.getInstance().getBlockDataManager().getDataBlock(block, false);
-
-      if (db != null && db.contains("level_tools") && db.getBoolean("level_tools")) {
-        return;
+      final PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
+      if (pdc.has(trackedBlocks)) {
+        final List<Vector> blocks = pdc.get(trackedBlocks, DataType.asList(DataType.VECTOR));
+        if (blocks != null && blocks.remove(block.getLocation().toVector())) {
+          pdc.set(trackedBlocks, DataType.asList(DataType.VECTOR), blocks);
+          return;
+        }
       }
     }
 
@@ -62,15 +86,5 @@ public class BlockEventListener extends XPListener {
         LevelToolsUtil.createLevelToolsItem(hand),
         player,
         LevelToolsUtil.getBlockModifier(block.getType()));
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void onBlockPlace(BlockPlaceEvent e) {
-    if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
-      LevelToolsPlugin.getInstance()
-          .getBlockDataManager()
-          .getDataBlockAsync(e.getBlockPlaced(), true)
-          .thenAccept(db -> db.set("level_tools", true));
-    }
   }
 }

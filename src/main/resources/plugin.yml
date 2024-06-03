@@ -5,6 +5,7 @@ author: byteful
 description: "A plugin that adds a leveling system to tools, swords, and bows."
 website: "https://github.com/byteful/LevelTools"
 api-version: "1.13"
+folia-supported: true
 softdepend:
   - PlaceholderAPI
 permissions:
