@@ -6,10 +6,12 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven {
         url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+    }
+    maven {
+        url = uri('https://repo.papermc.io/repository/maven-public/')
     }
     maven {
         url = uri('https://oss.sonatype.org/content/groups/public/')
@@ -21,16 +23,13 @@ repositories {
         url = uri('https://repo.maven.apache.org/maven2/')
     }
     maven {
-        url = uri('https://jitpack.io')
-    }
-    maven {
         url = uri('https://redempt.dev')
     }
     maven {
-        url = uri('https://repo.extendedclip.com/content/repositories/placeholderapi/')
+        url = uri('https://jitpack.io')
     }
     maven {
-        url = uri('https://repo.papermc.io/repository/maven-public/')
+        url = uri('https://repo.extendedclip.com/content/repositories/placeholderapi/')
     }
     maven {
         url = uri('https://hub.jeff-media.com/nexus/repository/jeff-media-public/')
@@ -48,7 +47,8 @@ dependencies {
     implementation 'org.bstats:bstats-bukkit:3.0.2'
     implementation 'com.jeff_media:MorePersistentDataTypes:2.4.0'
 
-    compileOnly 'dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly files('libs/folia-api-1.20.4-R0.1-SNAPSHOT.jar') // Modified API jar with Java 8 support
+    compileOnly 'net.kyori:adventure-api:4.17.0' // Not used but needed for Folia compilation
     compileOnly 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:24.1.0'
     compileOnly 'me.clip:placeholderapi:2.11.6'
