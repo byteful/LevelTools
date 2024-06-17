@@ -5,6 +5,7 @@ import static me.byteful.plugin.leveltools.util.Text.colorize;
 import java.util.Objects;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -159,6 +160,22 @@ public class LevelToolsCommand {
       player.sendMessage(
           colorize(Objects.requireNonNull(plugin.getConfig().getString("messages.item_not_tool"))));
     }
+  }
+
+  @Subcommand("debug")
+  @Description("Shows debug information about the server and plugin.")
+  public void onDebug(CommandSender sender) {
+    if (!checkPerm(sender)) {
+      return;
+    }
+
+    plugin.getUpdateChecker().check();
+    sender.sendMessage("LevelTools Debug Information:");
+    sender.sendMessage("- Server Version: " + Bukkit.getVersion());
+    sender.sendMessage("- Server Type: " + Bukkit.getBukkitVersion());
+    sender.sendMessage("- Plugin Version: " + plugin.getDescription().getVersion());
+    sender.sendMessage("- Latest Version: " + plugin.getUpdateChecker().getLastCheckedVersion());
+    sender.sendMessage("{!} Please include your configuration with this when asking for help. Please COPY AND PASTE configuration into discord server. {!}");
   }
 
   private boolean checkPerm(CommandSender sender) {

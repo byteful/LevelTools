@@ -38,7 +38,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'de.tr7zw:item-nbt-api:2.12.4'
+    implementation 'de.tr7zw:item-nbt-api:2.13.0'
     implementation 'com.github.Redempt:RedLib:6.6.1'
     implementation 'com.github.Redempt:Crunch:2.0.3'
     implementation 'com.github.cryptomorin:XSeries:11.0.0'
@@ -55,7 +55,7 @@ dependencies {
 }
 
 group = 'me.byteful.plugin'
-version = '1.4.0'
+version = '1.4.0-BETA'
 description = 'LevelTools'
 java.sourceCompatibility = JavaVersion.VERSION_17
 

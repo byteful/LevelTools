@@ -1,12 +1,13 @@
 package me.byteful.plugin.leveltools.listeners;
 
-import com.jeff_media.morepersistentdatatypes.DataType;
 import java.util.*;
 import java.util.stream.Collectors;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
+import me.byteful.plugin.leveltools.api.block.BlockDataManager;
+import me.byteful.plugin.leveltools.api.block.BlockPosition;
+import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,28 +15,34 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.util.Vector;
 
 public class BlockEventListener extends XPListener {
-  private final NamespacedKey trackedBlocks = new NamespacedKey(LevelToolsPlugin.getInstance(), "tracked_blocks");
+  private final BlockDataManager blockDataManager;
+  private final Scheduler scheduler;
 
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void onBlockPlaceTracker(BlockPlaceEvent event) {
-    if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
-      final PersistentDataContainer pdc = event.getBlock().getChunk().getPersistentDataContainer();
-      if (!pdc.has(trackedBlocks)) {
-        pdc.set(trackedBlocks, DataType.asList(DataType.VECTOR), new ArrayList<>());
-      }
+  public BlockEventListener(BlockDataManager blockDataManager, Scheduler scheduler) {
+    this.blockDataManager = blockDataManager;
+    this.scheduler = scheduler;
+  }
 
-      List<Vector> blocks = pdc.get(trackedBlocks, DataType.asList(DataType.VECTOR));
-      if (blocks == null) {
-        blocks = new ArrayList<>();
-      }
+  private boolean isPPBEnabled() {
+    return !LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks");
+  }
 
-      blocks.add(event.getBlock().getLocation().toVector());
-      pdc.set(trackedBlocks, DataType.asList(DataType.VECTOR), blocks);
-    }
+  @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+  public void on(BlockBreakEvent event) {
+    if (!isPPBEnabled()) return;
+
+    final Block block = event.getBlock();
+    final BlockPosition pos = BlockPosition.fromBukkit(block);
+    scheduler.locationDelayed(() -> blockDataManager.removePlacedBlock(pos), block.getLocation(), 1);
+  }
+
+  @EventHandler(priority = EventPriority.LOW)
+  public void on(BlockPlaceEvent event) {
+    if (!isPPBEnabled()) return;
+
+    blockDataManager.addPlacedBlock(BlockPosition.fromBukkit(event.getBlock()));
   }
 
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -49,15 +56,9 @@ public class BlockEventListener extends XPListener {
     final Block block = e.getBlock();
     final ItemStack hand = LevelToolsUtil.getHand(player);
 
-    if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")) {
-      final PersistentDataContainer pdc = block.getChunk().getPersistentDataContainer();
-      if (pdc.has(trackedBlocks)) {
-        final List<Vector> blocks = pdc.get(trackedBlocks, DataType.asList(DataType.VECTOR));
-        if (blocks != null && blocks.remove(block.getLocation().toVector())) {
-          pdc.set(trackedBlocks, DataType.asList(DataType.VECTOR), blocks);
-          return;
-        }
-      }
+    if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")
+        && blockDataManager.isPlacedBlock(BlockPosition.fromBukkit(block))) {
+      return;
     }
 
     final String type =

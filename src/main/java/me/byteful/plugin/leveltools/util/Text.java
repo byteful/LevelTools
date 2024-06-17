@@ -1,11 +1,10 @@
 package me.byteful.plugin.leveltools.util;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 // Borrowed from RedLib (https://github.com/boxbeam/RedCommands/blob/master/src/redempt/redlib/misc/FormatUtils.java)
@@ -53,5 +52,35 @@ public final class Text {
       builder.append(c);
     }
     return builder.toString();
+  }
+
+  // From Apache lang library
+  public static String[] substringsBetween(String str, String open, String close) {
+    int strLen = str.length();
+    if (strLen == 0) {
+      return ArrayUtils.EMPTY_STRING_ARRAY;
+    } else {
+      int closeLen = close.length();
+      int openLen = open.length();
+      List<String> list = new ArrayList();
+
+      int end;
+      for(int pos = 0; pos < strLen - closeLen; pos = end + closeLen) {
+        int start = str.indexOf(open, pos);
+        if (start < 0) {
+          break;
+        }
+
+        start += openLen;
+        end = str.indexOf(close, start);
+        if (end < 0) {
+          break;
+        }
+
+        list.add(str.substring(start, end));
+      }
+
+      return list.isEmpty() ? null : (String[])list.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+    }
   }
 }

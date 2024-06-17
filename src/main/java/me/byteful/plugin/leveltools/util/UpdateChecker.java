@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class UpdateChecker {
   @NotNull private final LevelToolsPlugin plugin;
   private final Scheduler scheduler;
+  private String lastCheckedVersion = null;
 
   public UpdateChecker(@NotNull LevelToolsPlugin plugin, Scheduler scheduler) {
     this.plugin = plugin;
@@ -59,8 +60,14 @@ public class UpdateChecker {
                     + latestVersion
                     + ".jar");
       }
+
+      lastCheckedVersion = latestVersion;
     } catch (IOException e) {
       plugin.getLogger().info("Unable to check for updates: " + e.getMessage());
     }
+  }
+
+  public String getLastCheckedVersion() {
+    return lastCheckedVersion;
   }
 }

@@ -38,9 +38,7 @@ anvil_combine: "ADD_BOTH"
 level_xp_formula: "100 + {current_level} * 100"
 
 # Should blocks that are placed by a player count towards XP?
-# May cause lag on a large server. Recommended to keep this true.
-# If this is set to false, all blocks placed beforehand will still be counted towards XP.
-playerPlacedBlocks: true
+playerPlacedBlocks: false
 
 # Configuration for the sound played during a level up.
 level_up_sound:
