@@ -83,11 +83,8 @@ shadowJar {
 def targetJavaVersion = 8
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
+    sourceCompatibility = 17
+    targetCompatibility = 8
 }
 
 tasks.withType(JavaCompile).configureEach {
