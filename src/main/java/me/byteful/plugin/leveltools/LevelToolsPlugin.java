@@ -2,15 +2,14 @@ package me.byteful.plugin.leveltools;
 
 import static me.byteful.plugin.leveltools.util.Text.colorize;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import me.byteful.plugin.leveltools.api.AnvilCombineMode;
+import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.listeners.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockEventListener;
 import me.byteful.plugin.leveltools.listeners.EntityEventListener;
+import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import me.byteful.plugin.leveltools.util.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -19,14 +18,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import redempt.crunch.CompiledExpression;
 import redempt.crunch.Crunch;
 import redempt.redlib.RedLib;
-import redempt.redlib.blockdata.BlockDataManager;
-import redempt.redlib.misc.Task;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 public final class LevelToolsPlugin extends JavaPlugin {
   private static LevelToolsPlugin instance;
 
-  private BlockDataManager blockDataManager;
   private BukkitCommandHandler commandManager;
   private AnvilCombineMode anvilCombineMode;
   private UpdateChecker updateChecker;
@@ -41,25 +37,9 @@ public final class LevelToolsPlugin extends JavaPlugin {
   public void onEnable() {
     sendStartupBanner();
     instance = this;
-    updateChecker = new UpdateChecker(this);
 
-    if (!getDataFolder().exists()) {
-      getDataFolder().mkdirs();
-    }
-
-    final Path blocksFile = getDataFolder().toPath().resolve("player_placed_blocks.db");
-
-    if (!Files.exists(blocksFile)) {
-      try {
-        blocksFile.toFile().createNewFile();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-
-    blockDataManager = BlockDataManager.createSQLite(this, blocksFile, true, true);
-    blockDataManager.migrate();
-    getLogger().info("Loaded BlockDataManager...");
+    final Scheduler scheduler = LevelToolsUtil.createScheduler(this);
+    updateChecker = new UpdateChecker(this, scheduler);
 
     saveDefaultConfig();
     getConfig().options().copyDefaults(true);
@@ -73,7 +53,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
 
     if (getConfig().getBoolean("update.periodically")) {
       final long delay = 20L * TimeUnit.DAYS.toSeconds(1);
-      Task.syncRepeating(() -> updateChecker.check(), delay, delay);
+      scheduler.syncTimer(() -> updateChecker.check(), delay, delay);
     }
 
     registerListeners();
@@ -99,11 +79,6 @@ public final class LevelToolsPlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    if (blockDataManager != null) {
-      blockDataManager.saveAndClose();
-      blockDataManager = null;
-    }
-
     if (metrics != null) {
       metrics.shutdown();
     }
@@ -145,10 +120,6 @@ public final class LevelToolsPlugin extends JavaPlugin {
     levelXpFormula =
         Crunch.compileExpression(
             getConfig().getString("level_xp_formula").replace("{current_level}", "$1"));
-  }
-
-  public BlockDataManager getBlockDataManager() {
-    return blockDataManager;
   }
 
   public AnvilCombineMode getAnvilCombineMode() {

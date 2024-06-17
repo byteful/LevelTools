@@ -21,6 +21,9 @@ import me.byteful.plugin.leveltools.api.RewardType;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.NBTLevelToolsItem;
 import me.byteful.plugin.leveltools.api.item.impl.PDCLevelToolsItem;
+import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
+import me.byteful.plugin.leveltools.api.scheduler.impl.BukkitScheduler;
+import me.byteful.plugin.leveltools.api.scheduler.impl.FoliaScheduler;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.math.NumberUtils;
@@ -351,6 +354,23 @@ public final class LevelToolsUtil {
       player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
     } else {
       ActionBar.sendActionBar(player, msg);
+    }
+  }
+
+  public static Scheduler createScheduler(LevelToolsPlugin plugin) {
+    if (isFolia()) {
+      return new FoliaScheduler(plugin);
+    }
+
+    return new BukkitScheduler(plugin);
+  }
+
+  private static boolean isFolia() {
+    try {
+      Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+      return true;
+    } catch (ClassNotFoundException e) {
+      return false;
     }
   }
 }
