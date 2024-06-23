@@ -45,6 +45,10 @@ public class LevelToolsCommand {
   @Subcommand("reset")
   @Description("Resets all XP/Levels for all the items in the target player.")
   public void onReset(CommandSender sender, Player target, @Switch("all") boolean all) {
+    if (!checkPerm(sender)) {
+      return;
+    }
+
     final ItemStack hand = LevelToolsUtil.getHand(target);
     if (!all) {
       if (!LevelToolsUtil.isSupportedTool(hand.getType())) {
