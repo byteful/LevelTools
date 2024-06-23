@@ -24,7 +24,12 @@ public class FileBlockDataManager implements BlockDataManager {
   }
 
   private void save() {
-    final Set<String> lines = cache.stream().map(x -> String.format("{%s}{%s}{%s}%s", x.getX(), x.getY(), x.getZ(), x.getWorld())).collect(Collectors.toSet());
+    final Set<String> lines;
+    synchronized (cache) {
+      lines = cache.stream()
+          .map(x -> String.format("{%s}{%s}{%s}%s", x.getX(), x.getY(), x.getZ(), x.getWorld()))
+          .collect(Collectors.toSet());
+    }
 
     try {
       Files.write(file, lines, StandardCharsets.UTF_8);
