@@ -4,9 +4,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.Sets;
 import me.byteful.plugin.leveltools.api.block.BlockDataManager;
 import me.byteful.plugin.leveltools.api.block.BlockPosition;
 import me.byteful.plugin.leveltools.api.scheduler.ScheduledTask;
@@ -14,7 +19,8 @@ import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.util.Text;
 
 public class FileBlockDataManager implements BlockDataManager {
-  private final Set<BlockPosition> cache = new HashSet<>();
+  private static final int MAX_CACHE_SIZE = 10_000;
+  private final Set<BlockPosition> cache = ConcurrentHashMap.newKeySet();
   private final Path file;
   private final ScheduledTask saveTask;
 
@@ -45,6 +51,7 @@ public class FileBlockDataManager implements BlockDataManager {
 
   @Override
   public void addPlacedBlock(BlockPosition pos) {
+    if (cache.size() >= MAX_CACHE_SIZE) return;
     cache.add(pos);
   }
 
