@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id("com.gradleup.shadow") version "9.0.0-beta13"
 }
 
 repositories {
@@ -37,15 +37,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'de.tr7zw:item-nbt-api:2.13.1'
+    implementation 'de.tr7zw:item-nbt-api:2.15.0'
     implementation 'com.github.Redempt:RedLib:6.6.1'
     implementation 'com.github.Redempt:Crunch:2.0.3'
-    implementation 'com.github.cryptomorin:XSeries:11.2.0'
-    implementation 'com.github.Revxrsal.Lamp:common:3.2.1'
-    implementation 'com.github.Revxrsal.Lamp:bukkit:3.2.1'
+    implementation 'com.github.cryptomorin:XSeries:13.2.0'
+    implementation 'com.github.Revxrsal.Lamp:common:3.3.6'
+    implementation 'com.github.Revxrsal.Lamp:bukkit:3.3.6'
     implementation 'com.github.Sven65:Item-Names:1.0.2'
-    implementation 'org.bstats:bstats-bukkit:3.0.2'
-    implementation 'com.jeff_media:MorePersistentDataTypes:2.4.0'
+    implementation 'org.bstats:bstats-bukkit:3.1.0'
+    implementation 'com.jeff-media:MorePersistentDataTypes:2.4.0'
 
     compileOnly files('libs/folia-api-1.20.4-R0.1-SNAPSHOT.jar') // Modified API jar with Java 8 support
     compileOnly 'net.kyori:adventure-api:4.17.0' // Not used but needed for Folia compilation
@@ -55,7 +55,7 @@ dependencies {
 }
 
 group = 'me.byteful.plugin'
-version = '1.4.0.2'
+version = '1.4.1'
 description = 'LevelTools'
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -77,7 +77,7 @@ shadowJar {
     relocate "redempt.redlib", "me.byteful.plugin.leveltools.libs.redlib"
     relocate 'revxrsal.commands', 'me.byteful.plugin.leveltools.libs.lamp'
     relocate 'org.bstats', 'me.byteful.plugin.leveltools.libs.bstats'
-    relocate 'com.jeff_media.morepersistentdatatypes', 'me.byteful.plugin.leveltools.libs.morepersistentdatatypes'
+    relocate 'com.jeff-media.morepersistentdatatypes', 'me.byteful.plugin.leveltools.libs.morepersistentdatatypes'
 }
 
 def targetJavaVersion = 8
@@ -104,6 +104,4 @@ processResources {
 
 compileJava { // Preserve parameter names in the bytecode
     options.compilerArgs += ["-parameters"]
-    options.fork = true
-    options.forkOptions.executable = "javac"
 }

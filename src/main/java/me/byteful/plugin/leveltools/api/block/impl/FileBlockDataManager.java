@@ -19,7 +19,7 @@ import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.util.Text;
 
 public class FileBlockDataManager implements BlockDataManager {
-  private static final int MAX_CACHE_SIZE = 10_000;
+  private static final int MAX_CACHE_SIZE = 100_000;
   private final Set<BlockPosition> cache = ConcurrentHashMap.newKeySet();
   private final Path file;
   private final ScheduledTask saveTask;
@@ -83,7 +83,8 @@ public class FileBlockDataManager implements BlockDataManager {
 
   @Override
   public void close() {
-    cache.clear();
     saveTask.stop();
+    save();
+    cache.clear();
   }
 }

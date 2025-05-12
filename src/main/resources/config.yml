@@ -20,6 +20,15 @@ update:
 # The max level that tools can reach.
 max_level: 100
 
+# Configuration for block data storage.
+block_data_storage:
+  # Defines the method used for storing and retrieving placed block data.
+  # Options:
+  #   LEGACY_TEXT: The original custom plain text file format.
+  #   SQLITE:      Uses an embedded SQLite database. Recommended for performance,
+  #                scalability with large datasets, and data integrity.
+  type: SQLITE
+
 # Configuration for messages.
 messages:
   no_permission: "&cYou do not have permission to execute this command!"

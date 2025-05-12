@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import me.byteful.plugin.leveltools.api.AnvilCombineMode;
 import me.byteful.plugin.leveltools.api.block.BlockDataManager;
+import me.byteful.plugin.leveltools.api.block.BlockDataManagerFactory;
 import me.byteful.plugin.leveltools.api.block.impl.FileBlockDataManager;
 import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.listeners.AnvilListener;
@@ -54,17 +55,11 @@ public final class LevelToolsPlugin extends JavaPlugin {
     setLevelXpFormula();
     getLogger().info("Loaded configuration...");
 
-    final Path blocksFile = getDataFolder().toPath().resolve("placed_blocks.txt");
-
-    if (!Files.exists(blocksFile)) {
-      try {
-        blocksFile.toFile().createNewFile();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-
-    blockDataManager = new FileBlockDataManager(blocksFile, scheduler);
+    blockDataManager = BlockDataManagerFactory.createBlockDataManager(
+        getDataFolder().toPath(),
+        getConfig(),
+        scheduler
+    );
     blockDataManager.load();
     getLogger().info("Loaded block data manager...");
 

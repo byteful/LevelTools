@@ -273,14 +273,15 @@ public final class LevelToolsUtil {
       return;
     }
 
-    final int start = findPrefixStart(lore);
+    final int[] bounds = findPrefixBounds(lore);
+    final int start = bounds[0];
+    final int end = bounds[1];
     if (start == -1) {
       lore.addAll(toAdd);
       meta.setLore(lore);
 
       return;
     }
-    final int end = start + toAdd.size();
     if (end > lore.size()) {
       meta.setLore(toAdd);
 
@@ -292,14 +293,20 @@ public final class LevelToolsUtil {
     meta.setLore(lore);
   }
 
-  private static int findPrefixStart(@NotNull List<String> lore) {
+  private static int[] findPrefixBounds(@NotNull List<String> lore) {
+    final int[] arr = new int[]{-1, -1};
     for (int i = 0; i < lore.size(); i++) {
       if (decolorize(lore.get(i)).startsWith(LORE_PREFIX)) {
-        return i;
+        if (arr[0] == -1) {
+          arr[0] = i;
+          arr[1] = i;
+        } else {
+          arr[1] = i;
+        }
       }
     }
 
-    return -1;
+    return arr;
   }
 
   public static void handleReward(LevelToolsItem tool, Player player) {
