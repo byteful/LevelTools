@@ -227,16 +227,26 @@ public final class LevelToolsUtil {
     assert meta != null : "ItemMeta is null! Should not happen.";
     final String progressBar = LevelToolsUtil.createDefaultProgressBar(xp, maxXp);
     if (cs.getBoolean("name.enabled")) {
-      meta.setDisplayName(
-          Text.colorize(
-              cs.getString("name.text")
-                  .replace("{item}", getLocalizedName(stack))
-                  .replace("{level}", String.valueOf(level))
-                  .replace("{xp}", String.valueOf(xp))
-                  .replace("{max_xp}", String.valueOf(maxXp))
-                  .replace("{max_xp_formatted}", formatMoney(maxXp))
-                  .replace("{xp_formatted}", formatMoney(xp))
-                  .replace("{progress_bar}", progressBar)));
+      final String text = colorize(cs.getString("name.text")
+              .replace("{level}", String.valueOf(level))
+              .replace("{xp}", String.valueOf(xp))
+              .replace("{max_xp}", String.valueOf(maxXp))
+              .replace("{max_xp_formatted}", formatMoney(maxXp))
+              .replace("{xp_formatted}", formatMoney(xp))
+              .replace("{progress_bar}", progressBar));
+
+      // We have to do some JSON component magic to make this work right
+      if (cs.getString("name.text").contains("{item}") && IS_PAPER) {
+        final net.kyori.adventure.text.TextComponent component = LegacyComponentSerializer.legacySection().deserialize(text);
+        for (Component child : component.children()) {
+          if (child instanceof net.kyori.adventure.text.TextComponent && ((net.kyori.adventure.text.TextComponent) child).content().equals("{item}")) {
+            ((net.kyori.adventure.text.TextComponent) child).content("");
+            child.append(translatable(stack.getType().translationKey()));
+          }
+        }
+      } else {
+        meta.setDisplayName(text);
+      }
     }
     if (cs.getBoolean("lore.enabled")) {
       List<String> lines =
