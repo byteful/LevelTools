@@ -1,8 +1,7 @@
 package me.byteful.plugin.leveltools.util;
 
-import static me.byteful.plugin.leveltools.util.Text.colorize;
-import static me.byteful.plugin.leveltools.util.Text.decolorize;
-import static redempt.redlib.misc.FormatUtils.formatMoney;
+import static me.byteful.plugin.leveltools.util.Text.*;
+import static net.kyori.adventure.text.Component.translatable;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.messages.ActionBar;
@@ -13,8 +12,9 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.api.RewardType;
@@ -24,9 +24,12 @@ import me.byteful.plugin.leveltools.api.item.impl.PDCLevelToolsItem;
 import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.api.scheduler.impl.bukkit.BukkitScheduler;
 import me.byteful.plugin.leveltools.api.scheduler.impl.folia.FoliaScheduler;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -37,11 +40,29 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import redempt.redlib.RedLib;
-import xyz.mackan.ItemNames.ItemNames;
 
 public final class LevelToolsUtil {
   private static final String LORE_PREFIX = "&f&l&o&n&m&k";
+
+  private static final boolean IS_PAPER = hasClass("com.destroystokyo.paper.PaperConfig") || hasClass("io.papermc.paper.configuration.Configuration");
+  public static final int MID_VERSION;
+
+  static {
+    // Code from https://github.com/boxbeam/RedLib/blob/master/src/redempt/redlib/java
+    final Pattern pattern = Pattern.compile("1\\.([0-9]+)");
+    final Matcher matcher = pattern.matcher(Bukkit.getBukkitVersion());
+    matcher.find();
+    MID_VERSION = Integer.parseInt(matcher.group(1));
+  }
+
+  private static boolean hasClass(String name) {
+    try {
+      Class.forName(name);
+      return true;
+    } catch (Exception ignored) {
+      return false;
+    }
+  }
 
   public static String getProgressBar(
       double percent,
@@ -139,7 +160,7 @@ public final class LevelToolsUtil {
 
   public static boolean isProjectileShooter(Material material) {
     return material == XMaterial.BOW.parseMaterial()
-        || (RedLib.MID_VERSION >= 14 && material == XMaterial.CROSSBOW.parseMaterial());
+        || (MID_VERSION >= 14 && material == XMaterial.CROSSBOW.parseMaterial());
   }
 
   public static boolean isSupportedTool(Material material) {
@@ -151,13 +172,13 @@ public final class LevelToolsUtil {
   }
 
   public static ItemStack getHand(Player player) {
-    return RedLib.MID_VERSION >= 9
+    return MID_VERSION >= 9
         ? player.getInventory().getItemInMainHand().clone()
         : player.getItemInHand().clone();
   }
 
   public static void setHand(Player player, ItemStack stack) {
-    if (RedLib.MID_VERSION >= 9) {
+    if (MID_VERSION >= 9) {
       player.getInventory().setItemInMainHand(stack);
     } else {
       player.setItemInHand(stack);
@@ -197,8 +218,8 @@ public final class LevelToolsUtil {
   }
 
   public static LevelToolsItem createLevelToolsItem(ItemStack stack) {
-    if (RedLib.MID_VERSION >= 14) {
-      if (RedLib.MID_VERSION < 18) {
+    if (MID_VERSION >= 14) {
+      if (MID_VERSION < 18) {
         final NBTItem nbt = new NBTItem(stack);
         if (nbt.getKeys().stream().anyMatch(s -> s.startsWith("levelTools"))) {
           return new NBTLevelToolsItem(
@@ -212,10 +233,10 @@ public final class LevelToolsUtil {
     }
   }
 
-  public static String getLocalizedName(ItemStack item) {
-    return RedLib.MID_VERSION > 16
-        ? Objects.requireNonNull(item.getItemMeta()).getLocalizedName()
-        : ItemNames.getItemName(item);
+  public static String getServerVersion() {
+    String version = Bukkit.getVersion();
+    String[] split = version.split(" ");
+    return split[split.length - 1].trim().replace(")", "");
   }
 
   public static ItemStack buildItemStack(
@@ -367,7 +388,7 @@ public final class LevelToolsUtil {
   }
 
   public static void sendActionBar(Player player, String msg) {
-    if (RedLib.MID_VERSION > 12) {
+    if (MID_VERSION > 12) {
       player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
     } else {
       ActionBar.sendActionBar(player, msg);
