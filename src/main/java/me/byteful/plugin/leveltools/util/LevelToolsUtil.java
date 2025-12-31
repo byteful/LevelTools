@@ -42,7 +42,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 public final class LevelToolsUtil {
-  private static final String LORE_PREFIX = "&f&l&o&n&m&k";
+  private static final String LORE_PREFIX = "§§";
 
   private static final boolean IS_PAPER = hasClass("com.destroystokyo.paper.PaperConfig") || hasClass("io.papermc.paper.configuration.Configuration");
   public static final int MID_VERSION;
@@ -313,12 +313,12 @@ public final class LevelToolsUtil {
 
       return;
     }
-    if (end > lore.size()) {
+    if (end >= lore.size()) {
       meta.setLore(toAdd);
 
       return;
     }
-    final List<String> sub = lore.subList(start, end);
+    final List<String> sub = lore.subList(start, end + 1);
     sub.clear();
     sub.addAll(toAdd);
     meta.setLore(lore);
@@ -327,13 +327,14 @@ public final class LevelToolsUtil {
   private static int[] findPrefixBounds(@NotNull List<String> lore) {
     final int[] arr = new int[]{-1, -1};
     for (int i = 0; i < lore.size(); i++) {
-      if (decolorize(lore.get(i)).startsWith(LORE_PREFIX)) {
+      final String text = lore.get(i);
+      final String line = decolorize(text);
+      if (line.startsWith("&&")) { // LORE_PREFIX gets turned into && if decolorized. Hopefully this doesn't clash with other plugins :/
         if (arr[0] == -1) {
           arr[0] = i;
-          arr[1] = i;
-        } else {
-          arr[1] = i;
         }
+
+        arr[1] = i;
       }
     }
 

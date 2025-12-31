@@ -1,16 +1,17 @@
 package me.byteful.plugin.leveltools.api;
 
 import com.cryptomorin.xseries.XEnchantment;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 public enum RewardType {
   COMMAND("command", false) {
@@ -40,11 +41,15 @@ public enum RewardType {
     public void apply(
         @NotNull LevelToolsItem tool, @NotNull String[] split, @NotNull Player player) {
       final boolean isOP = player.isOp();
-      if (!isOP) {
-        player.setOp(true);
+
+      try {
+        if (!isOP) {
+          player.setOp(true);
+        }
+        PLAYER_COMMAND.apply(tool, split, player);
+      } finally {
+        player.setOp(isOP);
       }
-      PLAYER_COMMAND.apply(tool, split, player);
-      player.setOp(isOP);
     }
   },
   ENCHANT("enchant") {

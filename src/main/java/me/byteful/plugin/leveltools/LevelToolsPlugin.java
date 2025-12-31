@@ -3,14 +3,11 @@ package me.byteful.plugin.leveltools;
 import static me.byteful.plugin.leveltools.util.Text.colorize;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import me.byteful.plugin.leveltools.api.AnvilCombineMode;
 import me.byteful.plugin.leveltools.api.block.BlockDataManager;
 import me.byteful.plugin.leveltools.api.block.BlockDataManagerFactory;
-import me.byteful.plugin.leveltools.api.block.impl.FileBlockDataManager;
 import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.listeners.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockEventListener;
@@ -23,7 +20,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import redempt.crunch.CompiledExpression;
 import redempt.crunch.Crunch;
-import redempt.redlib.RedLib;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 public final class LevelToolsPlugin extends JavaPlugin {
@@ -120,7 +116,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
             colorize(
                 String.format(
                     " &d|          &b|     &8Running &6%s &8on &6MC %s",
-                    getDescription().getFullName(), RedLib.getServerVersion())));
+                    getDescription().getFullName(), LevelToolsUtil.getServerVersion())));
     Bukkit.getConsoleSender()
         .sendMessage(
             colorize(

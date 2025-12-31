@@ -10,8 +10,8 @@
       </option>
       <option name="taskNames">
         <list>
+          <option value="clean" />
           <option value="shadowJar" />
-          <option value="publishMavenPublicationToMavenLocal" />
         </list>
       </option>
       <option name="vmOptions" />

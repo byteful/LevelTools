@@ -1,7 +1,6 @@
 package me.byteful.plugin.leveltools.listeners;
 
-
-import static redempt.redlib.misc.FormatUtils.formatMoney;
+import static me.byteful.plugin.leveltools.util.Text.formatMoney;
 
 import com.cryptomorin.xseries.XSound;
 import java.util.List;

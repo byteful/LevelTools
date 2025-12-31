@@ -1,5 +1,7 @@
 package me.byteful.plugin.leveltools;
 
+import static me.byteful.plugin.leveltools.util.LevelToolsUtil.MID_VERSION;
+
 import java.util.Locale;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
@@ -8,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import redempt.redlib.RedLib;
 
 public class LevelToolsPlaceholders extends PlaceholderExpansion {
   @Override
@@ -43,7 +44,7 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
     }
 
     final ItemStack hand =
-        RedLib.MID_VERSION <= 8
+        MID_VERSION <= 8
             ? player.getItemInHand()
             : player.getInventory().getItemInMainHand();
 

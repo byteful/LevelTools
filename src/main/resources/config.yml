@@ -1,5 +1,5 @@
 #
-# LevelTools v${version} by byteful#0001
+# LevelTools by byteful
 #
 
 # Useful Links:
@@ -24,9 +24,12 @@ max_level: 100
 block_data_storage:
   # Defines the method used for storing and retrieving placed block data.
   # Options:
-  #   LEGACY_TEXT: The original custom plain text file format.
-  #   SQLITE:      Uses an embedded SQLite database. Recommended for performance,
-  #                scalability with large datasets, and data integrity.
+  #
+  #   > LEGACY_TEXT: The original custom plain text file format. Easy to modify by hand.
+  #
+  #   > SQLITE:      Uses an embedded SQLite database. Recommended for performance,
+  #                  scalability with large datasets, and data integrity.
+  #
   type: SQLITE
 
 # Configuration for messages.
