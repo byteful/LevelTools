@@ -37,6 +37,7 @@ public class LevelToolsCommand {
     plugin.reloadConfig();
     plugin.setAnvilCombineMode();
     plugin.setLevelXpFormula();
+    plugin.reloadListenerCaches();
     sender.sendMessage(
         colorize(
             Objects.requireNonNull(plugin.getConfig().getString("messages.successful_reload"))));

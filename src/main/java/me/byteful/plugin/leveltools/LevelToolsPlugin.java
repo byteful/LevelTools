@@ -32,6 +32,8 @@ public final class LevelToolsPlugin extends JavaPlugin {
   private Metrics metrics;
   private BlockDataManager blockDataManager;
   private Scheduler scheduler;
+  private BlockEventListener blockEventListener;
+  private EntityEventListener entityEventListener;
 
   public static LevelToolsPlugin getInstance() {
     return instance;
@@ -126,9 +128,20 @@ public final class LevelToolsPlugin extends JavaPlugin {
 
   private void registerListeners() {
     final PluginManager pm = Bukkit.getPluginManager();
-    pm.registerEvents(new BlockEventListener(blockDataManager, scheduler), this);
-    pm.registerEvents(new EntityEventListener(), this);
+    blockEventListener = new BlockEventListener(blockDataManager, scheduler);
+    entityEventListener = new EntityEventListener();
+    pm.registerEvents(blockEventListener, this);
+    pm.registerEvents(entityEventListener, this);
     pm.registerEvents(new AnvilListener(), this);
+  }
+
+  public void reloadListenerCaches() {
+    if (blockEventListener != null) {
+      blockEventListener.reloadCache();
+    }
+    if (entityEventListener != null) {
+      entityEventListener.reloadCache();
+    }
   }
 
   public void setAnvilCombineMode() {

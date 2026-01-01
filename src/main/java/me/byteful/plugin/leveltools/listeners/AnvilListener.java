@@ -57,13 +57,15 @@ public class AnvilListener implements Listener {
       return;
     }
 
-    // Use result item to create a new leveltools item instance so other plugins can modify the result and we can still attempt to work with that
-    // just read the lvl and xp from the original item so it doesnt get reset
+    if (LevelToolsUtil.isSupportedTool(secondItem.getType())) {
+      return;
+    }
+
     final LevelToolsItem original = LevelToolsUtil.createLevelToolsItem(firstItem);
     final LevelToolsItem finalItem = LevelToolsUtil.createLevelToolsItem(result);
     finalItem.setLevel(original.getLevel());
     finalItem.setXp(original.getXp());
     finalItem.setLastHandledReward(original.getLastHandledReward());
-    e.setResult(finalItem.getItemStack()); // This has to be done to patch lore issues.
+    e.setResult(finalItem.getItemStack());
   }
 }

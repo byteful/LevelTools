@@ -5,7 +5,6 @@ import me.byteful.plugin.leveltools.api.block.BlockPosition;
 import me.byteful.plugin.leveltools.api.scheduler.ScheduledTask;
 import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.*;
 import java.util.Properties;
@@ -26,13 +25,12 @@ public class SqliteBlockDataManager implements BlockDataManager {
     private static final String DELETE_BLOCK_SQL = "DELETE FROM placed_blocks WHERE world = ? AND x = ? AND y = ? AND z = ?";
 
     private final Set<BlockPosition> cache = ConcurrentHashMap.newKeySet();
+    private final Set<BlockPosition> pendingInserts = ConcurrentHashMap.newKeySet();
+    private final Set<BlockPosition> pendingDeletes = ConcurrentHashMap.newKeySet();
     private final Connection connection;
     private final ScheduledTask saveTask;
-    private final Scheduler scheduler;
 
     public SqliteBlockDataManager(Path dbFile, Scheduler scheduler) {
-        this.scheduler = scheduler;
-
         try {
             Class.forName("org.sqlite.JDBC");
 
@@ -53,11 +51,16 @@ public class SqliteBlockDataManager implements BlockDataManager {
     }
 
     private void save() {
+        if (pendingInserts.isEmpty() && pendingDeletes.isEmpty()) {
+            return;
+        }
+
         try {
             connection.setAutoCommit(false);
-            try (PreparedStatement stmt = connection.prepareStatement(INSERT_BLOCK_SQL)) {
-                synchronized (cache) {
-                    for (BlockPosition pos : cache) {
+
+            if (!pendingDeletes.isEmpty()) {
+                try (PreparedStatement stmt = connection.prepareStatement(DELETE_BLOCK_SQL)) {
+                    for (BlockPosition pos : pendingDeletes) {
                         stmt.setString(1, pos.getWorld());
                         stmt.setInt(2, pos.getX());
                         stmt.setInt(3, pos.getY());
@@ -67,7 +70,23 @@ public class SqliteBlockDataManager implements BlockDataManager {
                     stmt.executeBatch();
                 }
             }
+
+            if (!pendingInserts.isEmpty()) {
+                try (PreparedStatement stmt = connection.prepareStatement(INSERT_BLOCK_SQL)) {
+                    for (BlockPosition pos : pendingInserts) {
+                        stmt.setString(1, pos.getWorld());
+                        stmt.setInt(2, pos.getX());
+                        stmt.setInt(3, pos.getY());
+                        stmt.setInt(4, pos.getZ());
+                        stmt.addBatch();
+                    }
+                    stmt.executeBatch();
+                }
+            }
+
             connection.commit();
+            pendingInserts.clear();
+            pendingDeletes.clear();
         } catch (SQLException e) {
             try {
                 connection.rollback();
@@ -92,28 +111,22 @@ public class SqliteBlockDataManager implements BlockDataManager {
     @Override
     public void addPlacedBlock(BlockPosition pos) {
         cache.add(pos);
+        pendingDeletes.remove(pos);
+        pendingInserts.add(pos);
     }
 
     @Override
     public void removePlacedBlock(BlockPosition pos) {
         cache.remove(pos);
-
-        scheduler.asyncDelayed(() -> {
-            try (PreparedStatement stmt = connection.prepareStatement(DELETE_BLOCK_SQL)) {
-                stmt.setString(1, pos.getWorld());
-                stmt.setInt(2, pos.getX());
-                stmt.setInt(3, pos.getY());
-                stmt.setInt(4, pos.getZ());
-                stmt.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }, 0);
+        pendingInserts.remove(pos);
+        pendingDeletes.add(pos);
     }
 
     @Override
     public void load() {
         cache.clear();
+        pendingInserts.clear();
+        pendingDeletes.clear();
         try (Statement stmt = connection.createStatement()) {
             try (ResultSet rs = stmt.executeQuery("SELECT world, x, y, z FROM placed_blocks")) {
                 while (rs.next()) {
@@ -132,8 +145,10 @@ public class SqliteBlockDataManager implements BlockDataManager {
     @Override
     public void close() {
         saveTask.stop();
-        save(); // Final save before closing
+        save();
         cache.clear();
+        pendingInserts.clear();
+        pendingDeletes.clear();
 
         try {
             if (connection != null && !connection.isClosed()) {

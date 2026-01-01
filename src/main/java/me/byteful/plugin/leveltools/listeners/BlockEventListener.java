@@ -20,9 +20,23 @@ public class BlockEventListener extends XPListener {
   private final BlockDataManager blockDataManager;
   private final Scheduler scheduler;
 
+  private Set<Material> cachedBlockList;
+  private boolean isWhitelist;
+
   public BlockEventListener(BlockDataManager blockDataManager, Scheduler scheduler) {
     this.blockDataManager = blockDataManager;
     this.scheduler = scheduler;
+    reloadCache();
+  }
+
+  public void reloadCache() {
+    final LevelToolsPlugin plugin = LevelToolsPlugin.getInstance();
+    final String type = plugin.getConfig().getString("block_list_type", "blacklist");
+    this.isWhitelist = "whitelist".equalsIgnoreCase(type);
+    this.cachedBlockList = plugin.getConfig().getStringList("block_list").stream()
+        .map(Material::getMaterial)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet());
   }
 
   private boolean isPPBEnabled() {
@@ -61,19 +75,11 @@ public class BlockEventListener extends XPListener {
       return;
     }
 
-    final String type =
-        LevelToolsPlugin.getInstance().getConfig().getString("block_list_type", "blacklist");
-    final Set<Material> blocks =
-        LevelToolsPlugin.getInstance().getConfig().getStringList("block_list").stream()
-            .map(Material::getMaterial)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
-
-    if (type != null && type.equalsIgnoreCase("whitelist") && !blocks.contains(block.getType())) {
+    final boolean inList = cachedBlockList.contains(block.getType());
+    if (isWhitelist && !inList) {
       return;
     }
-
-    if (type != null && type.equalsIgnoreCase("blacklist") && blocks.contains(block.getType())) {
+    if (!isWhitelist && inList) {
       return;
     }
 
