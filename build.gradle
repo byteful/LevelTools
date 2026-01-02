@@ -54,7 +54,7 @@ dependencies {
 }
 
 group = 'me.byteful.plugin'
-version = '1.5.0-BETA'
+version = '2.0.0-BETA'
 description = 'LevelTools'
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -86,9 +86,7 @@ java {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        options.release.set(targetJavaVersion)
-    }
+    options.release.set(targetJavaVersion)
 }
 
 processResources {

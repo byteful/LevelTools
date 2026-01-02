@@ -1,0 +1,38 @@
+#
+# Display Profiles - Define how leveled items look
+#
+# Wiki: https://github.com/byteful/LevelTools/wiki/Display-Profiles
+#
+# Placeholders:
+# - {level}          : The item's level.
+# - {xp}             : The item's current XP.
+# - {max_xp}         : XP needed to reach next level.
+# - {xp_formatted}   : XP with K,M,B suffixes (e.g. 100K, 1M)
+# - {max_xp_formatted}: Max XP with suffixes.
+# - {progress_bar}   : Progress bar from progress_bar config.
+# - {item}           : Original item name.
+
+profiles:
+  default:
+    name:
+      enabled: false
+      text: "{item} &7- &b{level}"
+    action_bar:
+      enabled: true
+      text: "{progress_bar} &e{xp_formatted}&6/&e{max_xp_formatted}"
+    lore:
+      enabled: true
+      lines:
+        - ""
+        - "&eLevel: &6{level}"
+        - ""
+        - "{progress_bar} &e{xp_formatted}&6/&e{max_xp_formatted}"
+    progress_bar:
+      total_bars: 50
+      bar_symbol: '|'
+      prefix_symbol: '['
+      suffix_symbol: ']'
+      prefix_color: '8'
+      suffix_color: '8'
+      completed_color: 'e'
+      placeholder_color: '7'

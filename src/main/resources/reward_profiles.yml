@@ -1,0 +1,164 @@
+#
+# Reward Profiles - Define rewards given at each level
+#
+# Wiki: https://github.com/byteful/LevelTools/wiki/Reward-Profiles
+#
+# Handlers:
+# - "command"         : Runs command as console. (Ex: "command say test")
+# - "player-command"  : Runs command as player. (Ex: "player-command say test")
+# - "player-opcommand": Runs command as player with OP. (Ex: "player-opcommand specialenchant enchantment")
+# - "enchant"         : Adds enchantment, overrides existing level. (Ex: "enchant efficiency 1")
+# - "enchant2"        : Adds enchantment if higher than existing. (Ex: "enchant2 efficiency 1")
+# - "enchant3"        : Adds to existing enchantment level. (Ex: "enchant3 efficiency 1")
+# - "attribute"       : Modifies item attribute. (Ex: "attribute generic.attack_speed 10")
+
+profiles:
+  # Tool rewards - for pickaxes, axes, shovels
+  tools:
+    levels:
+      1:
+        - "enchant2 efficiency 1"
+      3:
+        - "enchant2 efficiency 2"
+      5:
+        - "enchant2 efficiency 3"
+      8:
+        - "enchant2 efficiency 4"
+      10:
+        - "enchant2 efficiency 5"
+      11:
+        - "enchant2 unbreaking 1"
+      13:
+        - "enchant2 unbreaking 2"
+      15:
+        - "enchant2 unbreaking 3"
+      20:
+        - "enchant2 mending 1"
+      24:
+        - "enchant2 fortune 1"
+      26:
+        - "enchant2 fortune 2"
+      30:
+        - "enchant2 fortune 3"
+      40:
+        - "enchant2 efficiency 6"
+      50:
+        - "enchant2 fortune 4"
+      65:
+        - "enchant2 efficiency 7"
+        - "enchant2 unbreaking 10"
+      80:
+        - "enchant2 efficiency 8"
+      90:
+        - "enchant2 efficiency 9"
+      100:
+        - "enchant2 efficiency 10"
+        - "enchant2 fortune 5"
+
+  # Sword rewards
+  swords:
+    levels:
+      1:
+        - "enchant2 sharpness 1"
+      3:
+        - "enchant2 sharpness 2"
+      5:
+        - "enchant2 sharpness 3"
+      8:
+        - "enchant2 sharpness 4"
+      10:
+        - "enchant2 sharpness 5"
+      11:
+        - "enchant2 unbreaking 1"
+      13:
+        - "enchant2 unbreaking 2"
+      15:
+        - "enchant2 unbreaking 3"
+      20:
+        - "enchant2 mending 1"
+      24:
+        - "enchant2 looting 1"
+      26:
+        - "enchant2 looting 2"
+      30:
+        - "enchant2 looting 3"
+      40:
+        - "enchant2 sharpness 6"
+      50:
+        - "enchant2 looting 4"
+      65:
+        - "enchant2 sharpness 7"
+        - "enchant2 unbreaking 10"
+      80:
+        - "enchant2 sharpness 8"
+      90:
+        - "enchant2 sharpness 9"
+      100:
+        - "enchant2 sharpness 10"
+        - "enchant2 looting 5"
+
+  # Bow/Crossbow rewards
+  bows:
+    levels:
+      1:
+        - "enchant2 power 1"
+      3:
+        - "enchant2 power 2"
+      5:
+        - "enchant2 power 3"
+      8:
+        - "enchant2 power 4"
+      10:
+        - "enchant2 power 5"
+      11:
+        - "enchant2 unbreaking 1"
+      13:
+        - "enchant2 unbreaking 2"
+      15:
+        - "enchant2 unbreaking 3"
+      20:
+        - "enchant2 mending 1"
+      24:
+        - "enchant2 punch 1"
+      26:
+        - "enchant2 punch 2"
+      30:
+        - "enchant2 punch 3"
+      40:
+        - "enchant2 power 6"
+      50:
+        - "enchant2 flame 1"
+      65:
+        - "enchant2 power 7"
+        - "enchant2 unbreaking 10"
+      80:
+        - "enchant2 power 8"
+      90:
+        - "enchant2 power 9"
+      100:
+        - "enchant2 power 10"
+        - "enchant2 infinity 1"
+
+  # Fishing rod rewards
+  fishing_rods:
+    levels:
+      1:
+        - "enchant2 lure 1"
+      5:
+        - "enchant2 luck_of_the_sea 1"
+      10:
+        - "enchant2 lure 2"
+      15:
+        - "enchant2 unbreaking 1"
+      20:
+        - "enchant2 luck_of_the_sea 2"
+      25:
+        - "enchant2 lure 3"
+      30:
+        - "enchant2 unbreaking 2"
+      35:
+        - "enchant2 luck_of_the_sea 3"
+      40:
+        - "enchant2 unbreaking 3"
+      50:
+        - "enchant2 mending 1"

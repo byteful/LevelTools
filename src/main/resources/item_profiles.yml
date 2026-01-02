@@ -1,0 +1,97 @@
+#
+# Item Profiles - Define which items can level up
+#
+# Wiki: https://github.com/byteful/LevelTools/wiki/Item-Profiles
+#
+# Each item profile links:
+# - materials: List of item materials
+# - trigger_profile: How XP is gained
+# - reward_profile: What rewards are given
+# - display_profile: How item is displayed
+# - max_level: Maximum level for this item type
+#
+# Supports inheritance with 'extends' key.
+# One material can only belong to ONE profile (enforced at startup).
+
+profiles:
+  # Pickaxes
+  pickaxes:
+    materials:
+      - WOODEN_PICKAXE
+      - STONE_PICKAXE
+      - IRON_PICKAXE
+      - GOLDEN_PICKAXE
+      - DIAMOND_PICKAXE
+      - NETHERITE_PICKAXE
+    trigger_profile: block_mining
+    reward_profile: tools
+    display_profile: default
+    max_level: 100
+
+  # Axes
+  axes:
+    materials:
+      - WOODEN_AXE
+      - STONE_AXE
+      - IRON_AXE
+      - GOLDEN_AXE
+      - DIAMOND_AXE
+      - NETHERITE_AXE
+    trigger_profile: block_mining
+    reward_profile: tools
+    display_profile: default
+    max_level: 100
+
+  # Shovels
+  shovels:
+    materials:
+      - WOODEN_SHOVEL
+      - STONE_SHOVEL
+      - IRON_SHOVEL
+      - GOLDEN_SHOVEL
+      - DIAMOND_SHOVEL
+      - NETHERITE_SHOVEL
+    trigger_profile: block_mining
+    reward_profile: tools
+    display_profile: default
+    max_level: 100
+
+  # Swords
+  swords:
+    materials:
+      - WOODEN_SWORD
+      - STONE_SWORD
+      - IRON_SWORD
+      - GOLDEN_SWORD
+      - DIAMOND_SWORD
+      - NETHERITE_SWORD
+    trigger_profile: combat
+    reward_profile: swords
+    display_profile: default
+    max_level: 100
+
+  # Bows
+  bows:
+    materials:
+      - BOW
+      - CROSSBOW
+    trigger_profile: combat
+    reward_profile: bows
+    display_profile: default
+    max_level: 100
+
+  # Fishing Rods
+  fishing_rods:
+    materials:
+      - FISHING_ROD
+    trigger_profile: fishing
+    reward_profile: fishing_rods
+    display_profile: default
+    max_level: 50
+
+  # Example: Inheritance
+  # netherite_pickaxes:
+  #   extends: pickaxes
+  #   materials:
+  #     - NETHERITE_PICKAXE
+  #   max_level: 150  # Override

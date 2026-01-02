@@ -70,7 +70,7 @@ public final class Text {
   }
 
   // Code from https://github.com/boxbeam/RedCommands/blob/master/src/redempt/redlib/misc/FormatUtils.java
-  private static final DecimalFormat FORMAT = new DecimalFormat("0.00");
+  private static final ThreadLocal<DecimalFormat> FORMAT = ThreadLocal.withInitial(() -> new DecimalFormat("0.00"));
   private static final char[] SUFFIXES = {'K', 'M', 'B', 'T', 'Q'};
 
   public static String formatMoney(double money) {
@@ -86,7 +86,7 @@ public final class Text {
   }
 
   public static String truncateDouble(double input) {
-    return FORMAT.format(input);
+    return FORMAT.get().format(input);
   }
 
   // From Apache lang library

@@ -1,6 +1,8 @@
 #
 # LevelTools by byteful
 #
+# Wiki: https://github.com/byteful/LevelTools/wiki/Configuration
+#
 
 # Useful Links:
 # - https://minecraft.fandom.com/wiki/Attribute
@@ -16,9 +18,6 @@ update:
   start: true
   # Should LevelTools check for updates periodically?
   periodically: true
-
-# The max level that tools can reach.
-max_level: 100
 
 # Configuration for block data storage.
 block_data_storage:
@@ -47,6 +46,7 @@ anvil_combine: "ADD_BOTH"
 
 # The mathematical formula to calculate the required XP for next level.
 # Placeholders/Variables provided: {current_level}
+# This is the global default. Can be overridden per item profile.
 level_xp_formula: "100 + {current_level} * 100"
 
 # Should blocks that are placed by a player count towards XP?
@@ -58,256 +58,9 @@ level_up_sound:
   pitch: 1.0
   volume: 1.0
 
-# The default block XP modifier. Look at the configuration section below for a better explanation.
-default_block_xp_modifier:
-  min: 0.5
-  max: 1.5
-
-# The default combat XP modifier. Look at the configuration section below for a better explanation.
-default_combat_xp_modifier:
-  min: 1.0
-  max: 2.5
-
-# Configuration for specific block modifiers.
-# These modifiers change the amount of XP a block gives. Set the min and max to the same value to disable the random range system.
-block_xp_modifiers:
-  DIAMOND_ORE:
-    min: 5.0
-    max: 10.0
-
-# Configuration for specific entity (combat) modifiers.
-# These modifiers change the amount of XP an entity gives. Set the min and max to the same value to disable the random range system.
-combat_xp_modifiers:
-  BLAZE:
-    min: 5.0
-    max: 7.5
-
-# A list that prevents/allows the blocks listed from giving XP on break.
-block_list_type: "BLACKLIST" # Types: WHITELIST, BLACKLIST (blacklist by default)
-block_list:
-  - "FIRE"
-  - "SOUL_FIRE"
-  - "CRIMSON_FUNGUS"
-  - "BROWN_MUSHROOM"
-  - "RED_MUSHROOM"
-  - "CRIMSON_ROOTS"
-  - "GRASS"
-  - "TALL_GRASS"
-  - "SEAGRASS"
-  - "TORCH"
-  - "FERN"
-  - "LARGE_FERN"
-  - "SUNFLOWER"
-  - "CORNFLOWER"
-
-# A list that prevents/allows the entities listed from giving XP on kill.
-entity_list_type: "BLACKLIST" # Types: WHITELIST, BLACKLIST (blacklist by default)
-entity_list:
-  - "PLAYER"
+# Set to true if leveled items should show attributes. Recommended to keep this true to prevent "lore spam".
+hide_attributes: true
 
 # A list of worlds where LevelTools is disabled. Plugins using LevelTools' API will not be affected. Only LevelTools' core logic will be disabled in these worlds.
 disabled_worlds:
   - "disabled_world"
-
-# Configuration for tool rewards given at level ups.
-# Handlers:
-# - "command" : Runs the command provided as the console. (Ex: "command say test")
-# - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
-# - "player-opcommand" : Runs the command provided as the player with OP permissions. ("Ex: player-opcommand specialenchant enchantment")
-# - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
-# - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
-# - "enchant3" : Increases the existing level value of the enchant. (Ex: "enchant3 efficiency 1")
-# - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10") OR (Ex: "attribute GENERIC_ATTACK_SPEED 10")
-tool_rewards:
-  1:
-    - "enchant2 efficiency 1"
-  3:
-    - "enchant2 efficiency 2"
-  5:
-    - "enchant2 efficiency 3"
-  8:
-    - "enchant2 efficiency 4"
-  10:
-    - "enchant2 efficiency 5"
-  11:
-    - "enchant2 unbreaking 1"
-  13:
-    - "enchant2 unbreaking 2"
-  15:
-    - "enchant2 unbreaking 3"
-  20:
-    - "enchant2 mending 1"
-  24:
-    - "enchant2 fortune 1"
-  26:
-    - "enchant2 fortune 2"
-  30:
-    - "enchant2 fortune 3"
-  40:
-    - "enchant2 efficiency 6"
-  50:
-    - "enchant2 fortune 4"
-  65:
-    - "enchant2 efficiency 7"
-    - "enchant2 unbreaking 10"
-  80:
-    - "enchant2 efficiency 8"
-  90:
-    - "enchant2 efficiency 9"
-  100:
-    - "enchant2 efficiency 10"
-    - "enchant2 fortune 5"
-
-# Configuration for sword rewards given at level ups.
-# Handlers:
-# - "command" : Runs the command provided as the console. (Ex: "command say test")
-# - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
-# - "player-opcommand" : Runs the command provided as the player with OP permissions. ("Ex: player-opcommand specialenchant enchantment")
-# - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
-# - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
-# - "enchant3" : Increases the existing level value of the enchant. (Ex: "enchant3 efficiency 1")
-# - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10") OR (Ex: "attribute GENERIC_ATTACK_SPEED 10")
-sword_rewards:
-  1:
-    - "enchant2 sharpness 1"
-  3:
-    - "enchant2 sharpness 2"
-  5:
-    - "enchant2 sharpness 3"
-  8:
-    - "enchant2 sharpness 4"
-  10:
-    - "enchant2 sharpness 5"
-  11:
-    - "enchant2 unbreaking 1"
-  13:
-    - "enchant2 unbreaking 2"
-  15:
-    - "enchant2 unbreaking 3"
-  20:
-    - "enchant2 mending 1"
-  24:
-    - "enchant2 looting 1"
-  26:
-    - "enchant2 looting 2"
-  30:
-    - "enchant2 looting 3"
-  40:
-    - "enchant2 sharpness 6"
-  50:
-    - "enchant2 looting 4"
-  65:
-    - "enchant2 sharpness 7"
-    - "enchant2 unbreaking 10"
-  80:
-    - "enchant2 sharpness 8"
-  90:
-    - "enchant2 sharpness 9"
-  100:
-    - "enchant2 sharpness 10"
-    - "enchant2 looting 5"
-
-# Configuration for bow and crossbow rewards given at level ups.
-# Handlers:
-# - "command" : Runs the command provided as the console. (Ex: "command say test")
-# - "player-command" : Runs the command provided as the player. ("Ex: player-command say test")
-# - "player-opcommand" : Runs the command provided as the player with OP permissions. ("Ex: player-opcommand specialenchant enchantment")
-# - "enchant" : Adds an enchantment to the tool. Overrides existing enchantments with the new level provided. (Ex: "enchant efficiency 1")
-# - "enchant2" : Does the same thing as "enchant" but doesn't override existing enchantments. (Ex: "enchant2 efficiency 1")
-# - "enchant3" : Increases the existing level value of the enchant. (Ex: "enchant3 efficiency 1")
-# - "attribute" : Modifies an attribute on the tool. (Ex: "attribute generic.attack_speed 10") OR (Ex: "attribute GENERIC_ATTACK_SPEED 10")
-bow_rewards:
-  1:
-    - "enchant2 power 1"
-  3:
-    - "enchant2 power 2"
-  5:
-    - "enchant2 power 3"
-  8:
-    - "enchant2 power 4"
-  10:
-    - "enchant2 power 5"
-  11:
-    - "enchant2 unbreaking 1"
-  13:
-    - "enchant2 unbreaking 2"
-  15:
-    - "enchant2 unbreaking 3"
-  20:
-    - "enchant2 mending 1"
-  24:
-    - "enchant2 punch 1"
-  26:
-    - "enchant2 punch 2"
-  30:
-    - "enchant2 punch 3"
-  40:
-    - "enchant2 power 6"
-  50:
-    - "enchant2 flame 1"
-  65:
-    - "enchant2 power 7"
-    - "enchant2 unbreaking 10"
-  80:
-    - "enchant2 power 8"
-  90:
-    - "enchant2 power 9"
-  100:
-    - "enchant2 power 10"
-    - "enchant2 infinity 1"
-
-# Configuration for tool displays.
-# Placeholders:
-# - {level} : The tool's level.
-# - {xp} : The tool's xp.
-# - {max_xp} : The tool's max XP needed to reach the next level.
-# - {xp_formatted} : The tool's xp. (formatted with K,M,B, etc suffixes) (e.g 100K, 250B, 5K, 1M)
-# - {max_xp_formatted} : The tool's max XP needed to reach the next level. (formatted with K,M,B, etc suffixes) (e.g 100K, 250B, 5K, 1M)
-# - {progress_bar} : The progress bar text built with the configuration under 'progress_bar'.
-display:
-  name:
-    enabled: false
-    text: "{item} &7- &b{level}"
-  # Sends the progress bar to the action bar of a player when they gain XP on the tool in their hand.
-  actionBar:
-    enabled: true
-    text: "{progress_bar} &e{xp_formatted}&6/&e{max_xp_formatted}"
-  # Manage the lore displayed on the tool.
-  lore:
-    # Should LevelTools override the lore on tools?
-    enabled: true
-    # The lore lines that LevelTools overrides the tool with.
-    lines:
-      - ""
-      - "&eLevel: &6{level}"
-      - ""
-      - "{progress_bar} &e{xp_formatted}&6/&e{max_xp_formatted}"
-
-# Set to true if leveled items should show attributes. Recommended to keep this true to prevent "lore spam".
-hide_attributes: true
-
-# Configuration for the progress bar.
-progress_bar:
-  # The total amount of bars in the progress bar.
-  total_bars: 50
-
-  # The symbol used for the bar.
-  bar_symbol: '|'
-
-  # The symbol used to prefix the bar symbols.
-  prefix_symbol: '['
-
-  # The symbol used to suffix the bar symbols.
-  suffix_symbol: ']'
-
-  # The color for the prefix symbol.
-  prefix_color: '8' # Do not include the '&'
-
-  # The color for the suffix symbol.
-  suffix_color: '8' # Do not include the '&'
-
-  # The color for the achieved/completed bars.
-  completed_color: 'e' # Do not include the '&'
-
-  # The color for the remaining/placeholder bars.
-  placeholder_color: '7' # Do not include the '&'
