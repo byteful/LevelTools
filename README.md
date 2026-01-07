@@ -73,35 +73,7 @@ Your old config will be automatically backed up to `old_config.yml` and migrated
 
 ## Developer API
 
-### Gradle:
-
-```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
-dependencies {
-    compileOnly 'com.github.byteful:LevelTools:Tag' // Replace Tag with the version. (Ex: v2.0.0)
-}
-```
-
-### Maven:
-
-```xml
-
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-
-<dependency>
-    <groupId>com.github.byteful</groupId>
-    <artifactId>LevelTools</artifactId>
-    <version>Tag</version> <!-- Replace Tag with the version. (Ex: v2.0.0) -->
-</dependency>
-```
+**View detailed API usage [here](https://github.com/byteful/LevelTools/wiki/Developer-API).**
 
 ### Example Usage:
 
