@@ -75,30 +75,6 @@ Your old config will be automatically backed up to `old_config.yml` and migrated
 
 **View detailed API usage [here](https://github.com/byteful/LevelTools/wiki/Developer-API).**
 
-### Example Usage:
-
-```java
-// Items
-
-ItemStack hand = player.getInventory().getItemInMainHand();
-LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(hand);
-tool.setLevel(69);
-tool.setXp(420);
-player.getInventory().setItemInMainHand(tool.getItemStack());
-
-// Events
-
-@EventHandler
-public void onLevelEvent(LevelToolsLevelIncreaseEvent event) {
-  event.setNewLevel(69);
-}
-
-@EventHandler
-public void onXPEvent(LevelToolsXPIncreaseEvent event) {
-  event.setNewXp(420);
-}
-```
-
 ## PlaceholderAPI
 
 | Placeholder | Description |
