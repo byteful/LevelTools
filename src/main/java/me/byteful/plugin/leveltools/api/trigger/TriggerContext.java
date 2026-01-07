@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public final class TriggerContext {
     private final Player player;
     private final ItemStack item;
-    private final TriggerType triggerType;
+    private final String triggerId;
     private final Object source;
     private final Event originalEvent;
     private final ItemProfile itemProfile;
@@ -20,7 +20,7 @@ public final class TriggerContext {
     private TriggerContext(
             @NotNull Player player,
             @NotNull ItemStack item,
-            @NotNull TriggerType triggerType,
+            @NotNull String triggerId,
             @Nullable Object source,
             @NotNull Event originalEvent,
             @NotNull ItemProfile itemProfile,
@@ -28,7 +28,7 @@ public final class TriggerContext {
     ) {
         this.player = player;
         this.item = item;
-        this.triggerType = triggerType;
+        this.triggerId = triggerId;
         this.source = source;
         this.originalEvent = originalEvent;
         this.itemProfile = itemProfile;
@@ -50,8 +50,8 @@ public final class TriggerContext {
     }
 
     @NotNull
-    public TriggerType getTriggerType() {
-        return triggerType;
+    public String getTriggerId() {
+        return triggerId;
     }
 
     @Nullable
@@ -95,7 +95,7 @@ public final class TriggerContext {
     public static final class Builder {
         private Player player;
         private ItemStack item;
-        private TriggerType triggerType;
+        private String triggerId;
         private Object source;
         private Event originalEvent;
         private ItemProfile itemProfile;
@@ -114,8 +114,8 @@ public final class TriggerContext {
             return this;
         }
 
-        public Builder triggerType(@NotNull TriggerType triggerType) {
-            this.triggerType = triggerType;
+        public Builder triggerId(@NotNull String triggerId) {
+            this.triggerId = TriggerIds.normalize(triggerId);
             return this;
         }
 
@@ -142,12 +142,12 @@ public final class TriggerContext {
         public TriggerContext build() {
             if (player == null) throw new IllegalStateException("Player must be set");
             if (item == null) throw new IllegalStateException("Item must be set");
-            if (triggerType == null) throw new IllegalStateException("TriggerType must be set");
+            if (triggerId == null) throw new IllegalStateException("TriggerId must be set");
             if (originalEvent == null) throw new IllegalStateException("Original event must be set");
             if (itemProfile == null) throw new IllegalStateException("ItemProfile must be set");
             if (triggerProfile == null) throw new IllegalStateException("TriggerProfile must be set");
 
-            return new TriggerContext(player, item, triggerType, source, originalEvent, itemProfile, triggerProfile);
+            return new TriggerContext(player, item, triggerId, source, originalEvent, itemProfile, triggerProfile);
         }
     }
 }

@@ -6,6 +6,11 @@
 # Trigger Types: BLOCK_BREAK, ENTITY_KILL, FISHING, RIGHT_CLICK, LEFT_CLICK, CONSUME
 #
 # Each trigger profile can be reused by multiple item profiles.
+#
+
+#
+# Want more trigger types? Contact me here: https://discord.gg/G8BDgqsuyw
+#
 
 profiles:
   # Block breaking trigger - shared by pickaxes, axes, shovels
@@ -37,7 +42,7 @@ profiles:
         - "SUNFLOWER"
         - "CORNFLOWER"
 
-  # Entity killing trigger - shared by swords, bows
+  # Entity killing trigger - shared by swords, bows, crossbows, tridents
   combat:
     type: ENTITY_KILL
     xp_modifier:

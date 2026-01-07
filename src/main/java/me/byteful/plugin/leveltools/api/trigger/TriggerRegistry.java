@@ -5,30 +5,40 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class TriggerRegistry {
-    private final Map<TriggerType, Trigger> triggers = new EnumMap<>(TriggerType.class);
+    private final Map<String, Trigger> triggers = new ConcurrentHashMap<>();
 
     public void register(@NotNull Trigger trigger) {
-        triggers.put(trigger.getType(), trigger);
+        String id = TriggerIds.normalize(trigger.getTriggerId());
+        if (id.isEmpty()) {
+            throw new IllegalArgumentException("Trigger ID cannot be null or empty");
+        }
+        triggers.put(id, trigger);
     }
 
-    public void unregister(@NotNull TriggerType type) {
-        triggers.remove(type);
+    public boolean unregister(@NotNull String triggerId) {
+        return triggers.remove(TriggerIds.normalize(triggerId)) != null;
     }
 
     @Nullable
-    public Trigger get(@NotNull TriggerType type) {
-        return triggers.get(type);
+    public Trigger get(@NotNull String triggerId) {
+        return triggers.get(TriggerIds.normalize(triggerId));
     }
 
     @NotNull
-    public Optional<Trigger> getOptional(@NotNull TriggerType type) {
-        return Optional.ofNullable(triggers.get(type));
+    public Optional<Trigger> getOptional(@NotNull String triggerId) {
+        return Optional.ofNullable(get(triggerId));
     }
 
-    public boolean has(@NotNull TriggerType type) {
-        return triggers.containsKey(type);
+    public boolean has(@NotNull String triggerId) {
+        return triggers.containsKey(TriggerIds.normalize(triggerId));
+    }
+
+    @NotNull
+    public Set<String> getRegisteredIds() {
+        return Collections.unmodifiableSet(triggers.keySet());
     }
 
     @NotNull

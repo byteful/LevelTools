@@ -2,7 +2,7 @@ package me.byteful.plugin.leveltools.api.trigger.impl;
 
 import me.byteful.plugin.leveltools.api.trigger.Trigger;
 import me.byteful.plugin.leveltools.api.trigger.TriggerContext;
-import me.byteful.plugin.leveltools.api.trigger.TriggerType;
+import me.byteful.plugin.leveltools.api.trigger.TriggerIds;
 import me.byteful.plugin.leveltools.profile.trigger.TriggerProfile;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public final class EntityKillTrigger implements Trigger {
     @Override
     @NotNull
-    public TriggerType getType() {
-        return TriggerType.ENTITY_KILL;
+    public String getTriggerId() {
+        return TriggerIds.ENTITY_KILL;
     }
 
     @Override

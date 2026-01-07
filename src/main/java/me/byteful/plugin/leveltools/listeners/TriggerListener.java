@@ -6,8 +6,8 @@ import me.byteful.plugin.leveltools.api.block.BlockPosition;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.api.trigger.Trigger;
 import me.byteful.plugin.leveltools.api.trigger.TriggerContext;
+import me.byteful.plugin.leveltools.api.trigger.TriggerIds;
 import me.byteful.plugin.leveltools.api.trigger.TriggerRegistry;
-import me.byteful.plugin.leveltools.api.trigger.TriggerType;
 import me.byteful.plugin.leveltools.profile.ProfileManager;
 import me.byteful.plugin.leveltools.profile.item.ItemProfile;
 import me.byteful.plugin.leveltools.profile.trigger.TriggerProfile;
@@ -61,7 +61,7 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        handleTrigger(TriggerType.BLOCK_BREAK, player, block, event);
+        handleTrigger(TriggerIds.BLOCK_BREAK, player, block, event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -75,7 +75,7 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        handleTrigger(TriggerType.ENTITY_KILL, killer, event.getEntity(), event);
+        handleTrigger(TriggerIds.ENTITY_KILL, killer, event.getEntity(), event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -90,7 +90,7 @@ public final class TriggerListener implements Listener {
         }
 
         Entity caught = event.getCaught();
-        handleTrigger(TriggerType.FISHING, player, caught, event);
+        handleTrigger(TriggerIds.FISHING, player, caught, event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -104,9 +104,9 @@ public final class TriggerListener implements Listener {
         Block clickedBlock = event.getClickedBlock();
 
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            handleTrigger(TriggerType.RIGHT_CLICK, player, clickedBlock, event);
+            handleTrigger(TriggerIds.RIGHT_CLICK, player, clickedBlock, event);
         } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            handleTrigger(TriggerType.LEFT_CLICK, player, clickedBlock, event);
+            handleTrigger(TriggerIds.LEFT_CLICK, player, clickedBlock, event);
         }
     }
 
@@ -118,11 +118,11 @@ public final class TriggerListener implements Listener {
         }
 
         ItemStack consumedItem = event.getItem();
-        handleTrigger(TriggerType.CONSUME, player, consumedItem, event);
+        handleTrigger(TriggerIds.CONSUME, player, consumedItem, event);
     }
 
     private void handleTrigger(
-            @NotNull TriggerType type,
+            @NotNull String triggerId,
             @NotNull Player player,
             @Nullable Object source,
             @NotNull Event event
@@ -142,11 +142,11 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        if (triggerProfile.getType() != type) {
+        if (!triggerProfile.getTriggerId().equals(triggerId)) {
             return;
         }
 
-        Trigger trigger = triggerRegistry.get(type);
+        Trigger trigger = triggerRegistry.get(triggerId);
         if (trigger == null) {
             return;
         }
@@ -154,7 +154,7 @@ public final class TriggerListener implements Listener {
         TriggerContext context = TriggerContext.builder()
                 .player(player)
                 .item(hand)
-                .triggerType(type)
+                .triggerId(triggerId)
                 .source(source)
                 .originalEvent(event)
                 .itemProfile(itemProfile)

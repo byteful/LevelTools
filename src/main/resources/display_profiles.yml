@@ -11,6 +11,7 @@
 # - {max_xp_formatted}: Max XP with suffixes.
 # - {progress_bar}   : Progress bar from progress_bar config.
 # - {item}           : Original item name.
+#
 
 profiles:
   default:

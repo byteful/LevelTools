@@ -11,6 +11,12 @@
 # - "enchant2"        : Adds enchantment if higher than existing. (Ex: "enchant2 efficiency 1")
 # - "enchant3"        : Adds to existing enchantment level. (Ex: "enchant3 efficiency 1")
 # - "attribute"       : Modifies item attribute. (Ex: "attribute generic.attack_speed 10")
+#
+
+#
+# The default configuration is not super balanced. I would 100% recommend modifying this file.
+# This is what I used for my private SMP. It works, but it may not be fair on a public server.
+#
 
 profiles:
   # Tool rewards - for pickaxes, axes, shovels
@@ -97,7 +103,7 @@ profiles:
         - "enchant2 sharpness 10"
         - "enchant2 looting 5"
 
-  # Bow/Crossbow rewards
+  # Bow rewards
   bows:
     levels:
       1:
@@ -139,6 +145,38 @@ profiles:
         - "enchant2 power 10"
         - "enchant2 infinity 1"
 
+  # Crossbow rewards
+  crossbows:
+    levels:
+      1:
+        - "enchant2 piercing 1"
+      5:
+        - "enchant2 piercing 2"
+      10:
+        - "enchant2 quick_charge 1"
+        - "enchant2 unbreaking 1"
+      15:
+        - "enchant2 piercing 3"
+        - "enchant2 unbreaking 2"
+      20:
+        - "enchant2 piercing 4"
+        - "enchant2 quick_charge 2"
+      25:
+        - "enchant2 unbreaking 3"
+      30:
+        - "enchant2 quick_charge 3"
+        - "enchant2 mending 1"
+      40:
+        - "enchant2 piercing 5"
+      50:
+        - "enchant2 quick_charge 4"
+      65:
+        - "enchant2 unbreaking 4"
+      80:
+        - "enchant2 quick_charge 5"
+      100:
+        - "enchant2 multishot 1"
+
   # Fishing rod rewards
   fishing_rods:
     levels:
@@ -162,3 +200,41 @@ profiles:
         - "enchant2 unbreaking 3"
       50:
         - "enchant2 mending 1"
+
+  # Trident rewards
+  tridents:
+    levels:
+      1:
+        - "enchant2 impaling 1"
+      5:
+        - "enchant2 impaling 2"
+      10:
+        - "enchant2 impaling 3"
+        - "enchant2 loyalty 1"
+      15:
+        - "enchant2 impaling 4"
+        - "enchant2 loyalty 2"
+        - "enchant2 unbreaking 1"
+      20:
+        - "enchant2 impaling 5"
+        - "enchant2 loyalty 3"
+      25:
+        - "enchant2 unbreaking 2"
+        - "enchant2 channeling 1"
+      30:
+        - "enchant2 unbreaking 3"
+        - "enchant2 mending 1"
+      40:
+        - "enchant2 impaling 6"
+      50:
+        - "enchant2 loyalty 4"
+      65:
+        - "enchant2 impaling 7"
+        - "enchant2 unbreaking 4"
+      80:
+        - "enchant2 impaling 8"
+      90:
+        - "enchant2 impaling 9"
+      100:
+        - "enchant2 impaling 10"
+        - "enchant2 loyalty 5"

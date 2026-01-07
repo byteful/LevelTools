@@ -1,6 +1,6 @@
 package me.byteful.plugin.leveltools.profile.trigger;
 
-import me.byteful.plugin.leveltools.api.trigger.TriggerType;
+import me.byteful.plugin.leveltools.api.trigger.TriggerIds;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -48,17 +48,17 @@ public final class TriggerProfileLoader {
             throw new IllegalArgumentException("Missing 'type' field");
         }
 
-        TriggerType type = TriggerType.fromString(typeStr);
-        if (type == null) {
+        String triggerId = TriggerIds.normalize(typeStr);
+        if (triggerId.isEmpty()) {
             throw new IllegalArgumentException("Invalid trigger type: " + typeStr);
         }
 
         XpModifierConfig xpModifier = parseXpModifier(section.getConfigurationSection("xp_modifier"));
         TriggerFilter filter = parseFilter(section.getConfigurationSection("filter"));
-        TriggerSettings settings = parseSettings(section, type);
+        TriggerSettings settings = parseSettings(section, triggerId);
 
         return TriggerProfile.builder(id)
-                .type(type)
+                .triggerId(triggerId)
                 .xpModifier(xpModifier)
                 .filter(filter)
                 .settings(settings)
@@ -116,16 +116,12 @@ public final class TriggerProfileLoader {
     }
 
     @NotNull
-    private TriggerSettings parseSettings(@NotNull ConfigurationSection section, @NotNull TriggerType type) {
-        switch (type) {
-            case RIGHT_CLICK:
-            case LEFT_CLICK:
-                String clickModeStr = section.getString("click_mode", "ANY");
-                TriggerSettings.ClickMode clickMode = TriggerSettings.ClickMode.fromString(clickModeStr);
-                return TriggerSettings.forClick(clickMode);
-
-            default:
-                return TriggerSettings.empty();
+    private TriggerSettings parseSettings(@NotNull ConfigurationSection section, @NotNull String triggerId) {
+        if (TriggerIds.RIGHT_CLICK.equals(triggerId) || TriggerIds.LEFT_CLICK.equals(triggerId)) {
+            String clickModeStr = section.getString("click_mode", "ANY");
+            TriggerSettings.ClickMode clickMode = TriggerSettings.ClickMode.fromString(clickModeStr);
+            return TriggerSettings.forClick(clickMode);
         }
+        return TriggerSettings.empty();
     }
 }

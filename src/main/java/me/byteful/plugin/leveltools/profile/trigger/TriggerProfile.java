@@ -1,24 +1,24 @@
 package me.byteful.plugin.leveltools.profile.trigger;
 
-import me.byteful.plugin.leveltools.api.trigger.TriggerType;
+import me.byteful.plugin.leveltools.api.trigger.TriggerIds;
 import org.jetbrains.annotations.NotNull;
 
 public final class TriggerProfile {
     private final String id;
-    private final TriggerType type;
+    private final String triggerId;
     private final XpModifierConfig xpModifier;
     private final TriggerFilter filter;
     private final TriggerSettings settings;
 
     public TriggerProfile(
             @NotNull String id,
-            @NotNull TriggerType type,
+            @NotNull String triggerId,
             @NotNull XpModifierConfig xpModifier,
             @NotNull TriggerFilter filter,
             @NotNull TriggerSettings settings
     ) {
         this.id = id;
-        this.type = type;
+        this.triggerId = TriggerIds.normalize(triggerId);
         this.xpModifier = xpModifier;
         this.filter = filter;
         this.settings = settings;
@@ -34,8 +34,8 @@ public final class TriggerProfile {
     }
 
     @NotNull
-    public TriggerType getType() {
-        return type;
+    public String getTriggerId() {
+        return triggerId;
     }
 
     @NotNull
@@ -63,7 +63,7 @@ public final class TriggerProfile {
 
     public static final class Builder {
         private final String id;
-        private TriggerType type;
+        private String triggerId;
         private XpModifierConfig xpModifier;
         private TriggerFilter filter = TriggerFilter.empty();
         private TriggerSettings settings = TriggerSettings.empty();
@@ -72,8 +72,8 @@ public final class TriggerProfile {
             this.id = id;
         }
 
-        public Builder type(@NotNull TriggerType type) {
-            this.type = type;
+        public Builder triggerId(@NotNull String triggerId) {
+            this.triggerId = triggerId;
             return this;
         }
 
@@ -93,13 +93,13 @@ public final class TriggerProfile {
         }
 
         public TriggerProfile build() {
-            if (type == null) {
-                throw new IllegalStateException("TriggerType must be set");
+            if (triggerId == null) {
+                throw new IllegalStateException("TriggerId must be set");
             }
             if (xpModifier == null) {
                 throw new IllegalStateException("XpModifierConfig must be set");
             }
-            return new TriggerProfile(id, type, xpModifier, filter, settings);
+            return new TriggerProfile(id, triggerId, xpModifier, filter, settings);
         }
     }
 }

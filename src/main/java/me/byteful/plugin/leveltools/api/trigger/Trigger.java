@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Trigger {
     @NotNull
-    TriggerType getType();
+    String getTriggerId();
 
     boolean canHandle(@NotNull TriggerContext context);
 

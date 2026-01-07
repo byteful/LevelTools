@@ -3,6 +3,7 @@ package me.byteful.plugin.leveltools;
 import me.byteful.plugin.leveltools.api.AnvilCombineMode;
 import me.byteful.plugin.leveltools.api.block.BlockDataManager;
 import me.byteful.plugin.leveltools.api.block.BlockDataManagerFactory;
+import me.byteful.plugin.leveltools.api.event.LevelToolsLoadEvent;
 import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.api.trigger.TriggerRegistry;
 import me.byteful.plugin.leveltools.config.ConfigManager;
@@ -61,12 +62,19 @@ public final class LevelToolsPlugin extends JavaPlugin {
         getLogger().info("Loaded configuration...");
 
         profileManager = new ProfileManager(getLogger());
+        triggerRegistry = new TriggerRegistry();
+
+        Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.PRE_LOAD));
+
+        triggerRegistry.registerDefaults();
+        getLogger().info("Registered triggers...");
+
+        Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.POST_TRIGGERS));
+
         loadProfiles();
         getLogger().info("Loaded profiles...");
 
-        triggerRegistry = new TriggerRegistry();
-        triggerRegistry.registerDefaults();
-        getLogger().info("Registered triggers...");
+        Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.POST_PROFILES));
 
         blockDataManager = BlockDataManagerFactory.createBlockDataManager(
                 getDataFolder().toPath(),
@@ -103,6 +111,9 @@ public final class LevelToolsPlugin extends JavaPlugin {
         }
 
         metrics = new Metrics(this, 21451);
+
+        Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.COMPLETE));
+
         getLogger().info("Successfully started " + getDescription().getFullName() + "!");
     }
 
@@ -158,10 +169,19 @@ public final class LevelToolsPlugin extends JavaPlugin {
     }
 
     public void reloadPlugin() {
+        Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.PRE_LOAD));
+
         configManager.reload();
         setAnvilCombineMode();
         setLevelXpFormula();
+
+        Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.POST_TRIGGERS));
+
         loadProfiles();
+
+        Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.POST_PROFILES));
+        Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.COMPLETE));
+
         getLogger().info("Reloaded LevelTools!");
     }
 

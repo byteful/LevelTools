@@ -2,7 +2,7 @@ package me.byteful.plugin.leveltools.api.trigger.impl;
 
 import me.byteful.plugin.leveltools.api.trigger.Trigger;
 import me.byteful.plugin.leveltools.api.trigger.TriggerContext;
-import me.byteful.plugin.leveltools.api.trigger.TriggerType;
+import me.byteful.plugin.leveltools.api.trigger.TriggerIds;
 import me.byteful.plugin.leveltools.profile.trigger.TriggerProfile;
 import me.byteful.plugin.leveltools.profile.trigger.TriggerSettings;
 import org.bukkit.block.Block;
@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public final class RightClickTrigger implements Trigger {
     @Override
     @NotNull
-    public TriggerType getType() {
-        return TriggerType.RIGHT_CLICK;
+    public String getTriggerId() {
+        return TriggerIds.RIGHT_CLICK;
     }
 
     @Override

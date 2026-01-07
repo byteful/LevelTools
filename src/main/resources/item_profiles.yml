@@ -12,6 +12,7 @@
 #
 # Supports inheritance with 'extends' key.
 # One material can only belong to ONE profile (enforced at startup).
+#
 
 profiles:
   # Pickaxes
@@ -74,9 +75,16 @@ profiles:
   bows:
     materials:
       - BOW
-      - CROSSBOW
     trigger_profile: combat
     reward_profile: bows
+    display_profile: default
+    max_level: 100
+
+  crossbows:
+    materials:
+      - CROSSBOW
+    trigger_profile: combat
+    reward_profile: crossbows
     display_profile: default
     max_level: 100
 
@@ -87,7 +95,15 @@ profiles:
     trigger_profile: fishing
     reward_profile: fishing_rods
     display_profile: default
-    max_level: 50
+    max_level: 100
+
+  tridents:
+    materials:
+      - TRIDENT
+    trigger_profile: combat
+    reward_profile: tridents
+    display_profile: default
+    max_level: 100
 
   # Example: Inheritance
   # netherite_pickaxes:
