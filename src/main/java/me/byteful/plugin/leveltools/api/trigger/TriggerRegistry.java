@@ -1,6 +1,12 @@
 package me.byteful.plugin.leveltools.api.trigger;
 
-import me.byteful.plugin.leveltools.api.trigger.impl.*;
+import me.byteful.plugin.leveltools.api.trigger.impl.BlockBreakTrigger;
+import me.byteful.plugin.leveltools.api.trigger.impl.ConsumeTrigger;
+import me.byteful.plugin.leveltools.api.trigger.impl.EntityKillTrigger;
+import me.byteful.plugin.leveltools.api.trigger.impl.FarmingTrigger;
+import me.byteful.plugin.leveltools.api.trigger.impl.FishingTrigger;
+import me.byteful.plugin.leveltools.api.trigger.impl.LeftClickTrigger;
+import me.byteful.plugin.leveltools.api.trigger.impl.RightClickTrigger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,5 +63,6 @@ public final class TriggerRegistry {
         register(new RightClickTrigger());
         register(new LeftClickTrigger());
         register(new ConsumeTrigger());
+        register(new FarmingTrigger());
     }
 }

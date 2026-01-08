@@ -3,7 +3,7 @@
 #
 # Wiki: https://github.com/byteful/LevelTools/wiki/Trigger-Profiles
 #
-# Trigger Types: BLOCK_BREAK, ENTITY_KILL, FISHING, RIGHT_CLICK, LEFT_CLICK, CONSUME
+# Trigger Types: BLOCK_BREAK, ENTITY_KILL, FISHING, RIGHT_CLICK, LEFT_CLICK, CONSUME, FARMING
 #
 # Each trigger profile can be reused by multiple item profiles.
 #
@@ -94,3 +94,65 @@ profiles:
   #     default:
   #       min: 1.0
   #       max: 1.5
+
+  # Farming trigger - for hoes
+  # Handles tilling soil and harvesting mature crops
+  farming:
+    type: FARMING
+    xp_modifier:
+      default:
+        min: 1.0
+        max: 2.0
+      custom:
+        # Tilling soil
+        TILL:
+          min: 0.5
+          max: 1.0
+        # High-value crops
+        WHEAT:
+          min: 1.0
+          max: 2.0
+        CARROTS:
+          min: 1.0
+          max: 2.0
+        POTATOES:
+          min: 1.0
+          max: 2.0
+        BEETROOTS:
+          min: 1.5
+          max: 2.5
+        NETHER_WART:
+          min: 2.0
+          max: 3.0
+        MELON:
+          min: 1.5
+          max: 2.5
+        PUMPKIN:
+          min: 1.5
+          max: 2.5
+        COCOA:
+          min: 1.5
+          max: 2.5
+        SWEET_BERRY_BUSH:
+          min: 1.0
+          max: 1.5
+    filter:
+      type: WHITELIST
+      list:
+        - "TILL"
+        - "WHEAT"
+        - "CARROTS"
+        - "POTATOES"
+        - "BEETROOTS"
+        - "NETHER_WART"
+        - "COCOA"
+        - "SWEET_BERRY_BUSH"
+        - "MELON"
+        - "PUMPKIN"
+        - "SUGAR_CANE"
+        - "BAMBOO"
+        - "CACTUS"
+        - "KELP"
+        - "KELP_PLANT"
+        - "BROWN_MUSHROOM"
+        - "RED_MUSHROOM"

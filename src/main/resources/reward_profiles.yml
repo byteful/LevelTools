@@ -238,3 +238,45 @@ profiles:
       100:
         - "enchant2 impaling 10"
         - "enchant2 loyalty 5"
+
+  # Hoe rewards
+  hoes:
+    levels:
+      1:
+        - "enchant2 efficiency 1"
+      3:
+        - "enchant2 efficiency 2"
+      5:
+        - "enchant2 efficiency 3"
+      8:
+        - "enchant2 efficiency 4"
+      10:
+        - "enchant2 efficiency 5"
+      11:
+        - "enchant2 unbreaking 1"
+      13:
+        - "enchant2 unbreaking 2"
+      15:
+        - "enchant2 unbreaking 3"
+      20:
+        - "enchant2 mending 1"
+      24:
+        - "enchant2 fortune 1"
+      26:
+        - "enchant2 fortune 2"
+      30:
+        - "enchant2 fortune 3"
+      40:
+        - "enchant2 efficiency 6"
+      50:
+        - "enchant2 fortune 4"
+      65:
+        - "enchant2 efficiency 7"
+        - "enchant2 unbreaking 10"
+      80:
+        - "enchant2 efficiency 8"
+      90:
+        - "enchant2 efficiency 9"
+      100:
+        - "enchant2 efficiency 10"
+        - "enchant2 fortune 5"

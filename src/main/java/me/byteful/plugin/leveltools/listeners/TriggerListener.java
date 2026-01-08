@@ -62,6 +62,7 @@ public final class TriggerListener implements Listener {
         }
 
         handleTrigger(TriggerIds.BLOCK_BREAK, player, block, event);
+        handleTrigger(TriggerIds.FARMING, player, block, event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -105,6 +106,7 @@ public final class TriggerListener implements Listener {
 
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
             handleTrigger(TriggerIds.RIGHT_CLICK, player, clickedBlock, event);
+            handleTrigger(TriggerIds.FARMING, player, clickedBlock, event);
         } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             handleTrigger(TriggerIds.LEFT_CLICK, player, clickedBlock, event);
         }

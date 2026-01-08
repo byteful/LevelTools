@@ -10,6 +10,7 @@ public final class TriggerIds {
     public static final String RIGHT_CLICK = "right_click";
     public static final String LEFT_CLICK = "left_click";
     public static final String CONSUME = "consume";
+    public static final String FARMING = "farming";
 
     private TriggerIds() {}
 
@@ -26,6 +27,7 @@ public final class TriggerIds {
                 || FISHING.equals(normalized)
                 || RIGHT_CLICK.equals(normalized)
                 || LEFT_CLICK.equals(normalized)
-                || CONSUME.equals(normalized);
+                || CONSUME.equals(normalized)
+                || FARMING.equals(normalized);
     }
 }

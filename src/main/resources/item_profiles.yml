@@ -105,6 +105,20 @@ profiles:
     display_profile: default
     max_level: 100
 
+  # Hoes
+  hoes:
+    materials:
+      - WOODEN_HOE
+      - STONE_HOE
+      - IRON_HOE
+      - GOLDEN_HOE
+      - DIAMOND_HOE
+      - NETHERITE_HOE
+    trigger_profile: farming
+    reward_profile: hoes
+    display_profile: default
+    max_level: 100
+
   # Example: Inheritance
   # netherite_pickaxes:
   #   extends: pickaxes

@@ -44,6 +44,7 @@ LevelTools v2.0 introduces a modular profile-based configuration system. Instead
 - `FISHING` - XP when catching items
 - `RIGHT_CLICK` / `LEFT_CLICK` - XP on click
 - `CONSUME` - XP when consuming items
+- `FARMING` - XP when tilling soil and breaking plants
 
 ### Default Supported Items
 
@@ -51,6 +52,7 @@ Out of the box, LevelTools supports:
 - Pickaxes, Axes, Shovels (block mining)
 - Swords, Bows, Crossbows (combat)
 - Fishing Rods (fishing)
+- Hoes (farming)
 
 Add any item by creating custom profiles. See the [Wiki](https://github.com/byteful/LevelTools/wiki) for details.
 
