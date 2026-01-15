@@ -1,4 +1,4 @@
-package me.byteful.plugin.leveltools.listeners;
+package me.byteful.plugin.leveltools.listeners.anvil;
 
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.api.AnvilCombineMode;

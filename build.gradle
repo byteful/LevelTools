@@ -54,7 +54,7 @@ dependencies {
 }
 
 group = 'me.byteful.plugin'
-version = '2.1.0'
+version = '2.1.0.1'
 description = 'LevelTools'
 java.sourceCompatibility = JavaVersion.VERSION_17
 

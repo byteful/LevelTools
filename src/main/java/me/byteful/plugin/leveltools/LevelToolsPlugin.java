@@ -7,9 +7,10 @@ import me.byteful.plugin.leveltools.api.event.LevelToolsLoadEvent;
 import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.api.trigger.TriggerRegistry;
 import me.byteful.plugin.leveltools.config.ConfigManager;
-import me.byteful.plugin.leveltools.listeners.AnvilListener;
+import me.byteful.plugin.leveltools.listeners.anvil.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockPlacementListener;
 import me.byteful.plugin.leveltools.listeners.TriggerListener;
+import me.byteful.plugin.leveltools.listeners.anvil.LegacyAnvilListener;
 import me.byteful.plugin.leveltools.profile.ProfileManager;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import me.byteful.plugin.leveltools.util.UpdateChecker;
@@ -165,7 +166,11 @@ public final class LevelToolsPlugin extends JavaPlugin {
         final PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new BlockPlacementListener(blockDataManager, scheduler), this);
         pm.registerEvents(new TriggerListener(profileManager, triggerRegistry, blockDataManager), this);
-        pm.registerEvents(new AnvilListener(), this);
+        if (LevelToolsUtil.MID_VERSION <= 8) {
+            pm.registerEvents(new LegacyAnvilListener(), this);
+        } else {
+            pm.registerEvents(new AnvilListener(), this);
+        }
     }
 
     public void reloadPlugin() {
