@@ -1,5 +1,6 @@
 package me.byteful.plugin.leveltools.profile.item;
 
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -152,9 +153,10 @@ public final class ItemProfileLoader {
 
         for (String name : materialNames) {
             try {
-                Material material = Material.valueOf(name.toUpperCase());
-                materials.add(material);
-            } catch (IllegalArgumentException e) {
+                Optional<XMaterial> material = XMaterial.matchXMaterial(name.toUpperCase());
+
+                materials.add(Objects.requireNonNull(material.get().get()));
+            } catch (IllegalArgumentException | NoSuchElementException | NullPointerException e) {
                 logger.warning("Unknown material: " + name);
             }
         }

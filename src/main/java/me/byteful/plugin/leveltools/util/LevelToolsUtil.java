@@ -15,8 +15,6 @@ import me.byteful.plugin.leveltools.profile.display.ProgressBarConfig;
 import me.byteful.plugin.leveltools.profile.item.ItemProfile;
 import me.byteful.plugin.leveltools.profile.reward.RewardEntry;
 import me.byteful.plugin.leveltools.profile.reward.RewardProfile;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -38,7 +36,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.byteful.plugin.leveltools.util.Text.*;
-import static net.kyori.adventure.text.Component.translatable;
 
 public final class LevelToolsUtil {
     public static final int MID_VERSION;
@@ -171,14 +168,8 @@ public final class LevelToolsUtil {
                         .replace("{xp_formatted}", formatMoney(xp))
                         .replace("{progress_bar}", progressBar));
 
-                if (nameDisplay.getText().contains("{item}") && IS_PAPER) {
-                    final net.kyori.adventure.text.TextComponent component = LegacyComponentSerializer.legacySection().deserialize(text);
-                    for (Component child : component.children()) {
-                        if (child instanceof net.kyori.adventure.text.TextComponent && ((net.kyori.adventure.text.TextComponent) child).content().equals("{item}")) {
-                            ((net.kyori.adventure.text.TextComponent) child).content("");
-                            child.append(translatable(stack.getType().translationKey()));
-                        }
-                    }
+                if (nameDisplay.getText().contains("{item}") && MID_VERSION >= 13 && IS_PAPER) {
+                    AdventureHelper.setDisplayNameWithTranslatable(meta, text, stack);
                 } else {
                     meta.setDisplayName(text);
                 }
