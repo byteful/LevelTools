@@ -3,9 +3,12 @@
 #
 # Wiki: https://github.com/byteful/LevelTools/wiki/Trigger-Profiles
 #
-# Trigger Types: BLOCK_BREAK, ENTITY_KILL, FISHING, RIGHT_CLICK, LEFT_CLICK, CONSUME, FARMING
+# Trigger Types: BLOCK_BREAK, ENTITY_KILL, FISHING, RIGHT_CLICK, LEFT_CLICK, CONSUME, FARMING, ARMOR_DURABILITY
 #
 # Each trigger profile can be reused by multiple item profiles.
+# Optional: slots can restrict where an item must be equipped.
+# Slot names must match: HELMET, CHESTPLATE, LEGGINGS, BOOTS, HAND, OFF_HAND
+# Omit slots (or keep it empty) to allow matching from all slots.
 #
 
 #
@@ -80,12 +83,34 @@ profiles:
   # Example right-click trigger
   # right_click_any:
   #   type: RIGHT_CLICK
+  #   slots:
+  #     - HAND
   #   xp_modifier:
   #     default:
   #       min: 0.5
   #       max: 1.0
   #   # Click modes: ANY, ON_BLOCK, ON_ENTITY, ON_AIR
   #   click_mode: ANY
+
+  # Example armor durability trigger
+  # armor_durability:
+  #   type: ARMOR_DURABILITY
+  #   slots:
+  #     - HEAD
+  #     - CHEST
+  #     - LEGS
+  #     - FEET
+  #   xp_modifier:
+  #     default:
+  #       min: 0.5
+  #       max: 1.0
+  #   filter:
+  #     type: WHITELIST
+  #     list:
+  #       - LEATHER_HELMET
+  #       - LEATHER_CHESTPLATE
+  #       - LEATHER_LEGGINGS
+  #       - LEATHER_BOOTS
 
   # Example consume trigger
   # food_consumption:

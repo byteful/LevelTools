@@ -4,10 +4,7 @@ import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.api.block.BlockDataManager;
 import me.byteful.plugin.leveltools.api.block.BlockPosition;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
-import me.byteful.plugin.leveltools.api.trigger.Trigger;
-import me.byteful.plugin.leveltools.api.trigger.TriggerContext;
-import me.byteful.plugin.leveltools.api.trigger.TriggerIds;
-import me.byteful.plugin.leveltools.api.trigger.TriggerRegistry;
+import me.byteful.plugin.leveltools.api.trigger.*;
 import me.byteful.plugin.leveltools.profile.ProfileManager;
 import me.byteful.plugin.leveltools.profile.item.ItemProfile;
 import me.byteful.plugin.leveltools.profile.trigger.TriggerProfile;
@@ -26,9 +23,12 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public final class TriggerListener implements Listener {
     private final ProfileManager profileManager;
@@ -61,8 +61,8 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        handleTrigger(TriggerIds.BLOCK_BREAK, player, block, event);
-        handleTrigger(TriggerIds.FARMING, player, block, event);
+        handleTrigger(TriggerIds.BLOCK_BREAK, player, player.getItemInHand(), TriggerSlot.HAND, block, event);
+        handleTrigger(TriggerIds.FARMING, player, player.getItemInHand(), TriggerSlot.HAND, block, event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -76,7 +76,7 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        handleTrigger(TriggerIds.ENTITY_KILL, killer, event.getEntity(), event);
+        handleTrigger(TriggerIds.ENTITY_KILL, killer, killer.getItemInHand(), TriggerSlot.HAND, event.getEntity(), event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -91,7 +91,18 @@ public final class TriggerListener implements Listener {
         }
 
         Entity caught = event.getCaught();
-        handleTrigger(TriggerIds.FISHING, player, caught, event);
+        ItemStack item;
+        TriggerSlot slot;
+
+        if (LevelToolsUtil.MID_VERSION <= 8 || event.getHand() == null) {
+            item = event.getPlayer().getItemInHand();
+            slot = TriggerSlot.HAND;
+        } else {
+            item = event.getPlayer().getInventory().getItem(event.getHand());
+            slot = TriggerSlot.fromBukkit(event.getHand());
+        }
+
+        handleTrigger(TriggerIds.FISHING, player, item, slot, caught, event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -103,12 +114,20 @@ public final class TriggerListener implements Listener {
 
         Action action = event.getAction();
         Block clickedBlock = event.getClickedBlock();
+        TriggerSlot slot = LevelToolsUtil.MID_VERSION <= 8 || event.getHand() == null
+                ? TriggerSlot.HAND
+                : TriggerSlot.fromBukkit(event.getHand());
+        ItemStack item = event.getItem();
+
+        if (item == null) {
+            return;
+        }
 
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            handleTrigger(TriggerIds.RIGHT_CLICK, player, clickedBlock, event);
-            handleTrigger(TriggerIds.FARMING, player, clickedBlock, event);
+            handleTrigger(TriggerIds.RIGHT_CLICK, player, item, slot, clickedBlock, event);
+            handleTrigger(TriggerIds.FARMING, player, item, slot, clickedBlock, event);
         } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            handleTrigger(TriggerIds.LEFT_CLICK, player, clickedBlock, event);
+            handleTrigger(TriggerIds.LEFT_CLICK, player, item, slot, clickedBlock, event);
         }
     }
 
@@ -119,32 +138,50 @@ public final class TriggerListener implements Listener {
             return;
         }
 
+        TriggerSlot slot = LevelToolsUtil.MID_VERSION <= 8 ? TriggerSlot.HAND : TriggerSlot.fromBukkit(event.getHand());
         ItemStack consumedItem = event.getItem();
-        handleTrigger(TriggerIds.CONSUME, player, consumedItem, event);
+        handleTrigger(TriggerIds.CONSUME, player, consumedItem, slot, consumedItem, event);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerItemDamage(PlayerItemDamageEvent event) {
+        Player player = event.getPlayer();
+        if (!player.hasPermission("leveltools.enabled")) {
+            return;
+        }
+
+        ItemStack damagedItem = event.getItem();
+        if (damagedItem.getType() == Material.AIR) {
+            return;
+        }
+
+        TriggerSlot armorSlot = findArmorSlot(player, damagedItem);
+        if (armorSlot == null) {
+            return;
+        }
+
+        handleTrigger(TriggerIds.ARMOR_DURABILITY, player, damagedItem, armorSlot, damagedItem.getType(), event);
     }
 
     private void handleTrigger(
             @NotNull String triggerId,
             @NotNull Player player,
+            @NotNull ItemStack item,
+            @Nullable TriggerSlot slot,
             @Nullable Object source,
             @NotNull Event event
     ) {
-        ItemStack hand = LevelToolsUtil.getHand(player);
-        if (hand.getType() == Material.AIR) {
+        if (item.getType() == Material.AIR) {
             return;
         }
 
-        ItemProfile itemProfile = profileManager.getProfileForMaterial(hand.getType());
+        ItemProfile itemProfile = profileManager.getProfileForMaterial(item.getType());
         if (itemProfile == null) {
             return;
         }
 
-        TriggerProfile triggerProfile = profileManager.getTriggerProfileFor(itemProfile);
-        if (triggerProfile == null) {
-            return;
-        }
-
-        if (!triggerProfile.getTriggerId().equals(triggerId)) {
+        List<TriggerProfile> triggerProfiles = profileManager.getTriggerProfilesFor(itemProfile);
+        if (triggerProfiles.isEmpty()) {
             return;
         }
 
@@ -153,23 +190,64 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        TriggerContext context = TriggerContext.builder()
-                .player(player)
-                .item(hand)
-                .triggerId(triggerId)
-                .source(source)
-                .originalEvent(event)
-                .itemProfile(itemProfile)
-                .triggerProfile(triggerProfile)
-                .build();
+        double totalModifier = 0.0;
+        for (TriggerProfile triggerProfile : triggerProfiles) {
+            if (!triggerId.equals(triggerProfile.getTriggerId())) {
+                continue;
+            }
 
-        if (!trigger.canHandle(context)) {
+            if (!triggerProfile.getSlotFilter().matches(slot)) {
+                continue;
+            }
+
+            TriggerContext context = TriggerContext.builder()
+                    .player(player)
+                    .item(item)
+                    .triggerId(triggerId)
+                    .slot(slot)
+                    .source(source)
+                    .originalEvent(event)
+                    .itemProfile(itemProfile)
+                    .triggerProfile(triggerProfile)
+                    .build();
+
+            if (!trigger.canHandle(context)) {
+                continue;
+            }
+
+            totalModifier += trigger.calculateXpModifier(context);
+        }
+
+        if (totalModifier <= 0.0) {
             return;
         }
 
-        double modifier = trigger.calculateXpModifier(context);
+        LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+        xpHandler.handle(player, itemProfile, slot, tool, totalModifier);
+    }
 
-        LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(hand);
-        xpHandler.handle(context, tool, modifier);
+    @Nullable
+    private TriggerSlot findArmorSlot(@NotNull Player player, @NotNull ItemStack itemStack) {
+        if (matchesItem(player.getInventory().getHelmet(), itemStack)) {
+            return TriggerSlot.HELMET;
+        }
+
+        if (matchesItem(player.getInventory().getChestplate(), itemStack)) {
+            return TriggerSlot.CHESTPLATE;
+        }
+
+        if (matchesItem(player.getInventory().getLeggings(), itemStack)) {
+            return TriggerSlot.LEGGINGS;
+        }
+
+        if (matchesItem(player.getInventory().getBoots(), itemStack)) {
+            return TriggerSlot.BOOTS;
+        }
+
+        return null;
+    }
+
+    private boolean matchesItem(@Nullable ItemStack item, @NotNull ItemStack check) {
+        return item != null && item.equals(check);
     }
 }

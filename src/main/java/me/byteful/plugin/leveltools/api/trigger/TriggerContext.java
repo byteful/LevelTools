@@ -12,6 +12,7 @@ public final class TriggerContext {
     private final Player player;
     private final ItemStack item;
     private final String triggerId;
+    private final TriggerSlot slot;
     private final Object source;
     private final Event originalEvent;
     private final ItemProfile itemProfile;
@@ -21,6 +22,7 @@ public final class TriggerContext {
             @NotNull Player player,
             @NotNull ItemStack item,
             @NotNull String triggerId,
+            @Nullable TriggerSlot slot,
             @Nullable Object source,
             @NotNull Event originalEvent,
             @NotNull ItemProfile itemProfile,
@@ -29,6 +31,7 @@ public final class TriggerContext {
         this.player = player;
         this.item = item;
         this.triggerId = triggerId;
+        this.slot = slot;
         this.source = source;
         this.originalEvent = originalEvent;
         this.itemProfile = itemProfile;
@@ -52,6 +55,11 @@ public final class TriggerContext {
     @NotNull
     public String getTriggerId() {
         return triggerId;
+    }
+
+    @Nullable
+    public TriggerSlot getSlot() {
+        return slot;
     }
 
     @Nullable
@@ -96,6 +104,7 @@ public final class TriggerContext {
         private Player player;
         private ItemStack item;
         private String triggerId;
+        private TriggerSlot slot;
         private Object source;
         private Event originalEvent;
         private ItemProfile itemProfile;
@@ -116,6 +125,11 @@ public final class TriggerContext {
 
         public Builder triggerId(@NotNull String triggerId) {
             this.triggerId = TriggerIds.normalize(triggerId);
+            return this;
+        }
+
+        public Builder slot(@Nullable TriggerSlot slot) {
+            this.slot = slot;
             return this;
         }
 
@@ -147,7 +161,7 @@ public final class TriggerContext {
             if (itemProfile == null) throw new IllegalStateException("ItemProfile must be set");
             if (triggerProfile == null) throw new IllegalStateException("TriggerProfile must be set");
 
-            return new TriggerContext(player, item, triggerId, source, originalEvent, itemProfile, triggerProfile);
+            return new TriggerContext(player, item, triggerId, slot, source, originalEvent, itemProfile, triggerProfile);
         }
     }
 }

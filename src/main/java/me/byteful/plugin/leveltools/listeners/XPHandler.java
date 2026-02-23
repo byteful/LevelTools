@@ -5,7 +5,7 @@ import me.byteful.plugin.leveltools.LevelToolsPlugin;
 import me.byteful.plugin.leveltools.api.event.LevelToolsLevelIncreaseEvent;
 import me.byteful.plugin.leveltools.api.event.LevelToolsXPIncreaseEvent;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
-import me.byteful.plugin.leveltools.api.trigger.TriggerContext;
+import me.byteful.plugin.leveltools.api.trigger.TriggerSlot;
 import me.byteful.plugin.leveltools.profile.ProfileManager;
 import me.byteful.plugin.leveltools.profile.display.DisplayProfile;
 import me.byteful.plugin.leveltools.profile.item.ItemProfile;
@@ -17,7 +17,9 @@ import me.byteful.plugin.leveltools.util.XPBooster;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -30,10 +32,13 @@ public final class XPHandler {
         this.profileManager = profileManager;
     }
 
-    public void handle(@NotNull TriggerContext context, @NotNull LevelToolsItem tool, double modifier) {
-        Player player = context.getPlayer();
-        ItemProfile itemProfile = context.getItemProfile();
-
+    public void handle(
+            @NotNull Player player,
+            @NotNull ItemProfile itemProfile,
+            @Nullable TriggerSlot slot,
+            @NotNull LevelToolsItem tool,
+            double modifier
+    ) {
         List<String> disabledWorlds = LevelToolsPlugin.getInstance().getConfig().getStringList("disabled_worlds");
         if (disabledWorlds.contains(player.getWorld().getName())) {
             return;
@@ -52,24 +57,29 @@ public final class XPHandler {
         tool.setXp(xpEvent.getNewXp());
 
         if (tool.getXp() >= tool.getMaxXp()) {
-            handleLevelUp(tool, player, itemProfile);
+            handleLevelUp(tool, player, itemProfile, slot);
         }
 
-        LevelToolsUtil.setHand(player, tool.getItemStack());
+        updateItem(player, slot, tool.getItemStack());
 
         showActionBar(tool, player, itemProfile);
 
-        handleReward(tool, player, itemProfile);
+        handleReward(tool, player, itemProfile, slot);
     }
 
-    private void handleLevelUp(@NotNull LevelToolsItem tool, @NotNull Player player, @NotNull ItemProfile itemProfile) {
+    private void handleLevelUp(
+            @NotNull LevelToolsItem tool,
+            @NotNull Player player,
+            @NotNull ItemProfile itemProfile,
+            @Nullable TriggerSlot slot
+    ) {
         int newLevel = tool.getLevel() + 1;
         int maxLevel = itemProfile.getMaxLevel();
 
         if (newLevel > maxLevel) {
             if (tool.getXp() != tool.getMaxXp()) {
                 tool.setXp(tool.getMaxXp());
-                LevelToolsUtil.setHand(player, tool.getItemStack());
+                updateItem(player, slot, tool.getItemStack());
             }
             return;
         }
@@ -138,7 +148,12 @@ public final class XPHandler {
         LevelToolsUtil.sendActionBar(player, text);
     }
 
-    private void handleReward(@NotNull LevelToolsItem tool, @NotNull Player player, @NotNull ItemProfile itemProfile) {
+    private void handleReward(
+            @NotNull LevelToolsItem tool,
+            @NotNull Player player,
+            @NotNull ItemProfile itemProfile,
+            @Nullable TriggerSlot slot
+    ) {
         RewardProfile rewardProfile = profileManager.getRewardProfileFor(itemProfile);
         if (rewardProfile == null) {
             return;
@@ -154,14 +169,18 @@ public final class XPHandler {
         }
 
         tool.setLastHandledReward(level);
-        LevelToolsUtil.setHand(player, tool.getItemStack());
+        updateItem(player, slot, tool.getItemStack());
 
         List<RewardEntry> rewards = rewardProfile.getRewardsForLevel(level);
         for (RewardEntry entry : rewards) {
             entry.apply(tool, player);
             if (entry.shouldUpdateItem()) {
-                LevelToolsUtil.setHand(player, tool.getItemStack());
+                updateItem(player, slot, tool.getItemStack());
             }
         }
+    }
+
+    private void updateItem(@NotNull Player player, @Nullable TriggerSlot slot, @NotNull ItemStack itemStack) {
+        LevelToolsUtil.setItemInSlot(player, slot, itemStack);
     }
 }

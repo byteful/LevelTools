@@ -175,8 +175,10 @@ public final class ProfileManager {
             return RegistrationResult.alreadyExists(id, "item");
         }
 
-        if (!triggerProfiles.containsKey(profile.getTriggerProfileId())) {
-            return RegistrationResult.missingReference(id, "trigger", profile.getTriggerProfileId());
+        for (String triggerProfileId : profile.getTriggerProfileIds()) {
+            if (!triggerProfiles.containsKey(triggerProfileId)) {
+                return RegistrationResult.missingReference(id, "trigger", triggerProfileId);
+            }
         }
         if (!rewardProfiles.containsKey(profile.getRewardProfileId())) {
             return RegistrationResult.missingReference(id, "reward", profile.getRewardProfileId());
@@ -290,8 +292,27 @@ public final class ProfileManager {
     }
 
     @Nullable
+    @Deprecated
     public TriggerProfile getTriggerProfileFor(@NotNull ItemProfile itemProfile) {
-        return triggerProfiles.get(itemProfile.getTriggerProfileId());
+        List<TriggerProfile> profiles = getTriggerProfilesFor(itemProfile);
+        if (profiles.isEmpty()) {
+            return null;
+        }
+
+        return profiles.get(0);
+    }
+
+    @NotNull
+    public List<TriggerProfile> getTriggerProfilesFor(@NotNull ItemProfile itemProfile) {
+        List<TriggerProfile> profiles = new ArrayList<>();
+        for (String triggerProfileId : itemProfile.getTriggerProfileIds()) {
+            TriggerProfile triggerProfile = triggerProfiles.get(triggerProfileId);
+            if (triggerProfile != null) {
+                profiles.add(triggerProfile);
+            }
+        }
+
+        return Collections.unmodifiableList(profiles);
     }
 
     @Nullable

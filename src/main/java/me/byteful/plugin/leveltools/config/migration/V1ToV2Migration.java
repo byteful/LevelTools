@@ -219,7 +219,7 @@ public final class V1ToV2Migration {
                                    @NotNull String rewardProfile, @NotNull String displayProfile, int maxLevel) {
         String basePath = "profiles." + id;
         config.set(basePath + ".materials", materials);
-        config.set(basePath + ".trigger_profile", triggerProfile);
+        config.set(basePath + ".trigger_profiles", Collections.singletonList(triggerProfile));
         config.set(basePath + ".reward_profile", rewardProfile);
         config.set(basePath + ".display_profile", displayProfile);
         config.set(basePath + ".max_level", maxLevel);

@@ -103,12 +103,9 @@ public final class ItemProfileLoader {
             materials = parent.getMaterials();
         }
 
-        String triggerProfileId = section.getString("trigger_profile");
-        if (triggerProfileId == null && parent != null) {
-            triggerProfileId = parent.getTriggerProfileId();
-        }
-        if (triggerProfileId == null) {
-            throw new IllegalArgumentException("Missing 'trigger_profile' field");
+        List<String> triggerProfileIds = parseTriggerProfileIds(section, parent);
+        if (triggerProfileIds.isEmpty()) {
+            throw new IllegalArgumentException("Missing 'trigger_profiles' field");
         }
 
         String rewardProfileId = section.getString("reward_profile");
@@ -138,13 +135,34 @@ public final class ItemProfileLoader {
 
         return ItemProfile.builder(id)
                 .materials(materials)
-                .triggerProfile(triggerProfileId)
+                .triggerProfiles(triggerProfileIds)
                 .rewardProfile(rewardProfileId)
                 .displayProfile(displayProfileId)
                 .maxLevel(maxLevel)
                 .levelXpFormula(levelXpFormula)
                 .extendsProfile(extendsProfileId)
                 .build();
+    }
+
+    @NotNull
+    private List<String> parseTriggerProfileIds(
+            @NotNull ConfigurationSection section,
+            @Nullable ItemProfile parent
+    ) {
+        if (section.contains("trigger_profiles")) {
+            return section.getStringList("trigger_profiles");
+        }
+
+        String singleTriggerProfile = section.getString("trigger_profile");
+        if (singleTriggerProfile != null && !singleTriggerProfile.trim().isEmpty()) {
+            return Collections.singletonList(singleTriggerProfile);
+        }
+
+        if (parent != null) {
+            return parent.getTriggerProfileIds();
+        }
+
+        return Collections.emptyList();
     }
 
     @NotNull

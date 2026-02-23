@@ -9,6 +9,7 @@ import me.byteful.plugin.leveltools.api.item.impl.PDCLevelToolsItem;
 import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.api.scheduler.impl.bukkit.BukkitScheduler;
 import me.byteful.plugin.leveltools.api.scheduler.impl.folia.FoliaScheduler;
+import me.byteful.plugin.leveltools.api.trigger.TriggerSlot;
 import me.byteful.plugin.leveltools.profile.ProfileManager;
 import me.byteful.plugin.leveltools.profile.display.DisplayProfile;
 import me.byteful.plugin.leveltools.profile.display.ProgressBarConfig;
@@ -95,6 +96,39 @@ public final class LevelToolsUtil {
             player.getInventory().setItemInMainHand(stack);
         } else {
             player.setItemInHand(stack);
+        }
+    }
+
+    public static void setItemInSlot(@NotNull Player player, @Nullable TriggerSlot slot, @NotNull ItemStack stack) {
+        if (slot == null || slot == TriggerSlot.HAND) {
+            setHand(player, stack);
+            return;
+        }
+
+        if (slot == TriggerSlot.OFF_HAND) {
+            if (MID_VERSION >= 9) {
+                player.getInventory().setItemInOffHand(stack);
+            } else {
+                setHand(player, stack);
+            }
+            return;
+        }
+
+        switch (slot) {
+            case HELMET:
+                player.getInventory().setHelmet(stack);
+                return;
+            case CHESTPLATE:
+                player.getInventory().setChestplate(stack);
+                return;
+            case LEGGINGS:
+                player.getInventory().setLeggings(stack);
+                return;
+            case BOOTS:
+                player.getInventory().setBoots(stack);
+                return;
+            default:
+                setHand(player, stack);
         }
     }
 

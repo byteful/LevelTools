@@ -60,9 +60,10 @@ public final class ProfileValidator {
             @NotNull List<String> errors
     ) {
         for (ItemProfile itemProfile : itemProfiles.values()) {
-            String triggerId = itemProfile.getTriggerProfileId();
-            if (!triggerProfiles.containsKey(triggerId)) {
-                errors.add("Item profile '" + itemProfile.getId() + "' references unknown trigger profile: '" + triggerId + "'");
+            for (String triggerId : itemProfile.getTriggerProfileIds()) {
+                if (!triggerProfiles.containsKey(triggerId)) {
+                    errors.add("Item profile '" + itemProfile.getId() + "' references unknown trigger profile: '" + triggerId + "'");
+                }
             }
 
             String rewardId = itemProfile.getRewardProfileId();

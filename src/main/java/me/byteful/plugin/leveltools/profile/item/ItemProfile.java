@@ -4,19 +4,23 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class ItemProfile {
     private final String id;
     private final Set<Material> materials;
-    private final String triggerProfileId;
+    private final List<String> triggerProfileIds;
     private final String rewardProfileId;
     private final String displayProfileId;
     private final int maxLevel;
     private final String levelXpFormula;
     private final String extendsProfileId;
 
+    @Deprecated
     public ItemProfile(
             @NotNull String id,
             @NotNull Set<Material> materials,
@@ -27,9 +31,31 @@ public final class ItemProfile {
             @Nullable String levelXpFormula,
             @Nullable String extendsProfileId
     ) {
+        this(
+                id,
+                materials,
+                Collections.singletonList(triggerProfileId),
+                rewardProfileId,
+                displayProfileId,
+                maxLevel,
+                levelXpFormula,
+                extendsProfileId
+        );
+    }
+
+    public ItemProfile(
+            @NotNull String id,
+            @NotNull Set<Material> materials,
+            @NotNull List<String> triggerProfileIds,
+            @NotNull String rewardProfileId,
+            @NotNull String displayProfileId,
+            int maxLevel,
+            @Nullable String levelXpFormula,
+            @Nullable String extendsProfileId
+    ) {
         this.id = id;
         this.materials = Collections.unmodifiableSet(materials);
-        this.triggerProfileId = triggerProfileId;
+        this.triggerProfileIds = Collections.unmodifiableList(sanitizeTriggerProfileIds(triggerProfileIds));
         this.rewardProfileId = rewardProfileId;
         this.displayProfileId = displayProfileId;
         this.maxLevel = maxLevel;
@@ -52,8 +78,17 @@ public final class ItemProfile {
     }
 
     @NotNull
+    public List<String> getTriggerProfileIds() {
+        return triggerProfileIds;
+    }
+
+    /**
+     * @deprecated Use {@link #getTriggerProfileIds()} instead.
+     */
+    @Deprecated
+    @NotNull
     public String getTriggerProfileId() {
-        return triggerProfileId;
+        return triggerProfileIds.get(0);
     }
 
     @NotNull
@@ -95,7 +130,7 @@ public final class ItemProfile {
     public static final class Builder {
         private final String id;
         private Set<Material> materials = Collections.emptySet();
-        private String triggerProfileId;
+        private List<String> triggerProfileIds = Collections.emptyList();
         private String rewardProfileId;
         private String displayProfileId = "default";
         private int maxLevel = 100;
@@ -111,8 +146,14 @@ public final class ItemProfile {
             return this;
         }
 
+        public Builder triggerProfiles(@NotNull List<String> triggerProfileIds) {
+            this.triggerProfileIds = triggerProfileIds;
+            return this;
+        }
+
+        @Deprecated
         public Builder triggerProfile(@NotNull String triggerProfileId) {
-            this.triggerProfileId = triggerProfileId;
+            this.triggerProfileIds = Collections.singletonList(triggerProfileId);
             return this;
         }
 
@@ -142,16 +183,10 @@ public final class ItemProfile {
         }
 
         public ItemProfile build() {
-            if (triggerProfileId == null) {
-                throw new IllegalStateException("Trigger profile ID must be set");
-            }
-            if (rewardProfileId == null) {
-                throw new IllegalStateException("Reward profile ID must be set");
-            }
             return new ItemProfile(
                     id,
                     materials,
-                    triggerProfileId,
+                    triggerProfileIds,
                     rewardProfileId,
                     displayProfileId,
                     maxLevel,
@@ -159,5 +194,22 @@ public final class ItemProfile {
                     extendsProfileId
             );
         }
+    }
+
+    @NotNull
+    private static List<String> sanitizeTriggerProfileIds(@NotNull List<String> triggerProfileIds) {
+        LinkedHashSet<String> uniqueIds = new LinkedHashSet<>();
+        for (String triggerProfileId : triggerProfileIds) {
+            if (triggerProfileId == null) {
+                continue;
+            }
+
+            String trimmed = triggerProfileId.trim();
+            if (!trimmed.isEmpty()) {
+                uniqueIds.add(trimmed);
+            }
+        }
+
+        return new ArrayList<>(uniqueIds);
     }
 }

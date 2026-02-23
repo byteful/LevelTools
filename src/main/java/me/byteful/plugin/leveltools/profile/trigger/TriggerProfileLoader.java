@@ -1,5 +1,6 @@
 package me.byteful.plugin.leveltools.profile.trigger;
 
+import me.byteful.plugin.leveltools.api.trigger.TriggerSlot;
 import me.byteful.plugin.leveltools.api.trigger.TriggerIds;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -55,12 +56,14 @@ public final class TriggerProfileLoader {
 
         XpModifierConfig xpModifier = parseXpModifier(section.getConfigurationSection("xp_modifier"));
         TriggerFilter filter = parseFilter(section.getConfigurationSection("filter"));
+        TriggerSlotFilter slotFilter = parseSlots(id, section);
         TriggerSettings settings = parseSettings(section, triggerId);
 
         return TriggerProfile.builder(id)
                 .triggerId(triggerId)
                 .xpModifier(xpModifier)
                 .filter(filter)
+                .slotFilter(slotFilter)
                 .settings(settings)
                 .build();
     }
@@ -123,5 +126,38 @@ public final class TriggerProfileLoader {
             return TriggerSettings.forClick(clickMode);
         }
         return TriggerSettings.empty();
+    }
+
+    @NotNull
+    private TriggerSlotFilter parseSlots(@NotNull String profileId, @NotNull ConfigurationSection section) {
+        if (!section.contains("slots")) {
+            return TriggerSlotFilter.all();
+        }
+
+        List<String> slotValues = section.getStringList("slots");
+        if (slotValues.isEmpty()) {
+            return TriggerSlotFilter.all();
+        }
+
+        Set<TriggerSlot> slots = EnumSet.noneOf(TriggerSlot.class);
+        for (String slotValue : slotValues) {
+            if (slotValue == null || slotValue.trim().isEmpty()) {
+                logger.warning("Trigger profile '" + profileId + "' contains an empty slot entry. Ignoring configured slots for this profile.");
+                return TriggerSlotFilter.all();
+            }
+
+            TriggerSlot slot = TriggerSlot.fromName(slotValue);
+            if (slot == null) {
+                logger.warning("Trigger profile '" + profileId + "' contains an invalid slot '" + slotValue + "'. Ignoring configured slots for this profile.");
+                return TriggerSlotFilter.all();
+            }
+            slots.add(slot);
+        }
+
+        if (slots.isEmpty()) {
+            return TriggerSlotFilter.all();
+        }
+
+        return TriggerSlotFilter.restricted(slots);
     }
 }

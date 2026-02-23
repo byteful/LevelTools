@@ -5,7 +5,7 @@
 #
 # Each item profile links:
 # - materials: List of item materials
-# - trigger_profile: How XP is gained
+# - trigger_profiles: How XP is gained
 # - reward_profile: What rewards are given
 # - display_profile: How item is displayed
 # - max_level: Maximum level for this item type
@@ -24,7 +24,8 @@ profiles:
       - GOLDEN_PICKAXE
       - DIAMOND_PICKAXE
       - NETHERITE_PICKAXE
-    trigger_profile: block_mining
+    trigger_profiles:
+      - block_mining
     reward_profile: tools
     display_profile: default
     max_level: 100
@@ -38,7 +39,8 @@ profiles:
       - GOLDEN_AXE
       - DIAMOND_AXE
       - NETHERITE_AXE
-    trigger_profile: block_mining
+    trigger_profiles:
+      - block_mining
     reward_profile: tools
     display_profile: default
     max_level: 100
@@ -52,7 +54,8 @@ profiles:
       - GOLDEN_SHOVEL
       - DIAMOND_SHOVEL
       - NETHERITE_SHOVEL
-    trigger_profile: block_mining
+    trigger_profiles:
+      - block_mining
     reward_profile: tools
     display_profile: default
     max_level: 100
@@ -66,7 +69,8 @@ profiles:
       - GOLDEN_SWORD
       - DIAMOND_SWORD
       - NETHERITE_SWORD
-    trigger_profile: combat
+    trigger_profiles:
+      - combat
     reward_profile: swords
     display_profile: default
     max_level: 100
@@ -75,7 +79,8 @@ profiles:
   bows:
     materials:
       - BOW
-    trigger_profile: combat
+    trigger_profiles:
+      - combat
     reward_profile: bows
     display_profile: default
     max_level: 100
@@ -83,7 +88,8 @@ profiles:
   crossbows:
     materials:
       - CROSSBOW
-    trigger_profile: combat
+    trigger_profiles:
+      - combat
     reward_profile: crossbows
     display_profile: default
     max_level: 100
@@ -92,7 +98,8 @@ profiles:
   fishing_rods:
     materials:
       - FISHING_ROD
-    trigger_profile: fishing
+    trigger_profiles:
+      - fishing
     reward_profile: fishing_rods
     display_profile: default
     max_level: 100
@@ -100,7 +107,8 @@ profiles:
   tridents:
     materials:
       - TRIDENT
-    trigger_profile: combat
+    trigger_profiles:
+      - combat
     reward_profile: tridents
     display_profile: default
     max_level: 100
@@ -114,7 +122,8 @@ profiles:
       - GOLDEN_HOE
       - DIAMOND_HOE
       - NETHERITE_HOE
-    trigger_profile: farming
+    trigger_profiles:
+      - farming
     reward_profile: hoes
     display_profile: default
     max_level: 100
