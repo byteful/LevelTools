@@ -42,7 +42,7 @@ dependencies {
     implementation 'com.github.cryptomorin:XSeries:13.6.0'
     implementation 'com.github.Revxrsal.Lamp:common:3.3.6'
     implementation 'com.github.Revxrsal.Lamp:bukkit:3.3.6'
-    implementation 'org.bstats:bstats-bukkit:3.1.0'
+    implementation 'org.bstats:bstats-bukkit:3.2.1'
     implementation 'com.jeff-media:MorePersistentDataTypes:2.4.0'
 
     compileOnly files('libs/folia-api-1.20.4-R0.1-SNAPSHOT.jar') // Modified API jar with Java 8 support
