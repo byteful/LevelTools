@@ -7,6 +7,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    mavenLocal() // temporary for XSeries
     maven {
         url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
     }
@@ -37,9 +38,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'de.tr7zw:item-nbt-api:2.15.5'
+    implementation 'de.tr7zw:item-nbt-api:2.15.7'
     implementation 'com.github.Redempt:Crunch:2.0.3'
-    implementation 'com.github.cryptomorin:XSeries:13.6.0'
+    implementation 'com.github.cryptomorin:XSeries:14.0.0' // must build from source as of may 10th 2026
     implementation 'com.github.Revxrsal.Lamp:common:3.3.6'
     implementation 'com.github.Revxrsal.Lamp:bukkit:3.3.6'
     implementation 'org.bstats:bstats-bukkit:3.2.1'
@@ -54,7 +55,7 @@ dependencies {
 }
 
 group = 'me.byteful.plugin'
-version = '2.1.1'
+version = '2.1.2'
 description = 'LevelTools'
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -101,3 +102,5 @@ processResources {
 compileJava { // Preserve parameter names in the bytecode
     options.compilerArgs += ["-parameters"]
 }
+
+tasks.build.dependsOn += shadowJar

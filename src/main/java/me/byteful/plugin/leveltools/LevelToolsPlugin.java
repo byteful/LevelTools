@@ -166,7 +166,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
         final PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new BlockPlacementListener(blockDataManager, scheduler), this);
         pm.registerEvents(new TriggerListener(profileManager, triggerRegistry, blockDataManager), this);
-        if (LevelToolsUtil.MID_VERSION <= 8) {
+        if (LevelToolsUtil.requiresLegacyAnvilListener()) {
             pm.registerEvents(new LegacyAnvilListener(), this);
         } else {
             pm.registerEvents(new AnvilListener(), this);

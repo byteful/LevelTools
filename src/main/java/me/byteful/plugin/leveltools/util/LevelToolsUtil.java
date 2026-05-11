@@ -40,15 +40,15 @@ import static me.byteful.plugin.leveltools.util.Text.*;
 
 public final class LevelToolsUtil {
     public static final int MID_VERSION;
+    private static final Pattern MINECRAFT_VERSION_PATTERN =
+            Pattern.compile("^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:[-+].*)?$");
     private static final String LORE_PREFIX = "§§";
     private static final boolean IS_PAPER = hasClass("com.destroystokyo.paper.PaperConfig") || hasClass("io.papermc.paper.configuration.Configuration");
+    private static final MinecraftVersion MINECRAFT_VERSION;
 
     static {
-        // Code from https://github.com/boxbeam/RedLib/blob/master/src/redempt/redlib/java
-        final Pattern pattern = Pattern.compile("1\\.([0-9]+)");
-        final Matcher matcher = pattern.matcher(Bukkit.getBukkitVersion());
-        matcher.find();
-        MID_VERSION = Integer.parseInt(matcher.group(1));
+        MINECRAFT_VERSION = parseMinecraftVersion(Bukkit.getBukkitVersion());
+        MID_VERSION = MINECRAFT_VERSION.getCompatibilityMajor();
     }
 
     private static boolean hasClass(String name) {
@@ -86,13 +86,13 @@ public final class LevelToolsUtil {
     }
 
     public static ItemStack getHand(Player player) {
-        return MID_VERSION >= 9
+        return supportsDualWielding()
                 ? player.getInventory().getItemInMainHand().clone()
                 : player.getItemInHand().clone();
     }
 
     public static void setHand(Player player, ItemStack stack) {
-        if (MID_VERSION >= 9) {
+        if (supportsDualWielding()) {
             player.getInventory().setItemInMainHand(stack);
         } else {
             player.setItemInHand(stack);
@@ -106,7 +106,7 @@ public final class LevelToolsUtil {
         }
 
         if (slot == TriggerSlot.OFF_HAND) {
-            if (MID_VERSION >= 9) {
+            if (supportsDualWielding()) {
                 player.getInventory().setItemInOffHand(stack);
             } else {
                 setHand(player, stack);
@@ -156,8 +156,8 @@ public final class LevelToolsUtil {
     }
 
     public static LevelToolsItem createLevelToolsItem(ItemStack stack) {
-        if (MID_VERSION >= 14) {
-            if (MID_VERSION < 18) {
+        if (supportsPersistentDataContainer()) {
+            if (shouldCheckLegacyNbtData()) {
                 final NBTItem nbt = new NBTItem(stack);
                 if (nbt.getKeys().stream().anyMatch(s -> s.startsWith("levelTools"))) {
                     return new NBTLevelToolsItem(
@@ -175,6 +175,62 @@ public final class LevelToolsUtil {
         String version = Bukkit.getVersion();
         String[] split = version.split(" ");
         return split[split.length - 1].trim().replace(")", "");
+    }
+
+    public static boolean requiresLegacyAnvilListener() {
+        return isMinecraftVersionBefore(1, 9);
+    }
+
+    public static boolean supportsDualWielding() {
+        return isMinecraftVersionAtLeast(1, 9);
+    }
+
+    public static boolean supportsTranslatableItemDisplayNames() {
+        return isMinecraftVersionAtLeast(1, 13);
+    }
+
+    public static boolean supportsBlockData() {
+        return isMinecraftVersionAtLeast(1, 13);
+    }
+
+    public static boolean supportsPersistentDataContainer() {
+        return isMinecraftVersionAtLeast(1, 14);
+    }
+
+    public static boolean shouldCheckLegacyNbtData() {
+        return supportsPersistentDataContainer() && isMinecraftVersionBefore(1, 18);
+    }
+
+    public static boolean supportsSpigotActionBar() {
+        return isMinecraftVersionAtLeast(1, 13);
+    }
+
+    private static boolean isMinecraftVersionAtLeast(int major, int minor) {
+        return MINECRAFT_VERSION.compareTo(new MinecraftVersion(major, minor, 0)) >= 0;
+    }
+
+    private static boolean isMinecraftVersionBefore(int major, int minor) {
+        return MINECRAFT_VERSION.compareTo(new MinecraftVersion(major, minor, 0)) < 0;
+    }
+
+    static MinecraftVersion parseMinecraftVersion(@NotNull String version) {
+        final Matcher matcher = MINECRAFT_VERSION_PATTERN.matcher(version.trim());
+        if (!matcher.matches()) {
+            throw new IllegalStateException("Unable to parse Bukkit Minecraft version: " + version);
+        }
+
+        return new MinecraftVersion(
+                Integer.parseInt(matcher.group(1)),
+                parseVersionPart(matcher.group(2)),
+                parseVersionPart(matcher.group(3))
+        );
+    }
+
+    private static int parseVersionPart(@Nullable String value) {
+        if (value == null) {
+            return 0;
+        }
+        return Integer.parseInt(value);
     }
 
     public static ItemStack buildItemStack(
@@ -202,7 +258,9 @@ public final class LevelToolsUtil {
                         .replace("{xp_formatted}", formatMoney(xp))
                         .replace("{progress_bar}", progressBar));
 
-                if (nameDisplay.getText().contains("{item}") && MID_VERSION >= 13 && IS_PAPER) {
+                if (nameDisplay.getText().contains("{item}")
+                        && supportsTranslatableItemDisplayNames()
+                        && IS_PAPER) {
                     AdventureHelper.setDisplayNameWithTranslatable(meta, text, stack);
                 } else {
                     meta.setDisplayName(text);
@@ -342,7 +400,7 @@ public final class LevelToolsUtil {
     }
 
     public static void sendActionBar(Player player, String msg) {
-        if (MID_VERSION > 12) {
+        if (supportsSpigotActionBar()) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
         } else {
             ActionBar.sendActionBar(player, msg);
@@ -363,6 +421,36 @@ public final class LevelToolsUtil {
             return true;
         } catch (ClassNotFoundException e) {
             return false;
+        }
+    }
+
+    static final class MinecraftVersion implements Comparable<MinecraftVersion> {
+        private final int major;
+        private final int minor;
+        private final int patch;
+
+        private MinecraftVersion(int major, int minor, int patch) {
+            this.major = major;
+            this.minor = minor;
+            this.patch = patch;
+        }
+
+        private int getCompatibilityMajor() {
+            if (major == 1) {
+                return minor;
+            }
+            return major;
+        }
+
+        @Override
+        public int compareTo(@NotNull MinecraftVersion other) {
+            if (major != other.major) {
+                return Integer.compare(major, other.major);
+            }
+            if (minor != other.minor) {
+                return Integer.compare(minor, other.minor);
+            }
+            return Integer.compare(patch, other.patch);
         }
     }
 }

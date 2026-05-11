@@ -13,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
-import static me.byteful.plugin.leveltools.util.LevelToolsUtil.MID_VERSION;
-
 public class LevelToolsPlaceholders extends PlaceholderExpansion {
     @Override
     public @NotNull String getIdentifier() {
@@ -48,7 +46,7 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
         }
 
         final ItemStack hand =
-                MID_VERSION <= 8
+                !LevelToolsUtil.supportsDualWielding()
                         ? player.getItemInHand()
                         : player.getInventory().getItemInMainHand();
 

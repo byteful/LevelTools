@@ -56,7 +56,7 @@ public final class FarmingTrigger implements Trigger {
         }
 
         if (context.getOriginalEventAs(BlockBreakEvent.class) != null) {
-            if (LevelToolsUtil.MID_VERSION <= 12) {
+            if (!LevelToolsUtil.supportsBlockData()) {
                 MaterialData data = block.getState().getData();
 
                 if (data instanceof Crops) {

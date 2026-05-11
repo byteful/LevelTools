@@ -94,7 +94,7 @@ public final class TriggerListener implements Listener {
         ItemStack item;
         TriggerSlot slot;
 
-        if (LevelToolsUtil.MID_VERSION <= 8 || event.getHand() == null) {
+        if (!LevelToolsUtil.supportsDualWielding() || event.getHand() == null) {
             item = event.getPlayer().getItemInHand();
             slot = TriggerSlot.HAND;
         } else {
@@ -114,7 +114,7 @@ public final class TriggerListener implements Listener {
 
         Action action = event.getAction();
         Block clickedBlock = event.getClickedBlock();
-        TriggerSlot slot = LevelToolsUtil.MID_VERSION <= 8 || event.getHand() == null
+        TriggerSlot slot = !LevelToolsUtil.supportsDualWielding() || event.getHand() == null
                 ? TriggerSlot.HAND
                 : TriggerSlot.fromBukkit(event.getHand());
         ItemStack item = event.getItem();
@@ -138,7 +138,9 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        TriggerSlot slot = LevelToolsUtil.MID_VERSION <= 8 ? TriggerSlot.HAND : TriggerSlot.fromBukkit(event.getHand());
+        TriggerSlot slot = !LevelToolsUtil.supportsDualWielding()
+                ? TriggerSlot.HAND
+                : TriggerSlot.fromBukkit(event.getHand());
         ItemStack consumedItem = event.getItem();
         handleTrigger(TriggerIds.CONSUME, player, consumedItem, slot, consumedItem, event);
     }
