@@ -28,6 +28,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -41,13 +42,15 @@ import static me.byteful.plugin.leveltools.util.Text.*;
 public final class LevelToolsUtil {
     public static final int MID_VERSION;
     private static final Pattern MINECRAFT_VERSION_PATTERN =
-            Pattern.compile("^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:[-+].*)?$");
+            Pattern.compile("^(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:[-+].*|\\.(?!\\d).*)?$");
+    private static final Pattern SERVER_MINECRAFT_VERSION_PATTERN =
+            Pattern.compile("\\(MC:\\s*([^\\s)]+)\\)");
     private static final String LORE_PREFIX = "§§";
     private static final boolean IS_PAPER = hasClass("com.destroystokyo.paper.PaperConfig") || hasClass("io.papermc.paper.configuration.Configuration");
     private static final MinecraftVersion MINECRAFT_VERSION;
 
     static {
-        MINECRAFT_VERSION = parseMinecraftVersion(Bukkit.getBukkitVersion());
+        MINECRAFT_VERSION = resolveMinecraftVersion();
         MID_VERSION = MINECRAFT_VERSION.getCompatibilityMajor();
     }
 
@@ -211,6 +214,47 @@ public final class LevelToolsUtil {
 
     private static boolean isMinecraftVersionBefore(int major, int minor) {
         return MINECRAFT_VERSION.compareTo(new MinecraftVersion(major, minor, 0)) < 0;
+    }
+
+    private static MinecraftVersion resolveMinecraftVersion() {
+        final String minecraftVersion = getMinecraftVersion();
+        if (minecraftVersion != null) {
+            return parseMinecraftVersion(minecraftVersion);
+        }
+
+        final String serverVersion = getMinecraftVersionFromServerVersion(Bukkit.getVersion());
+        if (serverVersion != null) {
+            return parseMinecraftVersion(serverVersion);
+        }
+
+        return parseMinecraftVersion(Bukkit.getBukkitVersion());
+    }
+
+    @Nullable
+    private static String getMinecraftVersion() {
+        try {
+            final Method method = Bukkit.class.getMethod("getMinecraftVersion");
+            final Object version = method.invoke(null);
+            if (version instanceof String) {
+                final String value = ((String) version).trim();
+                if (!value.isEmpty()) {
+                    return value;
+                }
+            }
+        } catch (ReflectiveOperationException | SecurityException ignored) {
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static String getMinecraftVersionFromServerVersion(@NotNull String version) {
+        final Matcher matcher = SERVER_MINECRAFT_VERSION_PATTERN.matcher(version);
+        if (!matcher.find()) {
+            return null;
+        }
+
+        return matcher.group(1);
     }
 
     static MinecraftVersion parseMinecraftVersion(@NotNull String version) {
