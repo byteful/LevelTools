@@ -35,12 +35,27 @@ public class NBTLevelToolsItem implements LevelToolsItem {
     @NotNull
     @Override
     public ItemStack getItemStack() {
+        return getItemStack(getMaxXp());
+    }
+
+    @NotNull
+    @Override
+    public ItemStack getItemStack(double maxXp) {
         final ItemStack stack =
                 LevelToolsUtil.buildItemStack(
-                        nbt.getItem().clone(), enchantments, getLevel(), getXp(), getMaxXp());
+                        nbt.getItem().clone(), enchantments, getLevel(), getXp(), maxXp);
 
-        nbt = new NBTItem(stack);
-        final NBTCompoundList attr = nbt.getCompoundList("AttributeModifiers");
+        if (attributes.isEmpty()) {
+            return stack;
+        }
+
+        final NBTItem built = new NBTItem(stack);
+        final NBTCompoundList attr = built.getCompoundList("AttributeModifiers");
+        for (int i = attr.size() - 1; i >= 0; i--) {
+            if (attributes.containsKey(attr.get(i).getString("Name"))) {
+                attr.remove(i);
+            }
+        }
         attributes.forEach(
                 (attribute, modifier) -> {
                     final NBTListCompound list = attr.addCompound();
@@ -52,16 +67,12 @@ public class NBTLevelToolsItem implements LevelToolsItem {
                     list.setInteger("UUIDMost", 31453);
                 });
 
-        return nbt.getItem();
+        return built.getItem();
     }
 
     @Override
     public int getLevel() {
-        if (!nbt.hasKey(LEVEL_KEY)) {
-            setLevel(0);
-        }
-
-        return nbt.getInteger(LEVEL_KEY);
+        return nbt.hasTag(LEVEL_KEY) ? nbt.getInteger(LEVEL_KEY) : 0;
     }
 
     @Override
@@ -77,11 +88,7 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
     @Override
     public double getXp() {
-        if (!nbt.hasTag(XP_KEY)) {
-            setXp(0.0D);
-        }
-
-        return nbt.getDouble(XP_KEY);
+        return nbt.hasTag(XP_KEY) ? nbt.getDouble(XP_KEY) : 0.0D;
     }
 
     @Override
@@ -97,11 +104,7 @@ public class NBTLevelToolsItem implements LevelToolsItem {
 
     @Override
     public int getLastHandledReward() {
-        if (!nbt.hasTag(LAST_REWARD_KEY)) {
-            setLastHandledReward(-1);
-        }
-
-        return nbt.getInteger(LAST_REWARD_KEY);
+        return nbt.hasTag(LAST_REWARD_KEY) ? nbt.getInteger(LAST_REWARD_KEY) : -1;
     }
 
     @Override

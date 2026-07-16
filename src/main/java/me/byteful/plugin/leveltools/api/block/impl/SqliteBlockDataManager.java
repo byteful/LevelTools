@@ -7,6 +7,7 @@ import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,17 +51,20 @@ public class SqliteBlockDataManager implements BlockDataManager {
         this.saveTask = scheduler.asyncTimer(this::save, 5 * 20, 5 * 20);
     }
 
-    private void save() {
+    private synchronized void save() {
         if (pendingInserts.isEmpty() && pendingDeletes.isEmpty()) {
             return;
         }
 
+        final Set<BlockPosition> deletes = new HashSet<>(pendingDeletes);
+        final Set<BlockPosition> inserts = new HashSet<>(pendingInserts);
+
         try {
             connection.setAutoCommit(false);
 
-            if (!pendingDeletes.isEmpty()) {
+            if (!deletes.isEmpty()) {
                 try (PreparedStatement stmt = connection.prepareStatement(DELETE_BLOCK_SQL)) {
-                    for (BlockPosition pos : pendingDeletes) {
+                    for (BlockPosition pos : deletes) {
                         stmt.setString(1, pos.getWorld());
                         stmt.setInt(2, pos.getX());
                         stmt.setInt(3, pos.getY());
@@ -71,9 +75,9 @@ public class SqliteBlockDataManager implements BlockDataManager {
                 }
             }
 
-            if (!pendingInserts.isEmpty()) {
+            if (!inserts.isEmpty()) {
                 try (PreparedStatement stmt = connection.prepareStatement(INSERT_BLOCK_SQL)) {
-                    for (BlockPosition pos : pendingInserts) {
+                    for (BlockPosition pos : inserts) {
                         stmt.setString(1, pos.getWorld());
                         stmt.setInt(2, pos.getX());
                         stmt.setInt(3, pos.getY());
@@ -85,8 +89,8 @@ public class SqliteBlockDataManager implements BlockDataManager {
             }
 
             connection.commit();
-            pendingInserts.clear();
-            pendingDeletes.clear();
+            pendingInserts.removeAll(inserts);
+            pendingDeletes.removeAll(deletes);
         } catch (SQLException e) {
             try {
                 connection.rollback();
@@ -146,16 +150,19 @@ public class SqliteBlockDataManager implements BlockDataManager {
     public void close() {
         saveTask.stop();
         save();
-        cache.clear();
-        pendingInserts.clear();
-        pendingDeletes.clear();
 
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
+        synchronized (this) {
+            cache.clear();
+            pendingInserts.clear();
+            pendingDeletes.clear();
+
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 }

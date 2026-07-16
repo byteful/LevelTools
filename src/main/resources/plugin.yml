@@ -15,3 +15,6 @@ permissions:
   leveltools.enabled:
     description: "Permission to let a player level up a tool."
     default: true
+  leveltools.formula.*:
+    description: "Wildcard permission for configured XP formulas."
+    default: false

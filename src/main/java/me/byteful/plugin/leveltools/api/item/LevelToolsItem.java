@@ -11,6 +11,11 @@ public interface LevelToolsItem {
     @NotNull
     ItemStack getItemStack();
 
+    @NotNull
+    default ItemStack getItemStack(double maxXp) {
+        return getItemStack();
+    }
+
     int getLevel();
 
     void setLevel(int level);

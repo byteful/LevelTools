@@ -10,14 +10,17 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class PDCLevelToolsItem implements LevelToolsItem {
     @NotNull
@@ -32,101 +35,112 @@ public class PDCLevelToolsItem implements LevelToolsItem {
     private Map<Enchantment, Integer> enchantments;
     @NotNull
     private Map<String, Double> attributes;
+    private int level;
+    private double xp;
+    private int lastHandledReward;
 
     public PDCLevelToolsItem(@NotNull ItemStack stack) {
+        this(stack, stack.getItemMeta());
+    }
+
+    public PDCLevelToolsItem(@NotNull ItemStack stack, @Nullable ItemMeta meta) {
         this.stack = stack;
         this.enchantments = new HashMap<>();
         this.attributes = new HashMap<>();
+        readState(meta);
+    }
+
+    private void readState(@Nullable ItemMeta meta) {
+        if (meta == null) {
+            level = 0;
+            xp = 0.0D;
+            lastHandledReward = -1;
+
+            return;
+        }
+
+        final PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        final Integer storedLevel = pdc.get(LEVEL_KEY, PersistentDataType.INTEGER);
+        final Double storedXp = pdc.get(XP_KEY, PersistentDataType.DOUBLE);
+        final Integer storedLastReward = pdc.get(LAST_REWARD_KEY, PersistentDataType.INTEGER);
+        level = storedLevel == null ? 0 : Math.max(storedLevel, 0);
+        xp = storedXp == null ? 0.0D : Math.max(storedXp, 0.0D);
+        lastHandledReward = storedLastReward == null ? -1 : storedLastReward;
     }
 
     @Override
     public @NotNull ItemStack getItemStack() {
-        final ItemStack stack =
-                LevelToolsUtil.buildItemStack(this.stack, enchantments, getLevel(), getXp(), getMaxXp());
+        return getItemStack(getMaxXp());
+    }
 
-        final ItemMeta meta = stack.getItemMeta();
+    @Override
+    public @NotNull ItemStack getItemStack(double maxXp) {
+        final ItemStack built = stack.clone();
+        final ItemMeta meta = built.getItemMeta();
         assert meta != null : "ItemMeta is null! Should not happen.";
-        attributes.forEach(
-                (attribute, modifier) -> {
-                    final Attribute attr =
-                            Attribute.valueOf(attribute.replace(".", "_").toUpperCase(Locale.ROOT).trim());
-                    final AttributeModifier mod =
-                            new AttributeModifier(attribute, modifier, AttributeModifier.Operation.ADD_NUMBER);
-                    meta.addAttributeModifier(attr, mod);
-                });
-        stack.setItemMeta(meta);
 
-        return stack;
+        final PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        pdc.set(LEVEL_KEY, PersistentDataType.INTEGER, level);
+        pdc.set(XP_KEY, PersistentDataType.DOUBLE, xp);
+        pdc.set(LAST_REWARD_KEY, PersistentDataType.INTEGER, lastHandledReward);
+
+        LevelToolsUtil.applyDisplay(built, meta, enchantments, level, xp, maxXp);
+        applyAttributes(meta);
+        built.setItemMeta(meta);
+
+        return built;
+    }
+
+    private void applyAttributes(@NotNull ItemMeta meta) {
+        for (Map.Entry<String, Double> entry : attributes.entrySet()) {
+            final String name = entry.getKey();
+            final Attribute attribute =
+                    Attribute.valueOf(name.replace(".", "_").toUpperCase(Locale.ROOT).trim());
+            final Collection<AttributeModifier> existing = meta.getAttributeModifiers(attribute);
+            if (existing != null) {
+                for (AttributeModifier modifier : existing) {
+                    if (name.equals(modifier.getName())) {
+                        meta.removeAttributeModifier(attribute, modifier);
+                    }
+                }
+            }
+            // Deterministic UUID so rebuilds replace the modifier instead of stacking duplicates.
+            meta.addAttributeModifier(attribute, new AttributeModifier(
+                    UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)),
+                    name,
+                    entry.getValue(),
+                    AttributeModifier.Operation.ADD_NUMBER));
+        }
     }
 
     @Override
     public int getLevel() {
-        final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
-
-        Integer value = pdc.get(LEVEL_KEY, PersistentDataType.INTEGER);
-
-        if (value == null) {
-            setLevel(0);
-
-            value = 0;
-        }
-
-        return value;
+        return level;
     }
 
     @Override
     public void setLevel(int level) {
-        final PersistentDataHolder holder = getItemPDC();
-        final PersistentDataContainer pdc = holder.getPersistentDataContainer();
-
-        pdc.set(LEVEL_KEY, PersistentDataType.INTEGER, Math.max(level, 0));
-        stack.setItemMeta((ItemMeta) holder);
+        this.level = Math.max(level, 0);
     }
 
     @Override
     public double getXp() {
-        final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
-
-        Double value = pdc.get(XP_KEY, PersistentDataType.DOUBLE);
-
-        if (value == null) {
-            setXp(0.0D);
-
-            value = 0.0D;
-        }
-
-        return value;
+        return xp;
     }
 
     @Override
     public void setXp(double xp) {
-        final PersistentDataHolder holder = getItemPDC();
-        final PersistentDataContainer pdc = holder.getPersistentDataContainer();
-
-        pdc.set(XP_KEY, PersistentDataType.DOUBLE, Math.max(xp, 0.0));
-        stack.setItemMeta((ItemMeta) holder);
+        this.xp = Math.max(xp, 0.0D);
     }
 
     @Override
     public int getLastHandledReward() {
-        final PersistentDataContainer pdc = getItemPDC().getPersistentDataContainer();
-
-        Integer value = pdc.get(LAST_REWARD_KEY, PersistentDataType.INTEGER);
-        if (value == null) {
-            setLastHandledReward(-1);
-            value = -1;
-        }
-
-        return value;
+        return lastHandledReward;
     }
 
     @Override
     public void setLastHandledReward(int rewardKey) {
-        final PersistentDataHolder holder = getItemPDC();
-        final PersistentDataContainer pdc = holder.getPersistentDataContainer();
-
-        pdc.set(LAST_REWARD_KEY, PersistentDataType.INTEGER, rewardKey);
-        stack.setItemMeta((ItemMeta) holder);
+        this.lastHandledReward = rewardKey;
     }
 
     @Override
@@ -139,10 +153,6 @@ public class PDCLevelToolsItem implements LevelToolsItem {
         attributes.put(attribute, modifier);
     }
 
-    private PersistentDataHolder getItemPDC() {
-        return stack.getItemMeta();
-    }
-
     @NotNull
     public ItemStack getStack() {
         return stack;
@@ -150,6 +160,7 @@ public class PDCLevelToolsItem implements LevelToolsItem {
 
     public void setStack(@NotNull ItemStack stack) {
         this.stack = stack;
+        readState(stack.getItemMeta());
     }
 
     @NotNull
@@ -174,14 +185,17 @@ public class PDCLevelToolsItem implements LevelToolsItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PDCLevelToolsItem that = (PDCLevelToolsItem) o;
-        return stack.equals(that.stack)
+        return level == that.level
+                && Double.compare(that.xp, xp) == 0
+                && lastHandledReward == that.lastHandledReward
+                && stack.equals(that.stack)
                 && enchantments.equals(that.enchantments)
                 && attributes.equals(that.attributes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stack, enchantments, attributes);
+        return Objects.hash(stack, enchantments, attributes, level, xp, lastHandledReward);
     }
 
     @Override
@@ -193,6 +207,12 @@ public class PDCLevelToolsItem implements LevelToolsItem {
                 + enchantments
                 + ", attributes="
                 + attributes
+                + ", level="
+                + level
+                + ", xp="
+                + xp
+                + ", lastHandledReward="
+                + lastHandledReward
                 + '}';
     }
 }

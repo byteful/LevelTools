@@ -109,4 +109,35 @@ public final class FarmingTrigger implements Trigger {
 
         return profile.calculateXpModifier(block.getType().name());
     }
+
+    public static boolean isMatureCropSource(@NotNull Block block) {
+        if (!LevelToolsUtil.supportsBlockData()) {
+            final MaterialData data = block.getState().getData();
+
+            if (data instanceof Crops) {
+                final Crops crop = (Crops) data;
+                return crop.getState() == CropState.RIPE;
+            }
+
+            if (data instanceof NetherWarts) {
+                final NetherWarts wart = (NetherWarts) data;
+                return wart.getState() == NetherWartsState.RIPE;
+            }
+
+            if (data instanceof CocoaPlant) {
+                final CocoaPlant cocoa = (CocoaPlant) data;
+                return cocoa.getSize() == CocoaPlant.CocoaPlantSize.LARGE;
+            }
+
+            return false;
+        }
+
+        final BlockData data = block.getBlockData();
+        if (data instanceof Ageable) {
+            final Ageable ageable = (Ageable) data;
+            return ageable.getAge() >= ageable.getMaximumAge();
+        }
+
+        return false;
+    }
 }

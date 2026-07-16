@@ -1,0 +1,117 @@
+[CENTER][B]Support: [URL]https://discord.gg/G8BDgqsuyw[/URL][/B]
+[B]Wiki: [URL]https://github.com/byteful/LevelTools/wiki[/URL][/B]
+[IMG]https://github.com/byteful/LevelTools/blob/main/LevelTools%20Large%20Logo.png?raw=true[/IMG][/CENTER]
+
+[CENTER][SIZE=5][B]A plugin that adds a leveling system to any item.[/B][/SIZE]
+
+[SIZE=5][B]Features[/B][/SIZE][/CENTER]
+[LIST]
+[*]Supports Minecraft 1.8.8+
+[*]Supports Folia.
+[*]No required dependencies; PlaceholderAPI is optional.
+[*]Profile-based configuration system.
+[*]Any item can level up with custom triggers.
+[*]Configurable global, item-profile, and permission-based XP formulas.
+[*]Commands & enchants on level up.
+[*]Supports blacklisting/whitelisting for blocks, entities, and items.
+[*]ActionBar notifications.
+[*]Item lore modification.
+[*]Optional enchanted-book blocking for LevelTools items.
+[*]Farming trigger support for fully grown player-planted crops.
+[/LIST]
+
+[CENTER][SIZE=5][B]What's New in 2.2[/B][/SIZE][/CENTER]
+[LIST]
+[*][B]ARMOR_DURABILITY[/B] trigger awards XP when armor takes damage.
+[*]Configurable XP formulas under [B]xp_formulas[/B], selectable per player via [B]leveltools.formula.<id>[/B].
+[*]Toggle to block enchanted books from being applied to LevelTools items.
+[*][B]block_data_storage[/B] option (SQLITE) for persisting per-block placement data.
+[*]Farming trigger gains [B]ignore_player_placed_blocks_for_fully_grown_crops[/B].
+[*]Automatic config migration from v1.x and earlier v2.x layouts.
+[/LIST]
+
+[CENTER][SIZE=5][B]Profile System[/B][/SIZE][/CENTER]
+LevelTools uses a modular profile-based configuration system. Any item can be configured to level up.
+
+[SIZE=4][B]Profile Types[/B][/SIZE]
+[TABLE]
+[TR][TD][B]Profile Type[/B][/TD][TD][B]File[/B][/TD][/TR]
+[TR][TD]Item Profiles[/TD][TD]item_profiles.yml[/TD][/TR]
+[TR][TD]Trigger Profiles[/TD][TD]trigger_profiles.yml[/TD][/TR]
+[TR][TD]Reward Profiles[/TD][TD]reward_profiles.yml[/TD][/TR]
+[TR][TD]Display Profiles[/TD][TD]display_profiles.yml[/TD][/TR]
+[/TABLE]
+
+[SIZE=4][B]Trigger Types[/B][/SIZE]
+[LIST]
+[*]BLOCK_BREAK - XP when breaking blocks
+[*]ENTITY_KILL - XP when killing entities
+[*]FISHING - XP when catching items
+[*]RIGHT_CLICK / LEFT_CLICK - XP on click
+[*]CONSUME - XP when consuming items
+[*]FARMING - XP when tilling soil and breaking fully-grown crops
+[*]ARMOR_DURABILITY - XP when worn armor takes damage
+[/LIST]
+
+[SIZE=4][B]Default Supported Items[/B][/SIZE]
+Out of the box, LevelTools ships profiles for:
+[LIST]
+[*]Pickaxes, Axes, Shovels (block mining)
+[*]Swords (combat)
+[*]Bows, Crossbows (ranged)
+[*]Fishing Rods (fishing)
+[*]Tridents (combat / ranged)
+[*]Hoes (farming)
+[/LIST]
+Add any item by creating custom profiles. See the [URL='https://github.com/byteful/LevelTools/wiki']Wiki[/URL] for details.
+
+[SIZE=4][B]Migration from v1.x[/B][/SIZE]
+Your old config will be automatically backed up to old_config.yml and migrated to the new profile system.
+Earlier v2.x configs are also updated automatically: level_xp_formula is moved to xp_formulas.global.
+
+[CENTER][SIZE=5][B]Commands[/B][/SIZE][/CENTER]
+[TABLE]
+[TR][TD][B]Command[/B][/TD][TD][B]Description[/B][/TD][TD][B]Permission[/B][/TD][/TR]
+[TR][TD]/leveltools help [page][/TD][TD]Paginated command help[/TD][TD]None[/TD][/TR]
+[TR][TD]/leveltools reload[/TD][TD]Reloads configuration[/TD][TD]leveltools.admin[/TD][/TR]
+[TR][TD]/leveltools reset <player>[/TD][TD]Reset hand item for player[/TD][TD]leveltools.admin[/TD][/TR]
+[TR][TD]/leveltools reset <player> --all[/TD][TD]Reset all items for player[/TD][TD]leveltools.admin[/TD][/TR]
+[TR][TD]/leveltools xp <amount>[/TD][TD]Set hand item XP[/TD][TD]leveltools.admin[/TD][/TR]
+[TR][TD]/leveltools level <level>[/TD][TD]Set hand item level[/TD][TD]leveltools.admin[/TD][/TR]
+[TR][TD]/leveltools levelup[/TD][TD]Increase hand item level by 1[/TD][TD]leveltools.admin[/TD][/TR]
+[TR][TD]/leveltools debug[/TD][TD]Show debug information[/TD][TD]leveltools.admin[/TD][/TR]
+[/TABLE]
+
+[CENTER][SIZE=5][B]Permissions[/B][/SIZE][/CENTER]
+[TABLE]
+[TR][TD][B]Permission[/B][/TD][TD][B]Description[/B][/TD][TD][B]Default[/B][/TD][/TR]
+[TR][TD]leveltools.admin[/TD][TD]Access to admin commands[/TD][TD]op[/TD][/TR]
+[TR][TD]leveltools.enabled[/TD][TD]Allow leveling for this player[/TD][TD]true[/TD][/TR]
+[TR][TD]leveltools.formula.<id>[/TD][TD]Selects an XP formula defined under xp_formulas[/TD][TD]false[/TD][/TR]
+[/TABLE]
+
+[CENTER][SIZE=5][B]Developer API[/B][/SIZE][/CENTER]
+[LEFT]View detailed API usage [URL='https://github.com/byteful/LevelTools/wiki/Developer-API']here[/URL].[/LEFT]
+
+[CENTER][SIZE=5][B]PlaceholderAPI[/B][/SIZE][/CENTER]
+[TABLE]
+[TR][TD][B]Placeholder[/B][/TD][TD][B]Description[/B][/TD][/TR]
+[TR][TD]%leveltools_level%[/TD][TD]Current item level (main hand)[/TD][/TR]
+[TR][TD]%leveltools_xp%[/TD][TD]Current XP (main hand)[/TD][/TR]
+[TR][TD]%leveltools_max_xp%[/TD][TD]XP required for the next level[/TD][/TR]
+[TR][TD]%leveltools_progress%[/TD][TD]Progress percentage (0-100, 1 decimal)[/TD][/TR]
+[TR][TD]%leveltools_progress_bar%[/TD][TD]Rendered progress bar[/TD][/TR]
+[TR][TD]%leveltools_item_profile%[/TD][TD]Item profile id for the hand item[/TD][/TR]
+[TR][TD]%leveltools_max_level%[/TD][TD]Max level for the current item profile[/TD][/TR]
+[/TABLE]
+
+[CENTER][SIZE=5][B]Documentation[/B][/SIZE][/CENTER]
+Full documentation available at: [URL]https://github.com/byteful/LevelTools/wiki[/URL]
+[LIST]
+[*][URL='https://github.com/byteful/LevelTools/wiki/Configuration']Configuration[/URL]
+[*][URL='https://github.com/byteful/LevelTools/wiki/Trigger-Profiles']Trigger Profiles[/URL]
+[*][URL='https://github.com/byteful/LevelTools/wiki/Reward-Profiles']Reward Profiles[/URL]
+[*][URL='https://github.com/byteful/LevelTools/wiki/Display-Profiles']Display Profiles[/URL]
+[*][URL='https://github.com/byteful/LevelTools/wiki/Item-Profiles']Item Profiles[/URL]
+[/LIST]
+[CENTER][IMG]https://bstats.org/signatures/bukkit/LevelTools%20-%20RPG%20Item%20Leveling.svg[/IMG][/CENTER]

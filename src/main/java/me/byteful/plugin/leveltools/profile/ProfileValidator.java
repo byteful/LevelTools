@@ -1,5 +1,6 @@
 package me.byteful.plugin.leveltools.profile;
 
+import me.byteful.plugin.leveltools.config.XpFormulaRegistry;
 import me.byteful.plugin.leveltools.profile.display.DisplayProfile;
 import me.byteful.plugin.leveltools.profile.item.ItemProfile;
 import me.byteful.plugin.leveltools.profile.reward.RewardProfile;
@@ -29,6 +30,7 @@ public final class ProfileValidator {
 
         validateDuplicateMaterials(itemProfiles, errors);
         validateProfileReferences(itemProfiles, triggerProfiles, rewardProfiles, displayProfiles, errors);
+        validateItemXpFormulas(itemProfiles, errors);
         validateEmptyProfiles(itemProfiles, warnings);
 
         return new ValidationResult(errors, warnings);
@@ -85,6 +87,26 @@ public final class ProfileValidator {
         for (ItemProfile profile : itemProfiles.values()) {
             if (profile.getMaterials().isEmpty()) {
                 warnings.add("Item profile '" + profile.getId() + "' has no materials defined");
+            }
+        }
+    }
+
+    private void validateItemXpFormulas(
+            @NotNull Map<String, ItemProfile> itemProfiles,
+            @NotNull List<String> errors
+    ) {
+        for (ItemProfile profile : itemProfiles.values()) {
+            if (!profile.hasCustomXpFormula()) {
+                continue;
+            }
+
+            try {
+                XpFormulaRegistry.compileAndValidate(
+                        profile.getLevelXpFormula(),
+                        "item profile '" + profile.getId() + "' level_xp_formula"
+                );
+            } catch (RuntimeException e) {
+                errors.add("Item profile '" + profile.getId() + "' has invalid level_xp_formula: " + e.getMessage());
             }
         }
     }

@@ -1,6 +1,7 @@
 package me.byteful.plugin.leveltools;
 
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
+import me.byteful.plugin.leveltools.profile.item.ItemProfile;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -8,10 +9,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import revxrsal.commands.annotation.*;
-import revxrsal.commands.help.CommandHelp;
+import revxrsal.commands.bukkit.actor.BukkitCommandActor;
+import revxrsal.commands.command.ExecutableCommand;
+import revxrsal.commands.help.Help;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import static java.lang.String.format;
 import static me.byteful.plugin.leveltools.util.Text.colorize;
 
 @Command("leveltools")
@@ -19,13 +25,27 @@ public class LevelToolsCommand {
     @Dependency
     private LevelToolsPlugin plugin;
 
-    @DefaultFor("leveltools")
+    @CommandPlaceholder
+    public void onDefaultHelp(CommandSender sender, Help.RelatedCommands<BukkitCommandActor> help) {
+        sendHelp(sender, help, 1);
+    }
+
     @Subcommand("help")
     @Description("Shows the list of LevelTools commands.")
-    public void onHelp(CommandSender sender, CommandHelp<String> help, @Default("1") int page) {
+    public void onHelp(CommandSender sender, Help.RelatedCommands<BukkitCommandActor> help, @Default("1") int page) {
+        sendHelp(sender, help, page);
+    }
+
+    private void sendHelp(CommandSender sender, Help.RelatedCommands<BukkitCommandActor> help, int page) {
+        final List<ExecutableCommand<BukkitCommandActor>> entries = new ArrayList<>();
+        for (ExecutableCommand<BukkitCommandActor> entry : help) {
+            if (entry.description() != null) {
+                entries.add(entry);
+            }
+        }
         sender.sendMessage(colorize("&6&lLevelTools Command Help:"));
-        for (String entry : help.paginate(page, 7)) {
-            sender.sendMessage(colorize(entry));
+        for (ExecutableCommand<BukkitCommandActor> entry : Help.paginate(entries, page, 7)) {
+            sender.sendMessage(colorize(format("&7- &b/%s&7: &e%s", entry.usage(), entry.description())));
         }
     }
 
@@ -58,9 +78,10 @@ public class LevelToolsCommand {
             }
 
             final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(hand);
+            final ItemProfile itemProfile = LevelToolsUtil.getItemProfile(hand.getType());
             tool.setLevel(0);
             tool.setXp(0);
-            LevelToolsUtil.setHand(target, tool.getItemStack());
+            LevelToolsUtil.setHand(target, LevelToolsUtil.getItemStack(tool, target, itemProfile));
             sender.sendMessage(
                     colorize(
                             plugin
@@ -81,9 +102,10 @@ public class LevelToolsCommand {
                 continue;
             }
             final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+            final ItemProfile itemProfile = LevelToolsUtil.getItemProfile(item.getType());
             tool.setLevel(0);
             tool.setXp(0);
-            inv.setItem(i, tool.getItemStack());
+            inv.setItem(i, LevelToolsUtil.getItemStack(tool, target, itemProfile));
         }
         sender.sendMessage(
                 colorize(
@@ -103,8 +125,9 @@ public class LevelToolsCommand {
 
         if (LevelToolsUtil.isSupportedTool(item.getType())) {
             final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+            final ItemProfile itemProfile = LevelToolsUtil.getItemProfile(item.getType());
             tool.setXp(xp);
-            LevelToolsUtil.setHand(player, tool.getItemStack());
+            LevelToolsUtil.setHand(player, LevelToolsUtil.getItemStack(tool, player, itemProfile));
             player.sendMessage(
                     colorize(
                             Objects.requireNonNull(
@@ -126,9 +149,10 @@ public class LevelToolsCommand {
 
         if (LevelToolsUtil.isSupportedTool(item.getType())) {
             final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+            final ItemProfile itemProfile = LevelToolsUtil.getItemProfile(item.getType());
             final int initial = tool.getLevel();
             tool.setLevel(level);
-            LevelToolsUtil.setHand(player, tool.getItemStack());
+            LevelToolsUtil.setHand(player, LevelToolsUtil.getItemStack(tool, player, itemProfile));
             if (initial != tool.getLevel()) {
                 LevelToolsUtil.handleReward(tool, player);
             }
@@ -153,8 +177,9 @@ public class LevelToolsCommand {
 
         if (LevelToolsUtil.isSupportedTool(item.getType())) {
             final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+            final ItemProfile itemProfile = LevelToolsUtil.getItemProfile(item.getType());
             tool.setLevel(tool.getLevel() + 1);
-            LevelToolsUtil.setHand(player, tool.getItemStack());
+            LevelToolsUtil.setHand(player, LevelToolsUtil.getItemStack(tool, player, itemProfile));
             LevelToolsUtil.handleReward(tool, player);
             player.sendMessage(
                     colorize(

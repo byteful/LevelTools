@@ -8,15 +8,19 @@ import me.byteful.plugin.leveltools.util.Text;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class FileBlockDataManager implements BlockDataManager {
     private static final int MAX_CACHE_SIZE = 1_000_000;
     private final Set<BlockPosition> cache = ConcurrentHashMap.newKeySet();
+    private final AtomicBoolean dirty = new AtomicBoolean(false);
     private final Path file;
     private final ScheduledTask saveTask;
 
@@ -25,17 +29,26 @@ public class FileBlockDataManager implements BlockDataManager {
         this.saveTask = scheduler.asyncTimer(this::save, 5 * 20, 5 * 20);
     }
 
-    private void save() {
-        final Set<String> lines;
-        synchronized (cache) {
-            lines = cache.stream()
-                    .map(x -> String.format("{%s}{%s}{%s}%s", x.getX(), x.getY(), x.getZ(), x.getWorld()))
-                    .collect(Collectors.toSet());
+    private synchronized void save() {
+        if (!dirty.compareAndSet(true, false)) {
+            return;
         }
 
+        final Set<String> lines = cache.stream()
+                .map(x -> String.format("{%s}{%s}{%s}%s", x.getX(), x.getY(), x.getZ(), x.getWorld()))
+                .collect(Collectors.toSet());
+
         try {
-            Files.write(file, lines, StandardCharsets.UTF_8);
+            final Path temp = file.resolveSibling(file.getFileName().toString() + ".tmp");
+            Files.write(temp, lines, StandardCharsets.UTF_8);
+
+            try {
+                Files.move(temp, file, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (IOException e) {
+            dirty.set(true);
             e.printStackTrace();
         }
     }
@@ -48,16 +61,24 @@ public class FileBlockDataManager implements BlockDataManager {
     @Override
     public void addPlacedBlock(BlockPosition pos) {
         if (cache.size() >= MAX_CACHE_SIZE) return;
-        cache.add(pos);
+        if (cache.add(pos)) {
+            dirty.set(true);
+        }
     }
 
     @Override
     public void removePlacedBlock(BlockPosition pos) {
-        cache.remove(pos);
+        if (cache.remove(pos)) {
+            dirty.set(true);
+        }
     }
 
     @Override
     public void load() {
+        if (!Files.exists(file)) {
+            return;
+        }
+
         try {
             for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
                 final String[] data = Text.substringsBetween(line, "{", "}");

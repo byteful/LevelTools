@@ -9,6 +9,7 @@
 # - reward_profile: What rewards are given
 # - display_profile: How item is displayed
 # - max_level: Maximum level for this item type
+# - level_xp_formula: Optional formula override for this profile
 #
 # Supports inheritance with 'extends' key.
 # One material can only belong to ONE profile (enforced at startup).

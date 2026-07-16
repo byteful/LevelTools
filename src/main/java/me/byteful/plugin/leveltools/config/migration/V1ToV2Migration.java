@@ -44,8 +44,10 @@ public final class V1ToV2Migration {
         copySection(oldConfig.getConfigurationSection("messages"), newConfig, "messages");
 
         newConfig.set("anvil_combine", oldConfig.getString("anvil_combine", "ADD_BOTH"));
-        newConfig.set("level_xp_formula", oldConfig.getString("level_xp_formula", "100 + {current_level} * 100"));
+        newConfig.set("xp_formulas.global", oldConfig.getString("level_xp_formula", "100 + {current_level} * 100"));
         newConfig.set("playerPlacedBlocks", oldConfig.getBoolean("playerPlacedBlocks", false));
+        newConfig.set("prevent_enchanted_books_on_leveltools_items", false);
+        newConfig.set("farming.ignore_player_placed_blocks_for_fully_grown_crops", true);
 
         copySection(oldConfig.getConfigurationSection("level_up_sound"), newConfig, "level_up_sound");
 

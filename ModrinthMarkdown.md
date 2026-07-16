@@ -1,14 +1,10 @@
-[![Java CI with Gradle](https://github.com/byteful/LevelTools/actions/workflows/gradle.yml/badge.svg?branch=main)](https://github.com/byteful/LevelTools/actions/workflows/gradle.yml)
-[![Discord](https://img.shields.io/discord/911029017472270357?color=7289da&logo=discord)](https://discord.gg/G8BDgqsuyw)
-[![](https://jitpack.io/v/byteful/LevelTools.svg)](https://jitpack.io/#byteful/LevelTools)
+**Support/Help Server:** https://discord.gg/G8BDgqsuyw
 
-<h5 align="center">SpigotMC: https://www.spigotmc.org/resources/leveltools-rpg-item-leveling.97516/</h5>
-<h5 align="center">Support/Help Server: https://discord.gg/G8BDgqsuyw</h5>
-<h5 align="center">WIKI: https://github.com/byteful/LevelTools/wiki</h5>
+**Wiki:** https://github.com/byteful/LevelTools/wiki
 
 ![Logo](https://github.com/byteful/LevelTools/blob/main/LevelTools%20Large%20Logo.png?raw=true)
 
-<h3 align="center">A plugin that adds a leveling system to any item.</h3>
+## A plugin that adds a leveling system to any item.
 
 ## Features
 
@@ -119,3 +115,5 @@ Earlier v2.x configs are also updated automatically: `level_xp_formula` is moved
 - [Reward Profiles](https://github.com/byteful/LevelTools/wiki/Reward-Profiles)
 - [Display Profiles](https://github.com/byteful/LevelTools/wiki/Display-Profiles)
 - [Item Profiles](https://github.com/byteful/LevelTools/wiki/Item-Profiles)
+
+![bStats Graph](https://bstats.org/signatures/bukkit/LevelTools%20-%20RPG%20Item%20Leveling.svg)

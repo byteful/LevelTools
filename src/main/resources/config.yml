@@ -31,6 +31,10 @@ block_data_storage:
   #
   type: SQLITE
 
+# Should LevelTools force the legacy NBT storage method for item level/XP data, even on 1.14+ servers where PDC (PersistentDataContainer) is normally used?
+# Tool data is automatically migrated to the active storage method: PDC data migrates to NBT when this is enabled, and NBT data migrates back to PDC when disabled.
+force_nbt: false
+
 # Configuration for messages.
 messages:
   no_permission: "&cYou do not have permission to execute this command!"
@@ -46,11 +50,21 @@ anvil_combine: "ADD_BOTH"
 
 # The mathematical formula to calculate the required XP for next level.
 # Placeholders/Variables provided: {current_level}
-# This is the global default. Can be overridden per item profile.
-level_xp_formula: "100 + {current_level} * 100"
+# The global formula is required. Additional formulas can be added and selected with leveltools.formula.<id>.
+# Item profile level_xp_formula values override both global and permission formulas.
+xp_formulas:
+  global: "100 + {current_level} * 100"
 
 # Should blocks that are placed by a player count towards XP?
 playerPlacedBlocks: false
+
+# Configuration for farming trigger
+farming:
+  # Should fully grown farming crops ignore playerPlacedBlocks?
+  ignore_player_placed_blocks_for_fully_grown_crops: true
+
+# Should enchanted books be blocked from applying to LevelTools items in anvils?
+prevent_enchanted_books_on_leveltools_items: false
 
 # Configuration for the sound played during a level up.
 level_up_sound:

@@ -7,6 +7,7 @@ import me.byteful.plugin.leveltools.api.event.LevelToolsLoadEvent;
 import me.byteful.plugin.leveltools.api.scheduler.Scheduler;
 import me.byteful.plugin.leveltools.api.trigger.TriggerRegistry;
 import me.byteful.plugin.leveltools.config.ConfigManager;
+import me.byteful.plugin.leveltools.config.XpFormulaRegistry;
 import me.byteful.plugin.leveltools.listeners.anvil.AnvilListener;
 import me.byteful.plugin.leveltools.listeners.BlockPlacementListener;
 import me.byteful.plugin.leveltools.listeners.TriggerListener;
@@ -14,29 +15,33 @@ import me.byteful.plugin.leveltools.listeners.anvil.LegacyAnvilListener;
 import me.byteful.plugin.leveltools.profile.ProfileManager;
 import me.byteful.plugin.leveltools.util.LevelToolsUtil;
 import me.byteful.plugin.leveltools.util.UpdateChecker;
+import me.byteful.plugin.leveltools.util.XPBooster;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import redempt.crunch.CompiledExpression;
-import redempt.crunch.Crunch;
-import revxrsal.commands.bukkit.BukkitCommandHandler;
+import revxrsal.commands.Lamp;
+import revxrsal.commands.bukkit.BukkitLamp;
+import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.String.format;
 import static me.byteful.plugin.leveltools.util.Text.colorize;
 
 public final class LevelToolsPlugin extends JavaPlugin {
     private static LevelToolsPlugin instance;
 
-    private BukkitCommandHandler commandManager;
+    private Lamp<BukkitCommandActor> commandManager;
     private AnvilCombineMode anvilCombineMode;
     private UpdateChecker updateChecker;
-    private CompiledExpression levelXpFormula;
+    private volatile XpFormulaRegistry xpFormulaRegistry;
     private Metrics metrics;
     private BlockDataManager blockDataManager;
+    private String blockDataStorageType;
     private Scheduler scheduler;
 
     private ConfigManager configManager;
@@ -57,9 +62,10 @@ public final class LevelToolsPlugin extends JavaPlugin {
 
         configManager = new ConfigManager(this);
         configManager.loadAll();
+        reloadConfig();
 
         setAnvilCombineMode();
-        setLevelXpFormula();
+        setXpFormulaRegistry();
         getLogger().info("Loaded configuration...");
 
         profileManager = new ProfileManager(getLogger());
@@ -83,6 +89,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
                 scheduler
         );
         blockDataManager.load();
+        blockDataStorageType = getBlockDataStorageType();
         getLogger().info("Loaded block data manager...");
 
         if (getConfig().getBoolean("update.start")) {
@@ -97,14 +104,8 @@ public final class LevelToolsPlugin extends JavaPlugin {
         registerListeners();
         getLogger().info("Registered listeners...");
 
-        commandManager = BukkitCommandHandler.create(this);
-        commandManager.setHelpWriter(
-                (command, actor) ->
-                        String.format(
-                                "&7- &b/%s %s&7: &e%s",
-                                command.getPath().toRealString(), command.getUsage(), command.getDescription()));
+        commandManager = BukkitLamp.builder(this).build();
         commandManager.register(new LevelToolsCommand());
-        commandManager.registerBrigadier();
         getLogger().info("Registered commands...");
 
         if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -124,13 +125,7 @@ public final class LevelToolsPlugin extends JavaPlugin {
             metrics.shutdown();
         }
 
-        if (blockDataManager != null) {
-            try {
-                blockDataManager.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        closeBlockDataManager(blockDataManager);
 
         instance = null;
 
@@ -140,16 +135,8 @@ public final class LevelToolsPlugin extends JavaPlugin {
     private void sendStartupBanner() {
         Bukkit.getConsoleSender().sendMessage(colorize(" &b         _____"));
         Bukkit.getConsoleSender().sendMessage(colorize(" &d|          &b|     &8Created by &2byteful"));
-        Bukkit.getConsoleSender()
-                .sendMessage(
-                        colorize(
-                                String.format(
-                                        " &d|          &b|     &8Running &6%s &8on &6MC %s",
-                                        getDescription().getFullName(), LevelToolsUtil.getServerVersion())));
-        Bukkit.getConsoleSender()
-                .sendMessage(
-                        colorize(
-                                " &d|_____     &b|     &8Join &9&nhttps://discord.gg/G8BDgqsuyw&8 for support!"));
+        Bukkit.getConsoleSender().sendMessage(colorize(format(" &d|          &b|     &8Running &6%s &8on &6MC %s", getDescription().getFullName(), LevelToolsUtil.getServerVersion())));
+        Bukkit.getConsoleSender().sendMessage(colorize(" &d|_____     &b|     &8Join &9&nhttps://discord.gg/G8BDgqsuyw&8 for support!"));
         Bukkit.getConsoleSender().sendMessage("");
     }
 
@@ -164,8 +151,9 @@ public final class LevelToolsPlugin extends JavaPlugin {
 
     private void registerListeners() {
         final PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new BlockPlacementListener(blockDataManager, scheduler), this);
-        pm.registerEvents(new TriggerListener(profileManager, triggerRegistry, blockDataManager), this);
+        pm.registerEvents(new BlockPlacementListener(scheduler), this);
+        pm.registerEvents(new TriggerListener(profileManager, triggerRegistry), this);
+        pm.registerEvents(new XPBooster(), this);
         if (LevelToolsUtil.requiresLegacyAnvilListener()) {
             pm.registerEvents(new LegacyAnvilListener(), this);
         } else {
@@ -177,12 +165,40 @@ public final class LevelToolsPlugin extends JavaPlugin {
         Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.PRE_LOAD));
 
         configManager.reload();
-        setAnvilCombineMode();
-        setLevelXpFormula();
+        reloadConfig();
+
+        XpFormulaRegistry newFormulaRegistry = XpFormulaRegistry.load(getConfig());
+        AnvilCombineMode newAnvilCombineMode =
+                AnvilCombineMode.fromName(Objects.requireNonNull(getConfig().getString("anvil_combine")));
+        BlockDataManager newBlockDataManager = null;
+        String newBlockDataStorageType = getBlockDataStorageType();
+
+        if (!Objects.equals(blockDataStorageType, newBlockDataStorageType)) {
+            newBlockDataManager = BlockDataManagerFactory.createBlockDataManager(
+                    getDataFolder().toPath(),
+                    getConfig(),
+                    scheduler
+            );
+            newBlockDataManager.load();
+        }
 
         Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.POST_TRIGGERS));
 
-        loadProfiles();
+        try {
+            loadProfiles();
+        } catch (RuntimeException e) {
+            closeBlockDataManager(newBlockDataManager);
+            throw e;
+        }
+
+        anvilCombineMode = newAnvilCombineMode;
+        xpFormulaRegistry = newFormulaRegistry;
+        if (newBlockDataManager != null) {
+            BlockDataManager oldBlockDataManager = blockDataManager;
+            blockDataManager = newBlockDataManager;
+            blockDataStorageType = newBlockDataStorageType;
+            closeBlockDataManager(oldBlockDataManager);
+        }
 
         Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.POST_PROFILES));
         Bukkit.getPluginManager().callEvent(new LevelToolsLoadEvent(this, LevelToolsLoadEvent.LoadPhase.COMPLETE));
@@ -196,9 +212,11 @@ public final class LevelToolsPlugin extends JavaPlugin {
     }
 
     public void setLevelXpFormula() {
-        levelXpFormula =
-                Crunch.compileExpression(
-                        getConfig().getString("level_xp_formula").replace("{current_level}", "$1"));
+        setXpFormulaRegistry();
+    }
+
+    public void setXpFormulaRegistry() {
+        xpFormulaRegistry = XpFormulaRegistry.load(getConfig());
     }
 
     public AnvilCombineMode getAnvilCombineMode() {
@@ -206,10 +224,14 @@ public final class LevelToolsPlugin extends JavaPlugin {
     }
 
     public CompiledExpression getLevelXpFormula() {
-        return levelXpFormula;
+        return xpFormulaRegistry.getGlobalFormula();
     }
 
-    public BukkitCommandHandler getCommandManager() {
+    public XpFormulaRegistry getXpFormulaRegistry() {
+        return xpFormulaRegistry;
+    }
+
+    public Lamp<BukkitCommandActor> getCommandManager() {
         return commandManager;
     }
 
@@ -223,6 +245,22 @@ public final class LevelToolsPlugin extends JavaPlugin {
 
     public BlockDataManager getBlockDataManager() {
         return blockDataManager;
+    }
+
+    private String getBlockDataStorageType() {
+        return getConfig().getString("block_data_storage.type", "SQLITE").toUpperCase();
+    }
+
+    private void closeBlockDataManager(BlockDataManager manager) {
+        if (manager == null) {
+            return;
+        }
+
+        try {
+            manager.close();
+        } catch (IOException e) {
+            getLogger().warning("Failed to close block data manager: " + e.getMessage());
+        }
     }
 
     public ConfigManager getConfigManager() {

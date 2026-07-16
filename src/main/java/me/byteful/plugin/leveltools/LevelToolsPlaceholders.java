@@ -45,43 +45,52 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
             return null;
         }
 
-        final ItemStack hand =
-                !LevelToolsUtil.supportsDualWielding()
-                        ? player.getItemInHand()
-                        : player.getInventory().getItemInMainHand();
+        final ItemStack hand = LevelToolsUtil.getHand(player);
 
         if (!LevelToolsUtil.isSupportedTool(hand.getType())) {
             return "N/A";
         }
 
-        final LevelToolsItem item = LevelToolsUtil.createLevelToolsItem(hand);
-
         switch (params.toLowerCase(Locale.ROOT).replace(" ", "_")) {
             case "level": {
-                return "" + item.getLevel();
+                return "" + LevelToolsUtil.createLevelToolsItem(hand).getLevel();
             }
 
             case "xp": {
-                return "" + item.getXp();
+                return "" + LevelToolsUtil.createLevelToolsItem(hand).getXp();
             }
 
             case "max_xp": {
-                return "" + item.getMaxXp();
+                LevelToolsItem item = LevelToolsUtil.createLevelToolsItem(hand);
+                ItemProfile itemProfile = LevelToolsUtil.getItemProfile(hand.getType());
+                return "" + LevelToolsUtil.getMaxXp(player, itemProfile, item);
             }
 
             case "progress_bar": {
-                DisplayProfile displayProfile = getDisplayProfile(hand);
-                return LevelToolsUtil.createProgressBar(item.getXp(), item.getMaxXp(), displayProfile);
+                LevelToolsItem item = LevelToolsUtil.createLevelToolsItem(hand);
+                ItemProfile itemProfile = LevelToolsUtil.getItemProfile(hand.getType());
+                double maxXp = LevelToolsUtil.getMaxXp(player, itemProfile, item);
+                return LevelToolsUtil.createProgressBar(item.getXp(), maxXp, getDisplayProfile(itemProfile));
+            }
+
+            case "progress": {
+                LevelToolsItem item = LevelToolsUtil.createLevelToolsItem(hand);
+                ItemProfile itemProfile = LevelToolsUtil.getItemProfile(hand.getType());
+                double maxXp = LevelToolsUtil.getMaxXp(player, itemProfile, item);
+                if (maxXp <= 0.0) {
+                    return "0";
+                }
+                return "" + LevelToolsUtil.round((item.getXp() / maxXp) * 100.0, 1);
             }
 
             case "item_profile": {
-                ItemProfile profile = LevelToolsUtil.getItemProfile(hand.getType());
-                return profile != null ? profile.getId() : "N/A";
+                ItemProfile itemProfile = LevelToolsUtil.getItemProfile(hand.getType());
+                return itemProfile != null ? itemProfile.getId() : "N/A";
             }
 
             case "max_level": {
-                ItemProfile profile = LevelToolsUtil.getItemProfile(hand.getType());
-                return profile != null ? String.valueOf(profile.getMaxLevel()) : "N/A";
+                ItemProfile itemProfile = LevelToolsUtil.getItemProfile(hand.getType());
+                return itemProfile != null ? String.valueOf(itemProfile.getMaxLevel()) : "N/A";
             }
 
             default: {
@@ -91,8 +100,7 @@ public class LevelToolsPlaceholders extends PlaceholderExpansion {
     }
 
     @Nullable
-    private DisplayProfile getDisplayProfile(ItemStack item) {
-        ItemProfile itemProfile = LevelToolsUtil.getItemProfile(item.getType());
+    private DisplayProfile getDisplayProfile(@Nullable ItemProfile itemProfile) {
         if (itemProfile == null) {
             return null;
         }

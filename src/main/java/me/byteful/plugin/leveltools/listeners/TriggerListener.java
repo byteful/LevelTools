@@ -1,10 +1,11 @@
 package me.byteful.plugin.leveltools.listeners;
 
 import me.byteful.plugin.leveltools.LevelToolsPlugin;
-import me.byteful.plugin.leveltools.api.block.BlockDataManager;
 import me.byteful.plugin.leveltools.api.block.BlockPosition;
 import me.byteful.plugin.leveltools.api.item.LevelToolsItem;
 import me.byteful.plugin.leveltools.api.trigger.*;
+import me.byteful.plugin.leveltools.api.trigger.impl.FarmingTrigger;
+import me.byteful.plugin.leveltools.config.ConfigManager;
 import me.byteful.plugin.leveltools.profile.ProfileManager;
 import me.byteful.plugin.leveltools.profile.item.ItemProfile;
 import me.byteful.plugin.leveltools.profile.trigger.TriggerProfile;
@@ -34,17 +35,14 @@ public final class TriggerListener implements Listener {
     private final ProfileManager profileManager;
     private final TriggerRegistry triggerRegistry;
     private final XPHandler xpHandler;
-    private final BlockDataManager blockDataManager;
 
     public TriggerListener(
             @NotNull ProfileManager profileManager,
-            @NotNull TriggerRegistry triggerRegistry,
-            @NotNull BlockDataManager blockDataManager
+            @NotNull TriggerRegistry triggerRegistry
     ) {
         this.profileManager = profileManager;
         this.triggerRegistry = triggerRegistry;
         this.xpHandler = new XPHandler(profileManager);
-        this.blockDataManager = blockDataManager;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -56,13 +54,16 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        if (!LevelToolsPlugin.getInstance().getConfig().getBoolean("playerPlacedBlocks")
-                && blockDataManager.isPlacedBlock(BlockPosition.fromBukkit(block))) {
+        ConfigManager.Settings settings = LevelToolsPlugin.getInstance().getConfigManager().getSettings();
+        if (!settings.isCountPlayerPlacedBlocks()
+                && LevelToolsPlugin.getInstance().getBlockDataManager().isPlacedBlock(BlockPosition.fromBukkit(block))) {
+            if (settings.isIgnorePlayerPlacedBlocksForFullyGrownCrops() && FarmingTrigger.isMatureCropSource(block)) {
+                handleTrigger(player, player.getItemInHand(), TriggerSlot.HAND, block, event, TriggerIds.FARMING);
+            }
             return;
         }
 
-        handleTrigger(TriggerIds.BLOCK_BREAK, player, player.getItemInHand(), TriggerSlot.HAND, block, event);
-        handleTrigger(TriggerIds.FARMING, player, player.getItemInHand(), TriggerSlot.HAND, block, event);
+        handleTrigger(player, player.getItemInHand(), TriggerSlot.HAND, block, event, TriggerIds.BLOCK_BREAK, TriggerIds.FARMING);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -76,7 +77,7 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        handleTrigger(TriggerIds.ENTITY_KILL, killer, killer.getItemInHand(), TriggerSlot.HAND, event.getEntity(), event);
+        handleTrigger(killer, killer.getItemInHand(), TriggerSlot.HAND, event.getEntity(), event, TriggerIds.ENTITY_KILL);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -102,32 +103,39 @@ public final class TriggerListener implements Listener {
             slot = TriggerSlot.fromBukkit(event.getHand());
         }
 
-        handleTrigger(TriggerIds.FISHING, player, item, slot, caught, event);
+        handleTrigger(player, item, slot, caught, event, TriggerIds.FISHING);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerInteract(PlayerInteractEvent event) {
+        Action action = event.getAction();
+        if (action == Action.PHYSICAL) {
+            return;
+        }
+
+        Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock != null && event.useInteractedBlock() == Event.Result.DENY) {
+            return;
+        }
+
+        ItemStack item = event.getItem();
+        if (item == null) {
+            return;
+        }
+
         Player player = event.getPlayer();
         if (!player.hasPermission("leveltools.enabled")) {
             return;
         }
 
-        Action action = event.getAction();
-        Block clickedBlock = event.getClickedBlock();
         TriggerSlot slot = !LevelToolsUtil.supportsDualWielding() || event.getHand() == null
                 ? TriggerSlot.HAND
                 : TriggerSlot.fromBukkit(event.getHand());
-        ItemStack item = event.getItem();
-
-        if (item == null) {
-            return;
-        }
 
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            handleTrigger(TriggerIds.RIGHT_CLICK, player, item, slot, clickedBlock, event);
-            handleTrigger(TriggerIds.FARMING, player, item, slot, clickedBlock, event);
+            handleTrigger(player, item, slot, clickedBlock, event, TriggerIds.RIGHT_CLICK, TriggerIds.FARMING);
         } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            handleTrigger(TriggerIds.LEFT_CLICK, player, item, slot, clickedBlock, event);
+            handleTrigger(player, item, slot, clickedBlock, event, TriggerIds.LEFT_CLICK);
         }
     }
 
@@ -142,7 +150,7 @@ public final class TriggerListener implements Listener {
                 ? TriggerSlot.HAND
                 : TriggerSlot.fromBukkit(event.getHand());
         ItemStack consumedItem = event.getItem();
-        handleTrigger(TriggerIds.CONSUME, player, consumedItem, slot, consumedItem, event);
+        handleTrigger(player, consumedItem, slot, consumedItem, event, TriggerIds.CONSUME);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -162,18 +170,23 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        handleTrigger(TriggerIds.ARMOR_DURABILITY, player, damagedItem, armorSlot, damagedItem.getType(), event);
+        handleTrigger(player, damagedItem, armorSlot, damagedItem.getType(), event, TriggerIds.ARMOR_DURABILITY);
     }
 
     private void handleTrigger(
-            @NotNull String triggerId,
             @NotNull Player player,
             @NotNull ItemStack item,
             @Nullable TriggerSlot slot,
             @Nullable Object source,
-            @NotNull Event event
+            @NotNull Event event,
+            @NotNull String... triggerIds
     ) {
         if (item.getType() == Material.AIR) {
+            return;
+        }
+
+        ConfigManager.Settings settings = LevelToolsPlugin.getInstance().getConfigManager().getSettings();
+        if (settings.getDisabledWorlds().contains(player.getWorld().getName())) {
             return;
         }
 
@@ -187,18 +200,19 @@ public final class TriggerListener implements Listener {
             return;
         }
 
-        Trigger trigger = triggerRegistry.get(triggerId);
-        if (trigger == null) {
-            return;
-        }
-
         double totalModifier = 0.0;
         for (TriggerProfile triggerProfile : triggerProfiles) {
-            if (!triggerId.equals(triggerProfile.getTriggerId())) {
+            String triggerId = triggerProfile.getTriggerId();
+            if (!isApplicableTrigger(triggerId, triggerIds)) {
                 continue;
             }
 
             if (!triggerProfile.getSlotFilter().matches(slot)) {
+                continue;
+            }
+
+            Trigger trigger = triggerRegistry.get(triggerId);
+            if (trigger == null) {
                 continue;
             }
 
@@ -225,7 +239,17 @@ public final class TriggerListener implements Listener {
         }
 
         LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
-        xpHandler.handle(player, itemProfile, slot, tool, totalModifier);
+        xpHandler.handle(player, itemProfile, slot, tool, totalModifier, event instanceof PlayerItemDamageEvent);
+    }
+
+    private boolean isApplicableTrigger(@NotNull String triggerId, @NotNull String[] triggerIds) {
+        for (String id : triggerIds) {
+            if (id.equals(triggerId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Nullable

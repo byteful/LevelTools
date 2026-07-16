@@ -21,9 +21,7 @@ public class BlockPosition {
     }
 
     public static BlockPosition fromBukkit(Block block) {
-        final Location l = block.getLocation();
-
-        return new BlockPosition(l.getWorld().getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ());
+        return new BlockPosition(block.getWorld().getName(), block.getX(), block.getY(), block.getZ());
     }
 
     public Block toBukkit() {
@@ -58,7 +56,11 @@ public class BlockPosition {
 
     @Override
     public int hashCode() {
-        return Objects.hash(world, x, y, z);
+        int result = world != null ? world.hashCode() : 0;
+        result = 31 * result + x;
+        result = 31 * result + y;
+        result = 31 * result + z;
+        return result;
     }
 
     @Override
