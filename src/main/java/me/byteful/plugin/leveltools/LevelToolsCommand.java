@@ -81,6 +81,7 @@ public class LevelToolsCommand {
             final ItemProfile itemProfile = LevelToolsUtil.getItemProfile(hand.getType());
             tool.setLevel(0);
             tool.setXp(0);
+            tool.setLastHandledReward(-1);
             LevelToolsUtil.setHand(target, LevelToolsUtil.getItemStack(tool, target, itemProfile));
             sender.sendMessage(
                     colorize(
@@ -105,6 +106,7 @@ public class LevelToolsCommand {
             final ItemProfile itemProfile = LevelToolsUtil.getItemProfile(item.getType());
             tool.setLevel(0);
             tool.setXp(0);
+            tool.setLastHandledReward(-1);
             inv.setItem(i, LevelToolsUtil.getItemStack(tool, target, itemProfile));
         }
         sender.sendMessage(
@@ -151,7 +153,7 @@ public class LevelToolsCommand {
             final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
             final ItemProfile itemProfile = LevelToolsUtil.getItemProfile(item.getType());
             final int initial = tool.getLevel();
-            tool.setLevel(level);
+            tool.setLevel(LevelToolsUtil.clampLevel(itemProfile, level));
             LevelToolsUtil.setHand(player, LevelToolsUtil.getItemStack(tool, player, itemProfile));
             if (initial != tool.getLevel()) {
                 LevelToolsUtil.handleReward(tool, player);
@@ -178,9 +180,12 @@ public class LevelToolsCommand {
         if (LevelToolsUtil.isSupportedTool(item.getType())) {
             final LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
             final ItemProfile itemProfile = LevelToolsUtil.getItemProfile(item.getType());
-            tool.setLevel(tool.getLevel() + 1);
+            final int initial = tool.getLevel();
+            tool.setLevel(LevelToolsUtil.clampLevel(itemProfile, initial + 1));
             LevelToolsUtil.setHand(player, LevelToolsUtil.getItemStack(tool, player, itemProfile));
-            LevelToolsUtil.handleReward(tool, player);
+            if (initial != tool.getLevel()) {
+                LevelToolsUtil.handleReward(tool, player);
+            }
             player.sendMessage(
                     colorize(
                             Objects.requireNonNull(

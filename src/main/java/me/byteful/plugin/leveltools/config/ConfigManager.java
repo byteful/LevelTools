@@ -239,7 +239,7 @@ public final class ConfigManager {
         }
 
         public void play(@NotNull Player player) {
-            player.playSound(player.getLocation(), sound, pitch, volume);
+            player.playSound(player.getLocation(), sound, volume, pitch);
         }
     }
 }

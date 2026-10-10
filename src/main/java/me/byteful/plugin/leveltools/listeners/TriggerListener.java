@@ -133,7 +133,10 @@ public final class TriggerListener implements Listener {
                 : TriggerSlot.fromBukkit(event.getHand());
 
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            handleTrigger(player, item, slot, clickedBlock, event, TriggerIds.RIGHT_CLICK, TriggerIds.FARMING);
+            handleTrigger(player, item, slot, clickedBlock, event, TriggerIds.RIGHT_CLICK);
+            if (clickedBlock != null && FarmingTrigger.isTillable(clickedBlock)) {
+                handleTill(player, item, slot, clickedBlock, event);
+            }
         } else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             handleTrigger(player, item, slot, clickedBlock, event, TriggerIds.LEFT_CLICK);
         }
@@ -181,24 +184,87 @@ public final class TriggerListener implements Listener {
             @NotNull Event event,
             @NotNull String... triggerIds
     ) {
-        if (item.getType() == Material.AIR) {
-            return;
-        }
-
-        ConfigManager.Settings settings = LevelToolsPlugin.getInstance().getConfigManager().getSettings();
-        if (settings.getDisabledWorlds().contains(player.getWorld().getName())) {
-            return;
-        }
-
-        ItemProfile itemProfile = profileManager.getProfileForMaterial(item.getType());
+        ItemProfile itemProfile = getItemProfile(player, item);
         if (itemProfile == null) {
             return;
         }
 
-        List<TriggerProfile> triggerProfiles = profileManager.getTriggerProfilesFor(itemProfile);
-        if (triggerProfiles.isEmpty()) {
+        double totalModifier = calculateModifier(player, item, itemProfile, slot, source, event, triggerIds);
+        if (totalModifier <= 0.0) {
             return;
         }
+
+        LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
+        xpHandler.handle(player, itemProfile, slot, tool, totalModifier, shouldDeferCommit(event));
+    }
+
+    // The interact event fires before the hoe tills anything, so the XP is only granted once the block has
+    // actually changed on the next tick. Clicks that can't till (block above, protected region) give nothing.
+    private void handleTill(
+            @NotNull Player player,
+            @NotNull ItemStack item,
+            @Nullable TriggerSlot slot,
+            @NotNull Block block,
+            @NotNull PlayerInteractEvent event
+    ) {
+        ItemProfile itemProfile = getItemProfile(player, item);
+        if (itemProfile == null) {
+            return;
+        }
+
+        double totalModifier = calculateModifier(player, item, itemProfile, slot, block, event, TriggerIds.FARMING);
+        if (totalModifier <= 0.0) {
+            return;
+        }
+
+        Material typeBefore = block.getType();
+        byte dataBefore = getLegacyData(block);
+        Material expectedItem = item.getType();
+        LevelToolsPlugin.getInstance().getScheduler().locationDelayed(() -> {
+            boolean changed = block.getType() != typeBefore || getLegacyData(block) != dataBefore;
+            if (!changed || !player.isOnline()) {
+                return;
+            }
+
+            ItemStack live = LevelToolsUtil.getItemInSlot(player, slot);
+            if (live == null || live.getType() != expectedItem) {
+                return;
+            }
+
+            xpHandler.handle(player, itemProfile, slot, LevelToolsUtil.createLevelToolsItem(live), totalModifier, false);
+        }, block.getLocation(), 1);
+    }
+
+    // Only legacy servers need the data value (coarse dirt is DIRT:1 there); calling it on modern servers loads legacy support.
+    @SuppressWarnings("deprecation")
+    private static byte getLegacyData(@NotNull Block block) {
+        return LevelToolsUtil.supportsBlockData() ? 0 : block.getData();
+    }
+
+    @Nullable
+    private ItemProfile getItemProfile(@NotNull Player player, @NotNull ItemStack item) {
+        if (item.getType() == Material.AIR) {
+            return null;
+        }
+
+        ConfigManager.Settings settings = LevelToolsPlugin.getInstance().getConfigManager().getSettings();
+        if (settings.getDisabledWorlds().contains(player.getWorld().getName())) {
+            return null;
+        }
+
+        return profileManager.getProfileForMaterial(item.getType());
+    }
+
+    private double calculateModifier(
+            @NotNull Player player,
+            @NotNull ItemStack item,
+            @NotNull ItemProfile itemProfile,
+            @Nullable TriggerSlot slot,
+            @Nullable Object source,
+            @NotNull Event event,
+            @NotNull String... triggerIds
+    ) {
+        List<TriggerProfile> triggerProfiles = profileManager.getTriggerProfilesFor(itemProfile);
 
         double totalModifier = 0.0;
         for (TriggerProfile triggerProfile : triggerProfiles) {
@@ -234,12 +300,15 @@ public final class TriggerListener implements Listener {
             totalModifier += trigger.calculateXpModifier(context);
         }
 
-        if (totalModifier <= 0.0) {
-            return;
-        }
+        return totalModifier;
+    }
 
-        LevelToolsItem tool = LevelToolsUtil.createLevelToolsItem(item);
-        xpHandler.handle(player, itemProfile, slot, tool, totalModifier, event instanceof PlayerItemDamageEvent);
+    // Vanilla damages the item after these events fire, using the stack it captured beforehand.
+    // Replacing the item immediately would drop that durability loss, so commit on the next tick instead.
+    private boolean shouldDeferCommit(@NotNull Event event) {
+        return event instanceof PlayerItemDamageEvent
+                || event instanceof EntityDeathEvent
+                || event instanceof PlayerFishEvent;
     }
 
     private boolean isApplicableTrigger(@NotNull String triggerId, @NotNull String[] triggerIds) {

@@ -37,11 +37,11 @@ repositories {
 }
 
 dependencies {
-    implementation 'de.tr7zw:item-nbt-api:2.15.7'
+    implementation 'de.tr7zw:item-nbt-api:2.16.1'
     implementation 'com.github.Redempt:Crunch:2.0.3'
-    implementation 'com.github.cryptomorin:XSeries:13.7.1'
-    implementation 'io.github.revxrsal:lamp.common:4.0.0-rc.17'
-    implementation 'io.github.revxrsal:lamp.bukkit:4.0.0-rc.17'
+    implementation 'com.github.cryptomorin:XSeries:14.0.0'
+    implementation 'io.github.revxrsal:lamp.common:4.0.0-rc.19'
+    implementation 'io.github.revxrsal:lamp.bukkit:4.0.0-rc.19'
     implementation 'org.bstats:bstats-bukkit:3.2.1'
     implementation 'com.jeff-media:MorePersistentDataTypes:2.4.0'
 

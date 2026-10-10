@@ -32,6 +32,20 @@ public final class FarmingTrigger implements Trigger {
             XMaterial.ROOTED_DIRT
     );
 
+    // Crops without a meaningful growth age: harvesting them is always a full harvest.
+    // Sugar cane, cactus, kelp and bamboo do have an age, but it resets as they grow taller.
+    private static final Set<XMaterial> AGELESS_CROPS = EnumSet.of(
+            XMaterial.MELON,
+            XMaterial.PUMPKIN,
+            XMaterial.SUGAR_CANE,
+            XMaterial.CACTUS,
+            XMaterial.BAMBOO,
+            XMaterial.KELP,
+            XMaterial.KELP_PLANT,
+            XMaterial.BROWN_MUSHROOM,
+            XMaterial.RED_MUSHROOM
+    );
+
     @Override
     @NotNull
     public String getTriggerId() {
@@ -49,7 +63,7 @@ public final class FarmingTrigger implements Trigger {
         Material blockType = block.getType();
 
         if (context.getOriginalEventAs(PlayerInteractEvent.class) != null) {
-            if (!TILLABLE_BLOCKS.contains(XMaterial.matchXMaterial(blockType))) {
+            if (!isTillable(block)) {
                 return false;
             }
             return profile.isSourceAllowed("TILL");
@@ -75,7 +89,7 @@ public final class FarmingTrigger implements Trigger {
                         return false;
                     }
                 }
-            } else {
+            } else if (!isAgelessCrop(block)) {
                 BlockData data = block.getBlockData();
 
                 if (data instanceof Ageable) {
@@ -110,6 +124,19 @@ public final class FarmingTrigger implements Trigger {
         return profile.calculateXpModifier(block.getType().name());
     }
 
+    public static boolean isTillable(@NotNull Block block) {
+        return matches(TILLABLE_BLOCKS, block);
+    }
+
+    private static boolean isAgelessCrop(@NotNull Block block) {
+        return matches(AGELESS_CROPS, block);
+    }
+
+    // Uses the Optional lookup so blocks newer than XSeries don't throw.
+    private static boolean matches(@NotNull Set<XMaterial> materials, @NotNull Block block) {
+        return XMaterial.matchXMaterial(block.getType().name()).map(materials::contains).orElse(false);
+    }
+
     public static boolean isMatureCropSource(@NotNull Block block) {
         if (!LevelToolsUtil.supportsBlockData()) {
             final MaterialData data = block.getState().getData();
@@ -129,6 +156,11 @@ public final class FarmingTrigger implements Trigger {
                 return cocoa.getSize() == CocoaPlant.CocoaPlantSize.LARGE;
             }
 
+            return false;
+        }
+
+        // Player-placed melons, pumpkins, etc. are the placed block itself, so they never count as grown.
+        if (isAgelessCrop(block)) {
             return false;
         }
 

@@ -37,6 +37,7 @@ profiles:
         - "RED_MUSHROOM"
         - "CRIMSON_ROOTS"
         - "GRASS"
+        - "SHORT_GRASS"
         - "TALL_GRASS"
         - "SEAGRASS"
         - "TORCH"

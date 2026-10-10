@@ -90,6 +90,10 @@ public final class LevelToolsUtil {
     }
 
     @Nullable
+    public static int clampLevel(@Nullable ItemProfile profile, int level) {
+        return profile == null ? level : Math.min(level, profile.getMaxLevel());
+    }
+
     public static ItemProfile getItemProfile(Material material) {
         LevelToolsPlugin instance = LevelToolsPlugin.getInstance();
         if (instance == null) {

@@ -63,7 +63,7 @@ public class LegacyAnvilListener implements Listener {
             final LevelAndXPModel second =
                     LevelAndXPModel.fromItem(LevelToolsUtil.createLevelToolsItem(secondItem));
             final LevelAndXPModel finished = mode.getHandler().apply(first, second);
-            finalItem.setLevel(finished.getLevel());
+            finalItem.setLevel(LevelToolsUtil.clampLevel(LevelToolsUtil.getItemProfile(result.getType()), finished.getLevel()));
             finalItem.setXp(finished.getXp());
         } else {
             final LevelToolsItem original = LevelToolsUtil.createLevelToolsItem(firstItem);
